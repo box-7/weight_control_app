@@ -120,7 +120,7 @@ yarn-debug.log*
 *.vsix
 
 ### VisualStudioCode Patch ###
-# Ignore all local history of files
+# Ignore all local history of files 
 .history
 .ionide
 
