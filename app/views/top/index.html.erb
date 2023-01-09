@@ -1,0 +1,107 @@
+
+<h2 class="articles_list">投稿一覧</h2>
+
+<% @articles.each do |article| %>
+    <article>
+        <div class="content">
+            <div class="image">
+                <img src="https://placehold.jp/24/cc9999/993333/150x100.png">
+            </div>
+            <div class="name">
+                <p>(名前)</p>
+                <p class="make_a_margin-bottom"><%= article.user.name %></p>
+                <p>(投稿日時)</p>
+                <p class="make_a_margin-bottom"><%= article.date %></p>
+            </div>
+
+            <div class="weight">
+                <p>(目標との乖離)</p>
+                <p class="make_a_margin-bottom"><%= article.weight %></p>
+                <p>(体重)</p>
+                <p class="make_a_margin-bottom"><%= article.weight %></p>
+                <p>(体脂肪率)</p>
+                <p class="make_a_margin-bottom"><%= article.body_fat_percentage %></p>
+            </div>
+            <div class="meal">
+                <p>(食事(朝))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_morning %></p>
+                <p>(食事(昼))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_lunch %></p>
+                <p>(食事(夜))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_dinner %></p>
+                <p>(食事(間食))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_snack %></p>
+            </div>
+            <div class="exercise">
+                <p>(運動)</p>
+                <p class="make_a_margin-bottom"><%= article.exercise %></p>
+                <p>(メモ)</p>
+                <p class="make_a_margin-bottom"><%= article.memo %></p>
+            </div>
+
+        </div>
+        <div class="content button_zone">
+            <div class="content good">
+                <%# <p class="good_position">いいね</p> %>
+                <%= image_tag '/heart.png', size: '20x20', class:"good_position" %>
+                <p>○○件</p>
+                <%= image_tag '/comment.png', size: '30x30', class:"good_position" %>
+                <%# <p>コメント</p> %>
+            </div>
+            <div class="article_button">
+                <button type="button" class="btn btn-info">詳細</button>
+                <button type="button" class="btn btn-danger">削除</button>
+            </div>
+        </div>
+    </article>
+
+<% end %>
+
+<%
+=begin %>
+<img src="<%= "/heart.png" %>">
+<img src="<%= "/user_images/#{@user.image_name}" %>">
+
+
+File.binwrite("public/user_images/#{@user.image_name}", image.read)
+    <div class="container">
+        <div>
+            <div class="col">Column</div>
+            <div class="col">Column</div>
+            <div class="w-100"></div>
+            <div class="col">Column</div>
+            <div class="col">Column</div>
+        </div>
+    </div>
+</div>
+<%
+=end %>
+
+
+
+
+<%
+=begin %>
+<article>
+<article>
+    <h2 class="article-title"><a href="#">タイトルテキストテキストテキストテキストテキスト</a></h2>
+    <ul class="meta">
+    <li><a href="#">2020/01/01</a></li>
+    <li><a href="#">カテゴリ1</a></li>
+    </ul>
+    <a href="#"><img src="img/main1.jpg" alt="テキストテキストテキスト"></a>
+    <p class="text">
+    本文テキストテキストテキストテキストテキストテキストテキストテキスト
+    テキストテキストテキストテキストテキストテキストテキストテキストテキスト
+    テキストテキストテキストテキストテキストテキストテキストテキストテキスト
+    </p>
+    <div class="readmore"><a href="#">READ MORE</a></div>
+</article>
+
+<%
+=end %>
+
+
+
+
+
