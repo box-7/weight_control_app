@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  date: 2023-01-08
+  weight: 1.5
+  body_fat_percentage: 1.5
+  meal_morning: MyString
+  meal_lunch: MyString
+  meal_dinner: MyString
+  meal_snack: MyString
+  exercise: MyString
+  memo: MyString
+
+two:
+  user_id: 1
+  date: 2023-01-08
+  weight: 1.5
+  body_fat_percentage: 1.5
+  meal_morning: MyString
+  meal_lunch: MyString
+  meal_dinner: MyString
+  meal_snack: MyString
+  exercise: MyString
+  memo: MyString

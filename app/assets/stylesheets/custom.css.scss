@@ -26,7 +26,7 @@ textarea {
 /* header */
 .navbar-inverse {
     background-color: #d9d9d9;
-    border-color: #d9d9d9;
+    border-color: black;
 }
 
 .navbar-inverse .navbar-nav > li > a {
@@ -47,5 +47,83 @@ textarea {
     color: #fff;
     text-decoration: none;
 }
+
+// home
+.articles_list{
+    text-align: center;
+    margin-top:50px;
+}
+
+article{
+    padding: 40px 20px 20px;
+    margin:20px;
+    background-color:#d9d9d9;
+    border-radius: 20px;
+}
+
+.content{
+    display: flex;
+    // justify-content:space-between;
+    // flex-wrap: wrap; /* 折返し指定 */
+// 	gap: 0px 4px; /* 余白 */
+}
+
+.image{
+    // width:15%;
+    width:150px;
+    margin-top: 20px;
+    margin-right: 30px;
+}
+
+.name{
+    width:15%;
+    margin-right: 10px;
+}
+
+
+.weight{
+    width:15%;
+    margin-right: 10px;
+}
+
+.meal{
+    width:20%;
+    margin-right: 10px;
+}
+
+.exercise{
+    width:30%;
+    margin-right: 10px;
+}
+.button_zone{
+    justify-content: space-between;
+}
+
+.good{
+    margin-left:10%;
+}
+
+.good p{
+    margin-right: 10px;
+    white-space: nowrap
+}
+
+.article_button{
+    margin-right:10%;
+}
+
+.make_a_margin-bottom{
+    margin-bottom:20px;
+}
+
+.good_position{
+    margin-right:10%;
+}
+
+
+
+
+
+
 
 
