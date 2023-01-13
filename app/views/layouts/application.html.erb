@@ -2,7 +2,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-
     <%= stylesheet_link_tag 'application', media: 'all',
                                           'data-turbolinks-track' => true %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
@@ -10,7 +9,17 @@
 
   </head>
   <body>
+  <%# # 存在する場合、フラッシュメッセージの表示 %>
+
+		<% flash.each do |message_type, msg| %>
+      <div class="alert alert-<%= message_type %>"><%= msg %></div>
+    <% end %>
+
     <%= render 'layouts/header' %>
     <%= yield %>
   </body>
 </html>
+
+
+
+
