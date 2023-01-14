@@ -1,0 +1,38 @@
+<% provide(:title, @user.name) %>
+
+<h1>プロフィール詳細</h1>
+
+<%# /user_images/:フォルダ名、#{@user.image}:画像ファイル名
+publicフォルダに画像がある場合は、画像ファイル名のみでOK
+今回はuser_imagesフォルダを作成しているのでフォルダ名をつける 
+#{@user.image}%>
+<% if @user.image == "default.png" %>
+    <%= image_tag "/user_images/#{@user.image}" %>
+<% else %>
+    <%= image_tag "/user_images/user_#{@user.id}.png" %>
+<% end %>
+
+<p>ニックネーム</p>
+<p><%= @user.name %></p>
+
+<p>自己紹介</p>
+<p><%= @user.self_introduction %></p>
+
+<p>目標体重</p>
+<p><%= @user.target_weight %></p>
+
+<p>目標体脂肪率</p>
+<p><%= @user.target_body_fat_percentage %></p>
+
+<p>eメール</p>
+<p><%= @user.email %></p>
+
+<p>パスワード</p>
+<%# パスワード文字数と伏字マーク数合わせる？ %>
+<p>***********</p>
+
+<%# ログインしているユーザーIDとプロフィール詳細のユーザーIDが一致する場合、表示できる %>
+<% if current_user.id == @user.id %>
+    <%= link_to "編集", edit_user_path, class: "btn btn-info" %>
+    <%= link_to "削除", "#", class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+<% end %>

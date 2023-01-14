@@ -8,6 +8,9 @@ ja:
           name: 名前
           email: メールアドレス
           password: パスワード
-          # password_confirmation: パスワード再入力
+          password_confirmation: パスワード再入力
           created_at: 作成日
           updated_at: 更新日
+          self_introduction: 自己紹介
+          target_weight: 目標体重
+          target_body_fat_percentage: 目標体脂肪率

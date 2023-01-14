@@ -7,6 +7,8 @@ class UsersController < ApplicationController
   def create
   # 引数はストロングパラメーターで、ユーザーオブジェクトを生成し、インスタンス変数に代入
     @user = User.new(user_params)
+    # /user_images/は不要
+    @user.image = "default.png"
     if @user.save
       log_in @user # 保存成功後、ログイン
       flash[:success] = '新規作成に成功しました。' # フラッシュメッセージを渡す
@@ -20,7 +22,38 @@ class UsersController < ApplicationController
   def show
     @user = User.find(params[:id])
   end
+
+  def edit
+    @user = User.find(params[:id])
+  end
+
+  def update
+    @user = User.find(params[:id])
+    if @user.update_attributes(user_update_params)
+      if params[:user][:image]
+          @user.image = "user_#{@user.id}.png"
+          File.binwrite("public/user_images/#{@user.image}", params[:user][:image].read)
+      end
+      flash[:success] = "ユーザー情報を更新しました"
+      redirect_to @user
+    else
+      render :edit
+    end
+  end
 end
+    # # 引数はストロングパラメーターで、ユーザーオブジェクトを生成し、インスタンス変数に代入
+    # @user = User.new(user_params)
+    # @user.image = "user_images/default.png"
+    # if @user.save
+    #   log_in @user # 保存成功後、ログイン
+    #   flash[:success] = '新規作成に成功しました。' # フラッシュメッセージを渡す
+    #   # redirect_to user_url(@user) と同じ意味
+    #   redirect_to @user
+    # else
+    #   render :new
+    # end
+
+
 
   # ストロングパラメーター 入力できるカラムを制御する, :password_confirmation　.require(:user)
   def user_params
@@ -30,3 +63,8 @@ end
     # 入れると「ActionController::ParameterMissing in UsersController#new」エラーになる
     params.require(:user).permit(:name, :email, :password, :password_confirmation)
   end
+
+  def user_update_params
+    params.require(:user).permit(:name, :email, :password, :password_confirmation,:self_introduction, :target_weight, :target_body_fat_percentage, :image)
+  end
+
