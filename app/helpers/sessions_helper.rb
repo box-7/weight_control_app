@@ -1,4 +1,4 @@
-# application_controllerで使えるよう、module化
+# application_controllerで使えるように、module化している(自動生成)
 module SessionsHelper
     # 引数に渡されたユーザーオブジェクトでログイン
     def log_in(user)

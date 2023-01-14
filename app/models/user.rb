@@ -14,9 +14,8 @@ class User < ApplicationRecord
                         uniqueness: true
     # has_secure_passwordの機能を利用できるようにする
     has_secure_password
-    # 最小文字数を指定
-    validates :password, presence: true, length: { minimum: 6 }
-    validates :password, presence: true
+    # 最小文字数を指定  allow_nil: true → updateではパスワードがなくても更新できる
+    validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
     # validates :remember_digest, presence: true
 
     # 渡された文字列のハッシュ値を返す
