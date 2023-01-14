@@ -4,8 +4,8 @@
 
 <%# /user_images/:フォルダ名、#{@user.image}:画像ファイル名
 publicフォルダに画像がある場合は、画像ファイル名のみでOK
-今回はuser_imagesフォルダを作成しているのでフォルダ名をつける 
-#{@user.image}%>
+今回はuser_imagesフォルダを作成しているのでフォルダ名をつける
+本の画像がdefault画像とそれ以外の時で条件分岐 %>
 <% if @user.image == "default.png" %>
     <%= image_tag "/user_images/#{@user.image}" %>
 <% else %>
