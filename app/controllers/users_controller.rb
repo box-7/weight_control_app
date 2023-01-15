@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
 
+  before_action :correct_user, only: [:edit, :update] 
+
   def new
     @user = User.new
   end
@@ -7,8 +9,6 @@ class UsersController < ApplicationController
   def create
   # 引数はストロングパラメーターで、ユーザーオブジェクトを生成し、インスタンス変数に代入
     @user = User.new(user_params)
-    # /user_images/は不要
-    @user.image = "default.png"
     if @user.save
       log_in @user # 保存成功後、ログイン
       flash[:success] = '新規作成に成功しました。' # フラッシュメッセージを渡す
@@ -46,13 +46,16 @@ class UsersController < ApplicationController
   end
 end
 
+  private
+
   # ストロングパラメーター 入力できるカラムを制御する, :password_confirmation　.require(:user)
   def user_params
     # :password_confirmationはuserモデルには存在せず、new.html.erbに存在する項目
     # has_securepasswordで使用
     # そのためrequire(:user)は使えない → 使える
     # 入れると「ActionController::ParameterMissing in UsersController#new」エラーになる
-    params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    # /user_images/は不要、「''」が必要
+    params.require(:user).permit(:name, :email, :password, :password_confirmation).merge(image: 'default.png')
   end
 
   def user_update_params
