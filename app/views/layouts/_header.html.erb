@@ -1,11 +1,20 @@
 <header class="navbar navbar-fixed-top navbar-inverse">
     <div class="container">
-    <%= link_to " WEIGHT CONTROL", '#', id: "logo" %>
-    <nav>
-        <ul class="nav navbar-nav navbar-right">
-        <li><%= link_to "ログイン",   '#' %></li>
-        <li><%= link_to "ユーザー登録",   '#' %></li>
-        </ul>
-    </nav>
+        <%= link_to " WEIGHT CONTROL", root_path, id: "logo" %>
+        <nav>
+            <ul class="nav navbar-nav navbar-right">
+                <% if logged_in? %>
+                    <li><%= link_to "新規投稿", "#" %></li>
+                    <li><%= link_to "自分の投稿一覧", "#" %></li>
+                    <li><%= link_to "お気に入りユーザー一覧", "#" %></li>
+                    <%# sessions_helperで定義済み %>
+                    <li><%= link_to "プロフィール", user_path(@current_user.id) %></li>
+                    <li><%= link_to "ログアウト", logout_path, method: :delete %></li>
+                <% else %>
+                    <li><%= link_to "ログイン", login_path %></li>
+                    <li><%= link_to "ユーザー登録", signup_path %></li>
+                <% end %>
+            </ul>
+        </nav>
     </div>
 </header>

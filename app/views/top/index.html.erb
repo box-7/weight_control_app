@@ -49,8 +49,8 @@
                 <%# <p>コメント</p> %>
             </div>
             <div class="article_button">
-                <button type="button" class="btn btn-info">詳細</button>
-                <button type="button" class="btn btn-danger">削除</button>
+                <%= link_to "編集", "#", class: "btn btn-info" %>
+                <%= link_to "削除", "#", class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
             </div>
         </div>
     </article>

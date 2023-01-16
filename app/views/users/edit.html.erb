@@ -1,0 +1,58 @@
+
+<% provide(:title, 'Edit') %>
+<h1>ユーザー編集</h1>
+
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+
+        <%= form_with(model: @user, local: true) do |f| %>
+
+            <%# エラーメッセージを読み込む , multipart: true%>
+            <%= render 'shared/error_messages' %>
+            <p>
+                <label class="form-image">
+                    <%# /user_images/:フォルダ名、#{@user.image}:画像ファイル名
+                    publicフォルダに画像がある場合は、画像ファイル名のみでOK
+                    今回はuser_imagesフォルダを作成しているのでフォルダ名をつける
+                    本の画像がdefault画像とそれ以外の時で条件分岐 %>
+                    <% if @user.image == "default.png" %>
+                        <span class="image-file"><%= image_tag "/user_images/#{@user.image}" %>画像変更</span>
+                    <% else %>
+                        <span class="image-file"><%= image_tag "/user_images/user_#{@user.id}.png" %>画像変更</span>
+                    <% end %>
+                        <%= f.file_field :image, id:"item-image", class:"hidden" %>
+                </label>
+            </p>
+            <p>
+                <%= f.label :name %>
+                <%= f.text_field :name %>
+            </p>
+            <p>
+                <%= f.label :self_introduction %>
+                <%= f.text_area :self_introduction %>
+            </p>
+            <p>
+                <%= f.label :target_weight %>
+                <%= f.number_field :target_weight, step: "0.1" %>
+            </p>
+            <p>
+                <%= f.label :target_body_fat_percentage %>
+                <%= f.number_field :target_body_fat_percentage, step: "0.1" %>
+            </p>
+            <p>
+                <%= f.label :email %>
+                <%= f.email_field :email %>
+            </p>
+            <p>
+                <%= f.label :password %>
+                <%= f.password_field :password %>
+            </p>
+            <p>
+                <%= f.label :password_confirmation %>
+                <%= f.password_field :password_confirmation %>
+            </p>
+
+            <%= f.submit "保存", class: "btn btn-primary btn-block btn-signup" %>
+        <% end %>
+    </div>
+</div>
