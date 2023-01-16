@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_action :correct_user, only: [:edit, :update] 
+  before_action :correct_user, only: [:edit, :update, :destroy]
 
   def new
     @user = User.new
@@ -44,6 +44,13 @@ class UsersController < ApplicationController
       render :edit
     end
   end
+
+  def destroy
+    @user = User.find(params[:id])
+    @user.destroy
+    flash[:success] = "#{@user.name}のデータを削除しました。"
+    redirect_to root_path
+  end
 end
 
   private
@@ -55,6 +62,7 @@ end
     # そのためrequire(:user)は使えない → 使える
     # 入れると「ActionController::ParameterMissing in UsersController#new」エラーになる
     # /user_images/は不要、「''」が必要
+    # margeオプションで裏側で設定する画像をマージ
     params.require(:user).permit(:name, :email, :password, :password_confirmation).merge(image: 'default.png')
   end
 
