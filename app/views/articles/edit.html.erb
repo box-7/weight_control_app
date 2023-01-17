@@ -4,8 +4,8 @@
 
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
-
-        <%= form_with(model: @article, local: true) do |f| %>
+        <%# アソシエーションのモデルでform_withを使うためには、urlの指定が必要 %>
+        <%= form_with(model: @article, url: user_article_path, local: true) do |f| %>
 
             <%# エラーメッセージを読み込む , multipart: true%>
             <%= render 'shared/error_article_messages' %>

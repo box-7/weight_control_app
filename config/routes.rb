@@ -1,8 +1,6 @@
 Rails.application.routes.draw do
   get 'articles/new'
-
   get 'sessions/new'
-
   get 'users/new'
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
@@ -10,9 +8,9 @@ Rails.application.routes.draw do
   get '/signup', to: 'users#new'
 
   resources :users do
-    member do
-      resources :articles
-    end
+    # member do
+    resources :articles
+    # end
   end
 
 

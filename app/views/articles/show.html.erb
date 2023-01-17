@@ -73,7 +73,8 @@ publicフォルダに画像がある場合は、画像ファイル名のみでOK
 <%# ログインしているユーザーIDと投稿のユーザーIDが一致する場合、表示できる %>
 <% if logged_in? %>
     <% if current_user.id == @article.user.id %>
-        <%= link_to "編集", edit_article_path(@article.id), class: "btn btn-info" %>
-        <%= link_to "削除", article_path(@article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+        <%# アソシエーションのモデルで、idを指定したリンクは引数が2つ必要 %>
+        <%= link_to "編集", edit_user_article_path(user_id:@article.user_id, id:@article.id), class: "btn btn-info" %>
+        <%= link_to "削除", user_article_path(user_id:@article.user_id, id:@article.id), class: "btn btn-sm btn-danger",  method: :delete, data: { confirm: "本当に削除しますか？" } %>
     <% end %>
 <% end %>

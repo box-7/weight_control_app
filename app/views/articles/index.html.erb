@@ -61,11 +61,12 @@
                 <%# <p>コメント</p> %>
             </div>
             <div class="article_button">
-                <%= link_to "詳細", article_path(article.id), class: "btn btn-info" %>
+                <%# アソシエーションのモデルで、idを指定したリンクは引数が2つ必要 %>
+                <%= link_to "詳細", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-info" %>
                 <% if logged_in? %>
-                    <% if article.user.id == current_user.id %>
-                        <%= link_to "編集", edit_article_path(article.id), class: "btn btn-info" %>
-                        <%= link_to "削除", article_path(article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                    <% if article.user_id == current_user.id %>
+                        <%= link_to "編集", edit_user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-info" %>
+                        <%= link_to "削除", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
                     <% end %>
                 <% end %>
             </div>

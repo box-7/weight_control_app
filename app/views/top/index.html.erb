@@ -11,7 +11,7 @@
                 <% else %>
                     <%= image_tag "/user_images/user_#{article.user.id}.png", size: '150x150' %>
                 <% end %>
-                <%= link_to "ユーザーの投稿一覧", articles_path(article.user.id), class: "btn btn-info" %>
+                <%= link_to "ユーザーの投稿一覧", user_articles_path(article.user.id), class: "btn btn-info" %>
             </div>
             <div class="name">
                 <p>(名前)</p>
@@ -55,7 +55,14 @@
                 <%# <p>コメント</p> %>
             </div>
             <div class="article_button">
-                <%= link_to "詳細", article_path(article.id), class: "btn btn-info" %>
+            <%# 書き方注意、user_id,idが必要 user_article_path(user_id: article.user_id, id:article.id) %>
+                <%= link_to "詳細", user_article_path(user_id: article.user_id, id:article.id), class: "btn btn-info" %>
+                <% if logged_in? %>
+                    <% if article.user_id == current_user.id %>
+                        <%= link_to "編集", edit_user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-info" %>
+                        <%= link_to "削除", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                    <% end %>
+                <% end %>
 <%
 =begin %>
                 <%= link_to "削除", "#", class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
