@@ -1,0 +1,75 @@
+
+<h2 class="articles_list"><%= "投稿一覧 / ユーザー名：" + @user.name %></h2>
+
+
+<% @articles.each do |article| %>
+    <article>
+        <div class="content">
+            <div class="image">
+                <%# <img src="https://placehold.jp/24/cc9999/993333/150x100.png"> %>
+                <% if article.user.image == "default.png" %>
+                    <%= image_tag "/user_images/#{article.user.image}", size: '150x150' %>
+                <% else %>
+                    <%= image_tag "/user_images/user_#{article.user.id}.png", size: '150x150' %>
+                <% end %>
+<%
+=begin %>
+                ユーザーの投稿一覧へのリンクは不要
+                <%= link_to "ユーザーの投稿一覧", articles_path(article.user.id), class: "btn btn-info" %>
+<%
+=end %>
+            </div>
+            <div class="name">
+                <p>(名前)</p>
+                <p class="make_a_margin-bottom"><%= article.user.name %></p>
+                <p>(計測日)</p>
+                <p class="make_a_margin-bottom"><%= article.date %></p>
+            </div>
+
+            <div class="weight">
+                <p>(目標との乖離)</p>
+                <p class="make_a_margin-bottom"><%= article.weight %></p>
+                <p>(体重)</p>
+                <p class="make_a_margin-bottom"><%= article.weight %></p>
+                <p>(体脂肪率)</p>
+                <p class="make_a_margin-bottom"><%= article.body_fat_percentage %></p>
+            </div>
+            <div class="meal">
+                <p>(食事(朝))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_morning %></p>
+                <p>(食事(昼))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_lunch %></p>
+                <p>(食事(夜))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_dinner %></p>
+                <p>(食事(間食))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_snack %></p>
+            </div>
+            <div class="exercise">
+                <p>(運動)</p>
+                <p class="make_a_margin-bottom"><%= article.exercise %></p>
+                <p>(メモ)</p>
+                <p class="make_a_margin-bottom"><%= article.memo %></p>
+            </div>
+
+        </div>
+        <div class="content button_zone">
+            <div class="content good">
+                <%# <p class="good_position">いいね</p> %>
+                <%= image_tag '/heart.png', size: '20x20', class:"good_position" %>
+                <p>○○件</p>
+                <%= image_tag '/comment.png', size: '30x30', class:"good_position" %>
+                <%# <p>コメント</p> %>
+            </div>
+            <div class="article_button">
+                <%= link_to "詳細", article_path(article.id), class: "btn btn-info" %>
+                <% if logged_in? %>
+                    <% if article.user.id == current_user.id %>
+                        <%= link_to "編集", edit_article_path(article.id), class: "btn btn-info" %>
+                        <%= link_to "削除", article_path(article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                    <% end %>
+                <% end %>
+            </div>
+        </div>
+    </article>
+
+<% end %>

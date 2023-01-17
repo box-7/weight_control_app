@@ -1,0 +1,65 @@
+
+<% provide(:title, 'New') %>
+<h1>新規投稿</h1>
+
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+
+        <%= form_with(model: @article, local: true) do |f| %>
+
+            <%# エラーメッセージを読み込む , multipart: true%>
+            <%= render 'shared/error_article_messages' %>
+            <p>
+                <label class="form-image">
+                    <%# /user_images(フォルダ名)/#{@user.image(画像ファイル名)}
+                    publicフォルダに画像がある場合は、画像ファイル名のみでOK 今回user_imagesフォルダを作成したのでフォルダ名が必要
+                    画像がdefault画像とそれ以外の時で条件分岐 %>
+                    <% if @user.image == "default.png" %>
+                        <span class="image-file"><%= image_tag "/user_images/#{@user.image}", size: '150x150' %></span>
+                    <% else %>
+                        <span class="image-file"><%= image_tag "/user_images/user_#{@user.id}.png", size: '150x150' %></span>
+                    <% end %>
+                </label>
+            </p>
+            <p>
+                <%= f.label :date %>
+                <%= f.date_field :date %>
+            </p>
+
+            <p>
+                <%= f.label :weight %>
+                <%= f.number_field :weight, step: "0.1" %>
+            </p>
+            <p>
+                <%= f.label :body_fat_percentage %>
+                <%= f.number_field :body_fat_percentage, step: "0.1" %>
+            </p>
+            <p>
+                <%= f.label :meal_morning %>
+                <%= f.text_field :meal_morning %>
+            </p>
+            <p>
+                <%= f.label :meal_lunch %>
+                <%= f.text_field :meal_lunch %>
+            </p>
+            <p>
+                <%= f.label :meal_dinner %>
+                <%= f.text_field :meal_dinner %>
+            </p>
+            <p>
+                <%= f.label :meal_snack %>
+                <%= f.text_field :meal_snack %>
+            </p>
+            <p>
+                <%= f.label :exercise %>
+                <%= f.text_field :exercise %>
+            </p>
+            <p>
+                <%= f.label :memo %>
+                <%= f.text_area :memo %>
+            </p>
+
+            <%= f.submit "保存", class: "btn btn-primary btn-block btn-signup" %>
+        <% end %>
+    </div>
+</div>

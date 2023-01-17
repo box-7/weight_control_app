@@ -12,7 +12,7 @@ class UsersController < ApplicationController
     if @user.save
       log_in @user # 保存成功後、ログイン
       flash[:success] = '新規作成に成功しました。' # フラッシュメッセージを渡す
-      # redirect_to user_url(@user) と同じ意味
+      # redirect_to user_path(@user) と同じ意味
       redirect_to @user
     else
       render :new
@@ -28,7 +28,7 @@ class UsersController < ApplicationController
   end
 
   def update
-    # def createとは異なり、find文が必要
+    # createとは異なり、find文が必要
     @user = User.find(params[:id])
     if @user.update_attributes(user_update_params)
       # params[:image]ではなく、params[:user][:image]

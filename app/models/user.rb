@@ -1,7 +1,7 @@
 class User < ApplicationRecord
     # 「remember_token」という仮想の属性を作成
     attr_accessor :remember_token
-	has_many :articles, dependent: :destroy
+	has_many :articles, dependent: :destroy, foreign_key: "user_id"
 
     # メールアドレスの小文字化
     before_save { self.email = email.downcase }

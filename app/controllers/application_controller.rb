@@ -12,4 +12,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def correct_article_user
+    @article = Article.find(params[:id])
+    @user = User.find_by(id: @article.user.id)
+
+    unless current_user?(@user)
+      flash[:danger] = '自分以外の投稿は編集できません。'
+      redirect_to(root_url)
+    end
+  end
+
 end

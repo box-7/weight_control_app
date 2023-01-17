@@ -1,0 +1,79 @@
+<% provide(:title, @article.user.name) %>
+
+<h1>投稿詳細</h1>
+
+<%# /user_images/:フォルダ名、#{@article.user.image}:画像ファイル名
+publicフォルダに画像がある場合は、画像ファイル名のみでOK
+今回はuser_imagesフォルダを作成しているのでフォルダ名をつける
+本の画像がdefault画像とそれ以外の時で条件分岐 %>
+<% if @article.user.image == "default.png" %>
+    <%= image_tag "/user_images/#{@article.user.image}", size: '150x150' %>
+<% else %>
+    <%= image_tag "/user_images/user_#{@article.user.id}.png", size: '150x150' %>
+<% end %>
+
+<p>ニックネーム</p>
+<p><%= @article.user.name %></p>
+
+<p>計測日</p>
+<p><%= @article.date %></p>
+
+<p>目標体重</p>
+<%# if文が必要 formatを使う場合、値がnilだとエラーになる %>
+<% if @article.user.target_weight %>
+    <p><%= format("%.1f", @article.user.target_weight) %></p>
+<% end %>
+
+<p>目標体脂肪率</p>
+<% if @article.user.target_body_fat_percentage %>
+    <p><%= format("%.1f", @article.user.target_body_fat_percentage) %></p>
+<% end %>
+
+
+
+<%# 1年や半年との比較する、詳細は後で決めます %>
+<%# 目標体重との際の項目を入れるかなど、詳細は後で決めます %>
+<%# @article_one_month_agoに値がない場合、nilになる %>
+<p>1ヶ月前との比較</p>
+<% if @article_one_month_ago != nil %>
+    <p> <%= @article_one_month_ago.weight - @article.weight %></p>
+<% else %>
+    <p> -データなし- </p>
+<% end %>
+
+<p>体重</p>
+<%# if文が必要 formatを使う場合、値がnilだとエラーになる %>
+<% if @article.weight %>
+    <p><%= format("%.1f", @article.weight) %></p>
+<% end %>
+
+<p>体脂肪率</p>
+<% if @article.body_fat_percentage %>
+    <p><%= format("%.1f", @article.body_fat_percentage) %></p>
+<% end %>
+
+<p>食事(朝)</p>
+<p><%= @article.meal_morning %></p>
+
+<p>食事(昼)</p>
+<p><%= @article.meal_lunch %></p>
+
+<p>食事(夜)</p>
+<p><%= @article.meal_dinner %></p>
+
+<p>食事(間食)</p>
+<p><%= @article.meal_snack %></p>
+
+<p>運動</p>
+<p><%= @article.exercise %></p>
+
+<p>メモ</p>
+<p><%= @article.memo %></p>
+
+<%# ログインしているユーザーIDと投稿のユーザーIDが一致する場合、表示できる %>
+<% if logged_in? %>
+    <% if current_user.id == @article.user.id %>
+        <%= link_to "編集", edit_article_path(@article.id), class: "btn btn-info" %>
+        <%= link_to "削除", article_path(@article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+    <% end %>
+<% end %>
