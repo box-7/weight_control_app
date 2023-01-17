@@ -1,16 +1,22 @@
 
-<h2 class="articles_list">投稿一覧</h2>
+<h2 class="articles_list">投稿一覧(home)</h2>
 
 <% @articles.each do |article| %>
     <article>
         <div class="content">
             <div class="image">
-                <img src="https://placehold.jp/24/cc9999/993333/150x100.png">
+                <%# <img src="https://placehold.jp/24/cc9999/993333/150x100.png"> %>
+                <% if article.user.image == "default.png" %>
+                    <%= image_tag "/user_images/#{article.user.image}", size: '150x150' %>
+                <% else %>
+                    <%= image_tag "/user_images/user_#{article.user.id}.png", size: '150x150' %>
+                <% end %>
+                <%= link_to "ユーザーの投稿一覧", articles_path(article.user.id), class: "btn btn-info" %>
             </div>
             <div class="name">
                 <p>(名前)</p>
                 <p class="make_a_margin-bottom"><%= article.user.name %></p>
-                <p>(投稿日時)</p>
+                <p>(計測日)</p>
                 <p class="make_a_margin-bottom"><%= article.date %></p>
             </div>
 
@@ -49,57 +55,18 @@
                 <%# <p>コメント</p> %>
             </div>
             <div class="article_button">
-                <%= link_to "編集", "#", class: "btn btn-info" %>
+                <%= link_to "詳細", article_path(article.id), class: "btn btn-info" %>
+<%
+=begin %>
                 <%= link_to "削除", "#", class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+<%
+=end %>
             </div>
         </div>
     </article>
 
 <% end %>
 
-<%
-=begin %>
-<img src="<%= "/heart.png" %>">
-<img src="<%= "/user_images/#{@user.image_name}" %>">
-
-
-File.binwrite("public/user_images/#{@user.image_name}", image.read)
-    <div class="container">
-        <div>
-            <div class="col">Column</div>
-            <div class="col">Column</div>
-            <div class="w-100"></div>
-            <div class="col">Column</div>
-            <div class="col">Column</div>
-        </div>
-    </div>
-</div>
-<%
-=end %>
-
-
-
-
-<%
-=begin %>
-<article>
-<article>
-    <h2 class="article-title"><a href="#">タイトルテキストテキストテキストテキストテキスト</a></h2>
-    <ul class="meta">
-    <li><a href="#">2020/01/01</a></li>
-    <li><a href="#">カテゴリ1</a></li>
-    </ul>
-    <a href="#"><img src="img/main1.jpg" alt="テキストテキストテキスト"></a>
-    <p class="text">
-    本文テキストテキストテキストテキストテキストテキストテキストテキスト
-    テキストテキストテキストテキストテキストテキストテキストテキストテキスト
-    テキストテキストテキストテキストテキストテキストテキストテキストテキスト
-    </p>
-    <div class="readmore"><a href="#">READ MORE</a></div>
-</article>
-
-<%
-=end %>
 
 
 
