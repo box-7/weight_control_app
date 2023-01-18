@@ -8,7 +8,7 @@ class SessionsController < ApplicationController
       # 最初のuser → userが存在すればtrue、存在しなければfalseとなる / Rubyではnilとfalse以外のすべてのオブジェクトは、真偽値はtrueとなる
       # 後ろのuserはauthenticateメソッドでtrueかfalseか判断される
     if user && user.authenticate(params[:session][:password])
-      # sessions_helperを叩く
+      # sessions_helperを叩く/ session[:user_id] = user.id
       log_in user
       # [:remember_me] == '1'の場合 sessions_helperの、remember(user)、それ以外の場合 forget(user)を叩く
       params[:session][:remember_me] == '1' ? remember(user) : forget(user)

@@ -1,7 +1,7 @@
 class User < ApplicationRecord
     # 「remember_token」という仮想の属性を作成
     attr_accessor :remember_token
-	has_many :articles, dependent: :destroy
+	has_many :articles, dependent: :destroy, foreign_key: "user_id"
 
     # メールアドレスの小文字化
     before_save { self.email = email.downcase }
@@ -14,7 +14,8 @@ class User < ApplicationRecord
                         uniqueness: true
     # has_secure_passwordの機能を利用できるようにする
     has_secure_password
-    # 最小文字数を指定  allow_nil: true → updateではパスワードがなくても更新できる
+    # 最小文字数を指定  
+    # allow_nil: true → updateではパスワードが空文字""の場合バリデーションをスルー
     validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
     # validates :remember_digest, presence: true
 

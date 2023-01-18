@@ -11,28 +11,92 @@
     User.create!(
         name: "テスト太郎#{n + 1}",
         email: "test#{n + 1}@test.com",
-        admin:false,
+        admin: false,
+        password: 'password',
         self_introduction: 'テキストテキストテキストテキスト',
-        target_weight: 55.3,
-        target_body_fat_percentage:10.0
-        # image: File.open('./app/assets/images/test.jpg')
+        target_weight: 55 + n * 5 ,
+        target_body_fat_percentage: 15 + n * 3,
+        image: 'user_#{n + 1}.jpg'
+        # image: File.open('./app/assets/images/user#{n + 1}.jpg')
     )
 end
+
 
 User.all.each do |user|
-    user.articles.create!(
-        user_id: user.id,
-        date: 'Wed, 03 Jan 2018',
-        weight: 59.5,
-        body_fat_percentage: 15.4,
-        meal_morning: '朝ごはん',
-        meal_lunch: '昼ごはん',
-        meal_dinner: '夜ごはん',
-        meal_snack: '間食',
-        exercise: '運動',
-        memo: 'メモ'
-
-    )
+    40.times do |n|
+        # sample_date =  (Wed, 07 Dec 2022)
+        # user.articles.create!だとユーザーもたくさん作成されてしまう
+        Article.create!(
+            user_id: user.id,
+            date: Date.today - n,
+            weight: 65 - 0.2 * n ,
+            body_fat_percentage: 20 - 0.1 * n,
+            # weight: 65 - 0.2,
+            # body_fat_percentage: 20 - 0.1,
+            meal_morning: 'ご飯、味噌汁、納豆',
+            meal_lunch: 'スパゲッティ',
+            meal_dinner: '焼肉',
+            meal_snack: 'プロテインチョコ',
+            exercise: 'ランニング8km',
+            memo: '順調に体重は落ちている'
+        )
+    end
 end
+
+
+
+
+# User.all.each do |user|
+#     2.times do |n|
+#         user.articles.create!(
+#             user_id: user.id,
+#             date: 'Wed, 07 Jan 2022',
+#             # weight: 65 - 0.2 * n ,
+#             # body_fat_percentage: 20 - 0.1 * n,
+#             weight: 65 - 0.2,
+#             body_fat_percentage: 20 - 0.1,
+#             meal_morning: 'ご飯、味噌汁、納豆',
+#             meal_lunch: 'スパゲッティ',
+#             meal_dinner: '焼肉',
+#             meal_snack: 'プロテインチョコ',
+#             exercise: 'ランニング8km',
+#             memo: '順調に体重は落ちている'
+#         )
+#     binding.pry
+#     end
+# end
+
+
+# 3.times do |n|
+#     User.create!(
+#         name: "テスト太郎#{n + 1}",
+#         email: "test#{n + 1}@test.com",
+#         admin:false,
+#         self_introduction: 'テキストテキストテキストテキスト',
+#         target_weight: 55.3,
+#         target_body_fat_percentage:10.0
+#         # image: File.open('./app/assets/images/test.jpg')
+#     )
+# end
+
+# User.all.each do |user|
+#     user.articles.create!(
+#         user_id: user.id,
+#         date: 'Wed, 03 Jan 2018',
+#         weight: 59.5,
+#         body_fat_percentage: 15.4,
+#         meal_morning: '朝ごはん',
+#         meal_lunch: '昼ごはん',
+#         meal_dinner: '夜ごはん',
+#         meal_snack: '間食',
+#         exercise: '運動',
+#         memo: 'メモ'
+
+#     )
+# end
+
+
+
+
 
 

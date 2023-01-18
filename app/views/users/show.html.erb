@@ -7,9 +7,9 @@ publicフォルダに画像がある場合は、画像ファイル名のみでOK
 今回はuser_imagesフォルダを作成しているのでフォルダ名をつける
 本の画像がdefault画像とそれ以外の時で条件分岐 %>
 <% if @user.image == "default.png" %>
-    <%= image_tag "/user_images/#{@user.image}" %>
+    <%= image_tag "/user_images/#{@user.image}", size: '150x150' %>
 <% else %>
-    <%= image_tag "/user_images/user_#{@user.id}.png" %>
+    <%= image_tag "/user_images/user_#{@user.id}.png", size: '150x150' %>
 <% end %>
 
 <p>ニックネーム</p>
@@ -19,10 +19,15 @@ publicフォルダに画像がある場合は、画像ファイル名のみでOK
 <p><%= @user.self_introduction %></p>
 
 <p>目標体重</p>
-<p><%= @user.target_weight %></p>
+<%# if文が必要 formatを使う場合、値がnilだとエラーになる %>
+<% if @user.target_weight %>
+    <p><%= format("%.1f", @user.target_weight) %></p>
+<% end %>
 
 <p>目標体脂肪率</p>
-<p><%= @user.target_body_fat_percentage %></p>
+<% if @user.target_body_fat_percentage %>
+    <p><%= format("%.1f", @user.target_body_fat_percentage) %></p>
+<% end %>
 
 <p>eメール</p>
 <p><%= @user.email %></p>
@@ -32,7 +37,9 @@ publicフォルダに画像がある場合は、画像ファイル名のみでOK
 <p>***********</p>
 
 <%# ログインしているユーザーIDとプロフィール詳細のユーザーIDが一致する場合、表示できる %>
-<% if current_user.id == @user.id %>
-    <%= link_to "編集", edit_user_path, class: "btn btn-info" %>
-    <%= link_to "削除", "#", class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+<% if logged_in? %>
+    <% if current_user.id == @user.id %>
+        <%= link_to "編集", edit_user_path, class: "btn btn-info" %>
+        <%= link_to "削除", "#", class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+    <% end %>
 <% end %>

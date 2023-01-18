@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_action :correct_user, only: [:edit, :update] 
+  before_action :correct_user, only: [:edit, :update, :destroy]
 
   def new
     @user = User.new
@@ -12,7 +12,7 @@ class UsersController < ApplicationController
     if @user.save
       log_in @user # 保存成功後、ログイン
       flash[:success] = '新規作成に成功しました。' # フラッシュメッセージを渡す
-      # redirect_to user_url(@user) と同じ意味
+      # redirect_to user_path(@user) と同じ意味
       redirect_to @user
     else
       render :new
@@ -28,7 +28,7 @@ class UsersController < ApplicationController
   end
 
   def update
-    # def createとは異なり、find文が必要
+    # createとは異なり、find文が必要
     @user = User.find(params[:id])
     if @user.update_attributes(user_update_params)
       # params[:image]ではなく、params[:user][:image]
@@ -44,6 +44,17 @@ class UsersController < ApplicationController
       render :edit
     end
   end
+
+  def destroy
+    @user = User.find(params[:id])
+    if @user.destroy
+      flash[:success] = "#{@user.name}のデータを削除しました。"
+      redirect_to root_path
+    else
+      flash[:danger] = "#{@user.name}のデータ削除に失敗しました。"
+      redirect_to root_path
+    end
+  end
 end
 
   private
@@ -55,6 +66,7 @@ end
     # そのためrequire(:user)は使えない → 使える
     # 入れると「ActionController::ParameterMissing in UsersController#new」エラーになる
     # /user_images/は不要、「''」が必要
+    # margeオプションで裏側で設定する画像をマージ
     params.require(:user).permit(:name, :email, :password, :password_confirmation).merge(image: 'default.png')
   end
 

@@ -14,3 +14,14 @@ ja:
           self_introduction: 自己紹介
           target_weight: 目標体重
           target_body_fat_percentage: 目標体脂肪率
+        article:
+          date: 計測日
+          weight: 体重
+          body_fat_percentage: 体脂肪率
+          meal_morning: 食事(朝)
+          meal_lunch: 食事(昼)
+          meal_dinner: 食事(夜)
+          meal_snack: 食事(間食)
+          exercise: 運動
+          memo: メモ
+
