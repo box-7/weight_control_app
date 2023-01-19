@@ -44,7 +44,6 @@
                 <p>(メモ)</p>
                 <p class="make_a_margin-bottom"><%= article.memo %></p>
             </div>
-
         </div>
         <div class="content button_zone">
             <div class="content good">
@@ -56,22 +55,22 @@
             </div>
             <div class="article_button">
             <%# 書き方注意、user_id,idが必要 user_article_path(user_id: article.user_id, id:article.id) %>
-                <%= link_to "詳細", user_article_path(user_id: article.user_id, id:article.id), class: "btn btn-info" %>
                 <% if logged_in? %>
-                    <% if article.user_id == current_user.id %>
+                    <% if current_user.admin %>
+                        <%= link_to "詳細", user_article_path(user_id: article.user_id, id:article.id), class: "btn btn-info" %>
+                        <%= link_to "削除", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                    <% elsif article.user_id == current_user.id %>
                         <%= link_to "編集", edit_user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-info" %>
                         <%= link_to "削除", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                    <% else %>
+                        <%= link_to "詳細", user_article_path(user_id: article.user_id, id:article.id), class: "btn btn-info" %>
                     <% end %>
+                <% else %>
+                    <%= link_to "詳細", user_article_path(user_id: article.user_id, id:article.id), class: "btn btn-info" %>
                 <% end %>
-<%
-=begin %>
-                <%= link_to "削除", "#", class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
-<%
-=end %>
             </div>
         </div>
     </article>
-
 <% end %>
 
 

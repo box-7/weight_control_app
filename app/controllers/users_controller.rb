@@ -1,6 +1,12 @@
 class UsersController < ApplicationController
 
-  before_action :correct_user, only: [:edit, :update, :destroy]
+  before_action :correct_user_or_admin, only: [:destroy]
+  before_action :correct_user, only: [:edit, :update]
+  before_action :admin_user, only: [:index]
+
+  def index
+    @users = User.all
+  end
 
   def new
     @user = User.new

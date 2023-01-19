@@ -1,6 +1,7 @@
 class ArticlesController < ApplicationController
 
-  before_action :correct_article_user, only: [:edit, :update, :destroy]
+  before_action :correct_article_user_or_admin, only: [:destroy]
+  before_action :correct_article_user, only: [:edit, :update]
 
   def index
     @user = User.find(params[:user_id])

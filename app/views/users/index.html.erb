@@ -1,0 +1,67 @@
+
+<h2 class="articles_list">ユーザー一覧</h2>
+
+<% @users.each do |user| %>
+    <article>
+        <%# /user_images/:フォルダ名、#{user.image}:画像ファイル名
+        publicフォルダに画像がある場合は、画像ファイル名のみでOK
+        今回はuser_imagesフォルダを作成しているのでフォルダ名をつける
+        本の画像がdefault画像とそれ以外の時で条件分岐 %>
+        <div class="content">
+            <div class="image">
+                <% if user.image == "default.png" %>
+                    <%= image_tag "/user_images/#{user.image}", size: '150x150' %>
+                <% else %>
+                    <%= image_tag "/user_images/user_#{user.id}.png", size: '150x150' %>
+                <% end %>
+            </div>
+            <div class="name">
+                <p>ニックネーム</p>
+                <p><%= user.name %></p>
+            </div>
+
+            <div class="self-introduction">
+                <p>自己紹介</p>
+                <p><%= user.self_introduction %></p>
+            </div>
+
+            <div class="email">
+                <p>eメール</p>
+                <p><%= user.email %></p>
+            </div>
+
+            <%# adminユーザーの情報は、削除ボタンを表示させない %>
+            <div>
+                <% unless user.admin == true %>
+                    <%= link_to "詳細", user_path(user.id), class: "btn btn-info" %>
+                    <%= link_to "削除", user_path(user.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                <% end %>
+            </div>
+        </div>
+    </article>
+<% end %>
+
+<%
+=begin %>
+        <p>目標体重</p>
+        <%# if文が必要 formatを使う場合、値がnilだとエラーになる %>
+        <% if user.target_weight %>
+            <p><%= format("%.1f", user.target_weight) %></p>
+        <% end %>
+
+        <p>目標体脂肪率</p>
+        <% if user.target_body_fat_percentage %>
+            <p><%= format("%.1f", user.target_body_fat_percentage) %></p>
+        <% end %>
+
+        ------------------------
+
+        <div class="email">
+            <p>パスワード</p>
+            <%# パスワード文字数と伏字マーク数合わせる？ %>
+            <p>***********</p>
+        </div>
+
+        <%= link_to "編集", edit_user_path(user.id), class: "btn btn-info" %>
+<%
+=end %>

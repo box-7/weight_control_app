@@ -10,13 +10,13 @@
 3.times do |n|
     User.create!(
         name: "テスト太郎#{n + 1}",
-        email: "test#{n + 1}@test.com",
+        email: "test#{n + 1}@email.com",
         admin: false,
         password: 'password',
         self_introduction: 'テキストテキストテキストテキスト',
         target_weight: 55 + n * 5 ,
         target_body_fat_percentage: 15 + n * 3,
-        image: 'user_#{n + 1}.jpg'
+        image: 'user_#{n + 1}.png'
         # image: File.open('./app/assets/images/user#{n + 1}.jpg')
     )
 end
@@ -43,6 +43,13 @@ User.all.each do |user|
     end
 end
 
+User.create!(
+    name: "admin",
+    email: "admin@email.com",
+    admin: true,
+    password: 'password',
+    image: 'default.png'
+)
 
 
 
