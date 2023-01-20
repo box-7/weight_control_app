@@ -37,10 +37,10 @@ class ApplicationController < ActionController::Base
     @article = Article.find(params[:id])
     if current_user.admin?
       return
-    elsif current_user?(@user)
+    elsif current_user.id == @article.user_id
       return
     else
-      flash[:danger] = '自分以外の投稿は編集できません。'
+      flash[:danger] = '自分以外の投稿は削除できません。'
       redirect_to(root_url)
     end
   end
