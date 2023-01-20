@@ -38,8 +38,10 @@ publicフォルダに画像がある場合は、画像ファイル名のみでOK
 
 <%# ログインしているユーザーIDとプロフィール詳細のユーザーIDが一致する場合、表示できる %>
 <% if logged_in? %>
-    <% if current_user.id == @user.id %>
-        <%= link_to "編集", edit_user_path, class: "btn btn-info" %>
-        <%= link_to "削除", "#", class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+    <% if current_user.admin %>
+        <%= link_to "削除", user_path(@user.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+    <% elsif current_user.id == @user.id %>
+        <%= link_to "編集", edit_user_path(@user.id), class: "btn btn-info" %>
+        <%= link_to "削除", user_path(@user.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
     <% end %>
 <% end %>
