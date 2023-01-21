@@ -4,6 +4,12 @@ class UsersController < ApplicationController
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:index]
 
+  def search
+    @users = User.search(params[:keyword])
+    @keyword = params[:keyword]
+    render "index"
+  end
+
   def index
     @users = User.all
   end

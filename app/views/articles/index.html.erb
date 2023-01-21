@@ -1,23 +1,33 @@
 
 <h2 class="articles_list"><%= "投稿一覧 / ユーザー名：" + @user.name %></h2>
 
+<p id="notice"><%= notice %></p>
+
+<h1>Users</h1>
+
+<div class="search-form">
+    <%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
+        <%# @〜のインスタンス変数を渡したり受け取ったりする %>
+        <%= f.text_field :keyword, value: @keyword %>
+        <%# ユーザーのid（ユーザーがフォームから入力しない情報）をパラメーターとして渡す %>
+        <%= f.hidden_field :user_id, value: @user.id %>
+        <div class="field">
+            <%# @〜のインスタンス変数を渡したり受け取ったりする %>
+            <%= f.date_field :date_from, value: @date_from %> ~ <%= f.date_field :date_to, value: @date_to %>
+        </div>
+        <%= f.submit "検索" %>
+    <% end %>
+</div>
 
 <% @articles.each do |article| %>
     <article>
         <div class="content">
             <div class="image">
-                <%# <img src="https://placehold.jp/24/cc9999/993333/150x100.png"> %>
                 <% if article.user.image == "default.png" %>
                     <%= image_tag "/user_images/#{article.user.image}", size: '150x150' %>
                 <% else %>
                     <%= image_tag "/user_images/user_#{article.user.id}.png", size: '150x150' %>
                 <% end %>
-<%
-=begin %>
-                ユーザーの投稿一覧へのリンクは不要
-                <%= link_to "ユーザーの投稿一覧", articles_path(article.user.id), class: "btn btn-info" %>
-<%
-=end %>
             </div>
             <div class="name">
                 <p>(名前)</p>
@@ -25,7 +35,6 @@
                 <p>(計測日)</p>
                 <p class="make_a_margin-bottom"><%= article.date %></p>
             </div>
-
             <div class="weight">
                 <p>(目標との乖離)</p>
                 <p class="make_a_margin-bottom"><%= article.weight %></p>
@@ -50,7 +59,6 @@
                 <p>(メモ)</p>
                 <p class="make_a_margin-bottom"><%= article.memo %></p>
             </div>
-
         </div>
         <div class="content button_zone">
             <div class="content good">
@@ -72,5 +80,49 @@
             </div>
         </div>
     </article>
-
 <% end %>
+
+<%
+=begin %>
+                ユーザーの投稿一覧へのリンクは不要
+                <%= link_to "ユーザーの投稿一覧", articles_path(article.user.id), class: "btn btn-info" %>
+<%
+=end %>
+
+<%
+=begin %>
+        <%= f.label(:date, User.article_attribute(:date)) %>
+
+<div class="search-form">
+    <%= form_with url: articles_search_path, method: :get, local: true do |f| %>
+        <%= f.text_field :keyword, value: @keyword %>
+        <%# ユーザーのid（ユーザーがフォームから入力しない情報）をパラメーターとして渡す %>
+        <%= f.hidden_field :user_id, value: @user.id %>
+        <%= f.submit "検索" %>
+    <% end %>
+</div>
+
+        <div class="field">
+        <%= f.label(:name, User.human_attribute_name(:name)) %>
+        <%= f.text_field :name, value: @search_params[:name] %>
+        </div>
+
+        <div class="field">
+        <%= f.label(:gender, User.human_attribute_name(:gender)) %>
+        <%= f.collection_radio_buttons(:gender, User.genders, :first, :first) do |r| %>
+            <%= tag.div(class: 'form-check form-check-inline') do %>
+            <%= r.radio_button(checked: r.value == @search_params[:gender], class: 'form-check-input') + f.label(User.human_attribute_name("gender.#{r.text}"), class: 'form-check-label') %>
+            <% end %>
+        <% end %>
+        </div>
+
+        <div class="field">
+        <%= f.label(:prefecture_id, User.human_attribute_name(:prefecture_id)) %>
+        <%= f.collection_select(:prefecture_id, Prefecture.all, :id, :name, selected: @search_params[:prefecture_id], include_blank: t('helpers.select.include_blank')) %>
+        </div>
+
+        <div class="actions">
+        <%= f.submit(t('helpers.submit.search')) %>
+        </div>
+<%
+=end %>

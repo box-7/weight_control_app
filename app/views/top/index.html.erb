@@ -1,11 +1,16 @@
 
 <h2 class="articles_list">投稿一覧(home)</h2>
+<div class="search-form">
+    <%= form_with url: articles_search_path, method: :get, local: true do |f| %>
+        <%= f.text_field :keyword, value: @keyword %>
+        <%= f.submit "検索" %>
+    <% end %>
+</div>
 
 <% @articles.each do |article| %>
     <article>
         <div class="content">
             <div class="image">
-                <%# <img src="https://placehold.jp/24/cc9999/993333/150x100.png"> %>
                 <% if article.user.image == "default.png" %>
                     <%= image_tag "/user_images/#{article.user.image}", size: '150x150' %>
                 <% else %>
@@ -74,7 +79,12 @@
 <% end %>
 
 
-
+<%
+=begin %>
+        <%# ユーザーのid（ユーザーがフォームから入力しない情報）をパラメーターとして渡す %>
+        <%= f.hidden_field :user_id, value: @user.id %>
+<%
+=end %>
 
 
 
