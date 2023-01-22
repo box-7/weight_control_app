@@ -3,11 +3,58 @@ class ArticlesController < ApplicationController
   before_action :correct_article_user_or_admin, only: [:destroy]
   before_action :correct_article_user, only: [:edit, :update]
 
+
+  def search
+    @user = User.find(params[:user_id])
+    @articles = Article.where(user_id: @user.id)
+
+    if params[:keyword] != ""
+      if params[:date_from] != "" || params[:date_to] != ""
+        @articles = @articles.user_articles_search(params[:date_from], params[:date_to])
+      end
+      @articles = @articles.search(params[:keyword])
+    elsif params[:date_from] != "" || params[:date_to] != ""
+      if params[:keyword] != ""
+        @articles = @articles.search(params[:keyword])
+      end
+      @articles = @articles.user_articles_search(params[:date_from], params[:date_to])
+    end
+
+    @articles = @articles.order(date: "DESC")
+    render "index"
+  end
+
+  # def search
+  #   # keyword,date_from,date_to何も入力されていないとき
+  #   if params[:keyword] == "" && params[:date_from] == "" && params[:date_to] == ""
+  #     @user = User.find(params[:user_id])
+  #     @articles = Article.where(user_id: params[:user_id]).order(date: "DESC")
+  #     render "index"
+  #     return
+  #   end
+  #   # form_withからparams[:user_id]を渡す
+  #   @user = User.find(params[:user_id])
+
+  #   # article.rbのsearchメソッドを叩く whereをつなげられる
+  #   @articles = Article.search(params[:keyword]).where(user_id: @user.id)
+
+  #   # 日付入力がある場合のみ、article.rbのsuser_articles_searchメソッドを叩く
+  #   unless params[:date_from] == "" && params[:date_to] == ""
+  #     @articles = @articles.user_articles_search(params[:date_from], params[:date_to])
+  #   end
+
+  #   # 検索窓での表示で使う
+  #   @keyword = params[:keyword]
+  #   @date_from = params[:date_from]
+  #   @date_to = params[:date_to]
+  #   # articlesのindex
+  #   render "index"
+  # end
+
   def index
     @user = User.find(params[:user_id])
     @articles = Article.where(user_id: params[:user_id]).order(date: "DESC")
   end
-
 
   def new
     # sessions_helperのcurrent_userを叩く

@@ -33,12 +33,12 @@ User.all.each do |user|
             body_fat_percentage: 20 - 0.1 * n,
             # weight: 65 - 0.2,
             # body_fat_percentage: 20 - 0.1,
-            meal_morning: 'ご飯、味噌汁、納豆',
-            meal_lunch: 'スパゲッティ',
-            meal_dinner: '焼肉',
-            meal_snack: 'プロテインチョコ',
-            exercise: 'ランニング8km',
-            memo: '順調に体重は落ちている'
+            meal_morning: 'ご飯、味噌汁、納豆' + ' ' + (n + 1).to_s,
+            meal_lunch: 'スパゲッティ' + ' ' + (n + 1).to_s,
+            meal_dinner: '焼肉' + ' ' + (n + 1).to_s,
+            meal_snack: 'プロテインチョコ' + ' ' + (n + 1).to_s,
+            exercise: 'ランニング8km' + ' ' + (n + 1).to_s,
+            memo: '順調に体重は落ちている' + ' ' + (n + 1).to_s
         )
     end
 end
