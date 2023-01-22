@@ -5,19 +5,14 @@
 
 <h1>Users</h1>
 
-<div class="search-form">
-    <%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
-        <%# @〜のインスタンス変数を渡したり受け取ったりする %>
-        <%= f.text_field :keyword, value: @keyword %>
-        <%# ユーザーのid（ユーザーがフォームから入力しない情報）をパラメーターとして渡す %>
-        <%= f.hidden_field :user_id, value: @user.id %>
-        <div class="field">
-            <%# @〜のインスタンス変数を渡したり受け取ったりする %>
-            <%= f.date_field :date_from, value: @date_from %> ~ <%= f.date_field :date_to, value: @date_to %>
-        </div>
-        <%= f.submit "検索" %>
-    <% end %>
-</div>
+<%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
+    <%= f.text_field :keyword, value: params[:keyword] %>
+    <%= f.hidden_field :user_id, value: params[:user_id] %>
+    <div class="field">
+        <%= f.date_field :date_from, value: params[:date_from] %> ~ <%= f.date_field :date_to, value: params[:date_to] %>
+    </div>
+    <%= f.submit "検索" %>
+<% end %>
 
 <% @articles.each do |article| %>
     <article>
@@ -124,5 +119,23 @@
         <div class="actions">
         <%= f.submit(t('helpers.submit.search')) %>
         </div>
+<%
+=end %>
+
+<%
+=begin %>
+<div class="search-form">
+    <%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
+        <%# @〜のインスタンス変数を渡したり受け取ったりする %>
+        <%= f.text_field :keyword, value: @keyword %>
+        <%# ユーザーのid（ユーザーがフォームから入力しない情報）をパラメーターとして渡す %>
+        <%= f.hidden_field :user_id, value: @user.id %>
+        <div class="field">
+            <%# @〜のインスタンス変数を渡したり受け取ったりする %>
+            <%= f.date_field :date_from, value: @date_from %> ~ <%= f.date_field :date_to, value: @date_to %>
+        </div>
+        <%= f.submit "検索" %>
+    <% end %>
+</div>
 <%
 =end %>
