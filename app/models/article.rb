@@ -17,25 +17,19 @@ class Article < ApplicationRecord
             "%#{keyword}%", "%#{keyword}%", "%#{keyword}%", "%#{keyword}%", "%#{keyword}%", "%#{keyword}%"])
     end
 
-    def self.user_articles_search(keyword, date_from, date_to)
+    def self.user_articles_search(date_from, date_to)
         # scope :user_articles_search, -> (keyword, date_from, date_to) do
-        # .where("date <= ?", date_to)の書き方、dateかdate_toかで迷った 
+        # .where("date <= ?", date_to)の書き方、dateかdate_toかで迷った
         # 最初は小さく実装する「〜から〜まで」ではなく「〜まで」のみで実装する
         # もっとシンプルに書けそうだが、if文でやる方法以外うまくできなかった
             # where(["meal_morning like? OR meal_lunch like? OR meal_dinner like? OR meal_snack like? OR exercise like? OR memo like?","%#{keyword}%", "%#{keyword}%", "%#{keyword}%", "%#{keyword}%", "%#{keyword}%", "%#{keyword}%"])
             # .where("date >= ? AND date <= ? ", date_from, date_to)
         if date_from != "" && date_to != ""
-            where(["meal_morning like? OR meal_lunch like? OR meal_dinner like? OR meal_snack like? OR exercise like? OR memo like?",
-                "%#{keyword}%", "%#{keyword}%", "%#{keyword}%", "%#{keyword}%", "%#{keyword}%", "%#{keyword}%"])
-                .where(date: date_from..date_to)
+            where(date: date_from..date_to)
         elsif date_from == "" && date_to != ""
-            where(["meal_morning like? OR meal_lunch like? OR meal_dinner like? OR meal_snack like? OR exercise like? OR memo like?",
-                "%#{keyword}%", "%#{keyword}%", "%#{keyword}%", "%#{keyword}%", "%#{keyword}%", "%#{keyword}%"])
-                .where("date <= ?", date_to)
+            where("date <= ?", date_to)
         elsif date_from != "" && date_to == ""
-            where(["meal_morning like? OR meal_lunch like? OR meal_dinner like? OR meal_snack like? OR exercise like? OR memo like?",
-                "%#{keyword}%", "%#{keyword}%", "%#{keyword}%", "%#{keyword}%", "%#{keyword}%", "%#{keyword}%"])
-                .where("date >= ?", date_from)
+            where("date >= ?", date_from)
         end
     end
 end

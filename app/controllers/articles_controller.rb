@@ -13,8 +13,15 @@ class ArticlesController < ApplicationController
     end
     # form_withからparams[:user_id]を渡す
     @user = User.find(params[:user_id])
-    # article.rbのuser_articles_searchメソッドを叩く whereをつなげられる
-    @articles = Article.user_articles_search(params[:keyword], params[:date_from], params[:date_to]).where(user_id: @user.id)
+
+    # article.rbのsearchメソッドを叩く whereをつなげられる
+    @articles = Article.search(params[:keyword]).where(user_id: @user.id)
+
+    # 日付入力がある場合のみ、article.rbのsuser_articles_searchメソッドを叩く
+    unless params[:date_from] == "" && params[:date_to] == ""
+      @articles = @articles.user_articles_search(params[:date_from], params[:date_to])
+    end
+
     # 検索窓での表示で使う
     @keyword = params[:keyword]
     @date_from = params[:date_from]
