@@ -14,13 +14,13 @@ publicフォルダに画像がある場合は、画像ファイル名のみでOK
 
 <%
 =begin %>
-部分テンプレートを切り替える部分にidを付与
-jsは、以下の通り、＠〜でインスタンス変数にする必要がある
-document.getElementById('article_<%= @article.id %>').innerHTML = '<%= j(render 'layouts/article', article: @article) %>'
+    部分テンプレートを切り替える部分にidを付与
+    jsは、以下の通り、＠〜でインスタンス変数にする必要がある
+    document.getElementById('article_<%= @article.id %>').innerHTML = '<%= j(render 'layouts/article', article: @article) %>'
 <%
 =end %>
 <p id="article_<%= @article.id %>">
-<%# ,の後ろは、article: で変数を定義している %>
+<%# 「,」の後ろは、article: で変数を定義している %>
     <%= render 'layouts/article', article: @article %>
 </p>
 
