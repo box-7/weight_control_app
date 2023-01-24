@@ -1,5 +1,6 @@
 class Article < ApplicationRecord
     belongs_to :user
+    has_many :likes
 
     validates :date, presence: true
     validates :weight, presence: true

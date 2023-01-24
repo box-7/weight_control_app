@@ -1,0 +1,10 @@
+
+<%# liked_by?は、article.rbではなくuser.rbに定義する %>
+<%# 「remote: true」を付与することで、パラメーターがHTML形式ではなくJS形式で送られるようになる / likes_controller.rbのcreateアクション後は、views/likes/create.js.erbが呼び出される %>
+
+<% if current_user.liked_by?(article.id) %>
+    <td><%= link_to 'いいねを外す', destroy_like_path(article.id), method: :DELETE, remote: true %> <%= article.likes.count %></td>
+<% else %>
+    <td><%= link_to 'いいね', create_like_path(article.id), method: :POST, remote: true %> <%= article.likes.count %></td>
+<% end %>
+

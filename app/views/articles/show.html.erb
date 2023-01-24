@@ -12,6 +12,12 @@ publicフォルダに画像がある場合は、画像ファイル名のみでOK
     <%= image_tag "/user_images/user_#{@article.user.id}.png", size: '150x150' %>
 <% end %>
 
+<%# 部分テンプレートを切り替える部分にidを付与 %>
+<p id="article_<%= @article.id %>">
+<%# ,の後ろは、article: で変数を定義している %>
+    <%= render 'layouts/article', article: @article %>
+</p>
+
 <p>ニックネーム</p>
 <p><%= @article.user.name %></p>
 

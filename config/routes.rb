@@ -18,9 +18,12 @@ Rails.application.routes.draw do
     # end
   end
 
-
   # ログイン機能
   get    '/login', to: 'sessions#new'
   post   '/login', to: 'sessions#create'
   delete '/logout', to: 'sessions#destroy'
+
+  # メソッドなので、articleではなくpost、delete
+  post 'like/:id' => 'likes#create', as: 'create_like'
+  delete 'like/:id' => 'likes#destroy', as: 'destroy_like'
 end
