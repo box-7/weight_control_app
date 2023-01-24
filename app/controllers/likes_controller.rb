@@ -1,7 +1,6 @@
 class LikesController < ApplicationController
     before_action :article_params
 
-    binding.pry
     def create
         Like.create(user_id: current_user.id, article_id: params[:id])
         #「redirect_to」を記述すると画面遷移が行われてしまい、非同期処理ができなくなってしまうため削除
