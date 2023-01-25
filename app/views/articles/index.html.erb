@@ -57,7 +57,7 @@
         </div>
         <div class="content button_zone">
             <div class="content good">
-                <%# <p class="good_position">いいね</p> %>
+                <%# 非同期通信のためのid設定 %>
                 <p id="article_<%= article.id %>">
                 <%# 「,」の後ろは、article: で変数を定義している %>
                     <%= render 'layouts/article', article: article %>
