@@ -58,8 +58,10 @@
         <div class="content button_zone">
             <div class="content good">
                 <%# <p class="good_position">いいね</p> %>
-                <%= image_tag '/heart.png', size: '20x20', class:"good_position" %>
-                <p>○○件</p>
+                <p id="article_<%= article.id %>">
+                <%# 「,」の後ろは、article: で変数を定義している %>
+                    <%= render 'layouts/article', article: article %>
+                </p>
                 <%= image_tag '/comment.png', size: '30x30', class:"good_position" %>
                 <%# <p>コメント</p> %>
             </div>

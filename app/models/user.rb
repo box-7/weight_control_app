@@ -19,6 +19,8 @@ class User < ApplicationRecord
     validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
     # validates :remember_digest, presence: true
 
+    has_many :likes
+
     # 渡された文字列のハッシュ値を返す
     def User.digest(string)
         cost =
@@ -61,4 +63,7 @@ class User < ApplicationRecord
         where(["name like?", "%#{keyword}%"])
     end
 
+    def liked_by?(article_id)
+        likes.where(article_id: article_id).exists?
+    end
 end
