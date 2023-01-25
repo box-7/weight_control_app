@@ -6,7 +6,6 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-
 3.times do |n|
     User.create!(
         name: "テスト太郎#{n + 1}",
@@ -16,11 +15,13 @@
         self_introduction: 'テキストテキストテキストテキスト',
         target_weight: 55 + n * 5 ,
         target_body_fat_percentage: 15 + n * 3,
-        image: 'user_#{n + 1}.png'
+# image: 'user_#{n + 1}.png' → image: 'default.png'
+# 前者のコードだとプロフィール画像を変更した時、gitに来てしまうため
+        # image: 'user_#{n + 1}.png'
+        image: 'default.png'
         # image: File.open('./app/assets/images/user#{n + 1}.jpg')
     )
 end
-
 
 User.all.each do |user|
     40.times do |n|
@@ -29,7 +30,7 @@ User.all.each do |user|
         Article.create!(
             user_id: user.id,
             date: Date.today - n,
-            weight: 65 - 0.2 * n ,
+            weight: 65 - 0.2 * n,
             body_fat_percentage: 20 - 0.1 * n,
             # weight: 65 - 0.2,
             # body_fat_percentage: 20 - 0.1,
@@ -50,7 +51,6 @@ User.create!(
     password: 'password',
     image: 'default.png'
 )
-
 
 
 # User.all.each do |user|
