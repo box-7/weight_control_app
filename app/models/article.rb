@@ -1,6 +1,7 @@
 class Article < ApplicationRecord
     belongs_to :user
     has_many :likes
+    has_many :comments, dependent: :destroy
 
     validates :date, presence: true
     validates :weight, presence: true

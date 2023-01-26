@@ -1,0 +1,18 @@
+<div class="comments">
+    <% if article.comments.present? %>
+        <p>コメント件数：<%= article.comments.count %></p>
+        <% article.comments.each do |comment| %>
+            <div>
+                <%= comment.user.name %>
+                <%= comment.created_at.strftime('%Y/%m/%d') + ' ' %><%= comment.comment %>
+                <% if comment.user == current_user %>
+                    <nobr class="comment-delete">
+                        <%= link_to "削除", user_article_comment_path(user_id: comment.user_id, article_id: comment.article_id, id: comment.id), method: :delete, data: {confirm: "本当に削除しますか？"} %>
+                    </nobr>
+                <% end %>
+            </div>
+        <% end %>
+    <% else %>
+        <p>コメントはまだありません</p>
+    <% end %>
+</div>

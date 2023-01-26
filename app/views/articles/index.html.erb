@@ -75,6 +75,16 @@
                     <% end %>
                 <% end %>
             </div>
+            <!--コメント投稿部分-->
+            <div class="new-comment">
+<%# リダイレクト先のパスを指定するため変数を定義 controller_path: 'top_index' %>
+                <%= render partial: 'comments/form', locals: { article: article, comment: @comment, controller_path: 'articles_index' } %>
+            </div>
+
+            <!--コメント一覧部分-->
+            <div id="comments_area">
+                <%= render 'comments/article_comments', article: article, comment: @comment %>
+            </div>
         </div>
     </article>
 <% end %>

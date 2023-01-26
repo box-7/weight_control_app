@@ -1,18 +1,74 @@
-<% if @user.errors.any? %>
-    <div id="error_explanation">
-        <div class="alert alert-danger">
+<%# if params[:user]の書き方に注意 @userでは、記事投稿、コメント投稿の際もtrueになり、正しく分岐できない %>
+<% if params[:user] %>
+    <% if @user.errors.any? %>
+        <div id="error_explanation">
+<%# pluralize 最初の引数に整数があると、その値に基づいて２番目の引数である英単語が単数系、または複数形で渡される
+    pluralize(2, "error") => "2 errors" %>
+            <div class="alert alert-danger">
+            入力エラーが <%= pluralize(@user.errors.count, "件") %>ありました。
+            </div>
+            <ul>
+                <% @user.errors.full_messages.each do |msg| %>
+                    <li><%= msg %></li>
+                <% end %>
+            </ul>
+        </div>
+    <% end %>
+<% elsif params[:article] %>
+    <% if @article.errors.any? %>
+        <div id="error_explanation">
+            <div class="alert alert-danger">
+            入力エラーが <%= pluralize(@article.errors.count, "件") %>ありました。
+            </div>
+            <ul>
+                <% @article.errors.full_messages.each do |msg| %>
+                    <li><%= msg %></li>
+                <% end %>
+            </ul>
+        </div>
+    <% end %>
+<% elsif params[:comment]%>
+    <% if @comment.errors.any? %>
+        <div id="error_explanation">
+            <div class="alert alert-danger">
+            入力エラーが <%= pluralize(@comment.errors.count, "件") %>ありました。
+            </div>
+            <ul>
+                <% @comment.errors.full_messages.each do |msg| %>
+                    <li><%= msg %></li>
+                <% end %>
+            </ul>
+        </div>
+    <% end %>
+<% end %>
+
+
 <%
 =begin %>
-    # pluralize 最初の引数に整数があると、その値に基づいて２番目の引数である英単語が単数系、または複数形で渡される
-    # pluralize(2, "error") => "2 errors"
-<%
-=end %>
-        入力エラーが <%= pluralize(@user.errors.count, "件") %>ありました。
+
+<% elsif @comment.errors.any? %>
+    <div id="error_explanation">
+        <div class="alert alert-danger">
+        入力エラーが <%= pluralize(@comment.errors.count, "件") %>ありました。
         </div>
         <ul>
-            <% @user.errors.full_messages.each do |msg| %>
+            <% @comment.errors.full_messages.each do |msg| %>
                 <li><%= msg %></li>
             <% end %>
         </ul>
     </div>
 <% end %>
+
+
+
+<% elsif @comment.errors.any? %>
+    <div class="alert alert-danger">
+        <ul class="list-unstyled">
+        <h5><%= @comment.errors.count %>件のエラー</h5>
+        <% @comment.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+        <% end %>
+        </ul>
+    </div>
+<%
+=end %>

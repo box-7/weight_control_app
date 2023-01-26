@@ -19,41 +19,14 @@ class ArticlesController < ApplicationController
       end
       @articles = @articles.user_articles_search(params[:date_from], params[:date_to])
     end
-
     @articles = @articles.order(date: "DESC")
     render "index"
   end
 
-  # def search
-  #   # keyword,date_from,date_to何も入力されていないとき
-  #   if params[:keyword] == "" && params[:date_from] == "" && params[:date_to] == ""
-  #     @user = User.find(params[:user_id])
-  #     @articles = Article.where(user_id: params[:user_id]).order(date: "DESC")
-  #     render "index"
-  #     return
-  #   end
-  #   # form_withからparams[:user_id]を渡す
-  #   @user = User.find(params[:user_id])
-
-  #   # article.rbのsearchメソッドを叩く whereをつなげられる
-  #   @articles = Article.search(params[:keyword]).where(user_id: @user.id)
-
-  #   # 日付入力がある場合のみ、article.rbのsuser_articles_searchメソッドを叩く
-  #   unless params[:date_from] == "" && params[:date_to] == ""
-  #     @articles = @articles.user_articles_search(params[:date_from], params[:date_to])
-  #   end
-
-  #   # 検索窓での表示で使う
-  #   @keyword = params[:keyword]
-  #   @date_from = params[:date_from]
-  #   @date_to = params[:date_to]
-  #   # articlesのindex
-  #   render "index"
-  # end
-
   def index
     @user = User.find(params[:user_id])
     @articles = Article.where(user_id: params[:user_id]).order(date: "DESC")
+    @comment = Comment.new
   end
 
   def new
@@ -87,6 +60,7 @@ class ArticlesController < ApplicationController
     @article = Article.find(params[:id])
     # firstがないと配列になってしまうため、エラーとなりweightのデータがとれなくなる
     @article_one_month_ago = Article.where(user_id: @article.user.id, date: (@article.date - 1.month)).first
+    @comment = Comment.new
   end
 
   def edit
@@ -123,3 +97,31 @@ end
     params.require(:article).permit(:date, :weight, :body_fat_percentage, :meal_morning, :meal_lunch,
       :meal_dinner, :meal_snack, :exercise, :memo).merge(user_id: current_user.id)
   end
+
+
+  # def search
+  #   # keyword,date_from,date_to何も入力されていないとき
+  #   if params[:keyword] == "" && params[:date_from] == "" && params[:date_to] == ""
+  #     @user = User.find(params[:user_id])
+  #     @articles = Article.where(user_id: params[:user_id]).order(date: "DESC")
+  #     render "index"
+  #     return
+  #   end
+  #   # form_withからparams[:user_id]を渡す
+  #   @user = User.find(params[:user_id])
+
+  #   # article.rbのsearchメソッドを叩く whereをつなげられる
+  #   @articles = Article.search(params[:keyword]).where(user_id: @user.id)
+
+  #   # 日付入力がある場合のみ、article.rbのsuser_articles_searchメソッドを叩く
+  #   unless params[:date_from] == "" && params[:date_to] == ""
+  #     @articles = @articles.user_articles_search(params[:date_from], params[:date_to])
+  #   end
+
+  #   # 検索窓での表示で使う
+  #   @keyword = params[:keyword]
+  #   @date_from = params[:date_from]
+  #   @date_to = params[:date_to]
+  #   # articlesのindex
+  #   render "index"
+  # end

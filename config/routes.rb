@@ -13,8 +13,10 @@ Rails.application.routes.draw do
   get '/signup', to: 'users#new'
 
   resources :users do
-    # member do
-    resources :articles
+    # resources :articlesには、member doの記載は不要
+    resources :articles do
+      resources :comments, only: [:create, :destroy]
+    end
     # end
   end
 
