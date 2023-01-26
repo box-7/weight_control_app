@@ -17,10 +17,11 @@ class CommentsController < ApplicationController
         else
 # render部分がエラー
             if params[:controller_path] == 'top_index'
-                # @user = User.find(@article.user_id)
-                # @articles = Article.all.order(created_at: "DESC")
+                @user = User.find(@article.user_id)
+                @articles = Article.all.order(created_at: "DESC")
                 # @articles = Article.where(user_id: @article.user_id).order(date: "DESC")
-                render template: "top/index"
+                # render template: "top/index"
+                render "top/index"
                 # render 'app/views/top/index.html.erb'
                 # render partial: 'top/index', locals: { @user: User.find_by(id: article.user_id) }
             elsif params[:controller_path] == 'articles_index'
