@@ -1,2 +1,3 @@
-
+//「j」とは「escape_javascriptメソッド」の省略形で、部分テンプレート内の改行をエスケープ処理をする
+//_article.html.erbでif,elseが逆になるので、内容が書き変わる
 document.getElementById('article_<%= @article.id %>').innerHTML = '<%= j(render 'layouts/article', article: @article) %>'

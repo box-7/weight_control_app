@@ -1,5 +1,7 @@
 <% provide(:title, @article.user.name) %>
 
+<%= render 'shared/error_messages' %>
+
 <h1>投稿詳細</h1>
 
 <%# /user_images/:フォルダ名、#{@article.user.image}:画像ファイル名
@@ -14,7 +16,7 @@ publicフォルダに画像がある場合は、画像ファイル名のみでOK
 
 <%
 =begin %>
-    部分テンプレートを切り替える部分にidを付与
+    非同期通信のためのid設定
     jsは、以下の通り、＠〜でインスタンス変数にする必要がある
     document.getElementById('article_<%= @article.id %>').innerHTML = '<%= j(render 'layouts/article', article: @article) %>'
 <%
@@ -90,3 +92,31 @@ publicフォルダに画像がある場合は、画像ファイル名のみでOK
         <%= link_to "削除", user_article_path(user_id:@article.user_id, id:@article.id), class: "btn btn-sm btn-danger",  method: :delete, data: { confirm: "本当に削除しますか？" } %>
     <% end %>
 <% end %>
+
+<!--コメントフォーム-->
+<div class="new-comment">
+
+<!--コメント投稿部分-->
+<div class="new-comment">
+    <%= render 'comments/form', article: @article, comment: @comment %>
+</div>
+
+<!--コメント一覧部分-->
+<div id="comments_area">
+    <%= render 'comments/article_comments', article: @article, comment: @comment  %>
+</div>
+
+<%
+=begin %>
+    <%= form_with(model:[@article, @comment], local: true) do |f| %>
+        <%= render 'layouts/error_messages', model: f.object %>
+
+    <%= form_with(model: @comment, url: user_article_comments_path(article_id: @article.id), local: true) do |f| %>
+        <%= f.text_area :comment, rows:'5',placeholder: "コメントを入力してください" %>
+        <%= f.submit "送信する" %>
+    <% end %>
+</div>
+
+    <%= render 'comments/form', post: @post, comment: @comment %>
+<%
+=end %>

@@ -52,29 +52,39 @@
         </div>
         <div class="content button_zone">
             <div class="content good">
-                <%# <p class="good_position">いいね</p> %>
+                <%# 非同期通信のためのid設定 %>
                 <p id="article_<%= article.id %>">
                 <%# 「,」の後ろは、article: で変数を定義している %>
                     <%= render 'layouts/article', article: article %>
                 </p>
-                <%= image_tag '/comment.png', size: '30x30', class:"good_position" %>
-                <%# <p>コメント</p> %>
             </div>
             <div class="article_button">
-            <%# 書き方注意、user_id,idが必要 user_article_path(user_id: article.user_id, id:article.id) %>
+                <%# 書き方注意、user_id,idが必要 user_article_path(user_id: article.user_id, id:article.id) %>
+                <%= link_to "詳細", user_article_path(user_id: article.user_id, id:article.id), class: "btn btn-info" %>
                 <% if logged_in? %>
                     <% if current_user.admin %>
-                        <%= link_to "詳細", user_article_path(user_id: article.user_id, id:article.id), class: "btn btn-info" %>
                         <%= link_to "削除", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
                     <% elsif article.user_id == current_user.id %>
                         <%= link_to "編集", edit_user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-info" %>
                         <%= link_to "削除", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
-                    <% else %>
-                        <%= link_to "詳細", user_article_path(user_id: article.user_id, id:article.id), class: "btn btn-info" %>
                     <% end %>
-                <% else %>
-                    <%= link_to "詳細", user_article_path(user_id: article.user_id, id:article.id), class: "btn btn-info" %>
                 <% end %>
+            </div>
+            <!--コメント投稿部分-->
+            <%# @commentがsaveに失敗した場合、@commentに情報が残っているので条件分岐できる %>
+            <% if @comment.article_id.present? && @comment.article_id == article.id %>
+                <div class="new-comment">
+                    <%= render partial: 'comments/form', locals: { article: article, comment: @comment, controller_path: 'top_index' } %>
+                </div>
+            <% else %>
+                <div class="new-comment">
+                    <%= render partial: 'comments/form', locals: { article: article, comment: Comment.new, controller_path: 'top_index' } %>
+                </div>
+            <% end %>
+
+            <!--コメント一覧部分-->
+            <div id="comments_area">
+                <%= render 'comments/article_comments', article: article, comment: @comment, controller_path: 'top_index' %>
             </div>
         </div>
     </article>
@@ -83,6 +93,23 @@
 
 <%
 =begin %>
+            <div class="new-comment">
+<%# リダイレクト先のパスを指定するため変数を定義 controller_path: 'top_index' %>
+                <%= render partial: 'comments/form', locals: { article: article, comment: @comment, controller_path: 'top_index' } %>
+            </div>
+
+
+            <% if @comment.article_id.present? && @comment.article_id == article.id %>
+                <div class="new-comment">
+                    <%= render partial: 'comments/form', locals: { article: article, comment: @comment, controller_path: 'top_index' } %>
+                </div>
+            <% else %>
+                <div class="new-comment">
+                    <%= render partial: 'comments/form', locals: { article: article, comment: Comment.new, controller_path: 'top_index' } %>
+                </div>
+            <% end %>
+
+
         <%# ユーザーのid（ユーザーがフォームから入力しない情報）をパラメーターとして渡す %>
         <%= f.hidden_field :user_id, value: @user.id %>
 <%

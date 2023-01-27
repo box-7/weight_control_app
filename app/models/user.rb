@@ -20,6 +20,8 @@ class User < ApplicationRecord
     # validates :remember_digest, presence: true
 
     has_many :likes
+    has_many :article, dependent: :destroy
+    has_many :comments, dependent: :destroy
 
     # 渡された文字列のハッシュ値を返す
     def User.digest(string)
