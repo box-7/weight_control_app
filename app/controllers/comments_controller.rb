@@ -33,10 +33,13 @@ class CommentsController < ApplicationController
     end
 
     def destroy
-        flash[:success] = 'コメントを削除しました'
         @comment = Comment.find_by(id: params[:id], article_id: params[:article_id], user_id: params[:user_id])
         @article = Article.find(@comment.article_id)
-        @comment.destroy
+        if @comment.destroy
+            flash[:success] = 'コメントを削除しました'
+        else
+            flash[:danger] = "コメント削除に失敗しました。"
+        end
         if params[:controller_path] == 'top_index'
             redirect_to root_path
         elsif params[:controller_path] == 'articles_index'
