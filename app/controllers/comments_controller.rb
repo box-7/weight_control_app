@@ -15,30 +15,35 @@ class CommentsController < ApplicationController
                 redirect_to user_article_path(user_id: @article.user_id, id: @article.id)
             end
         else
-# render部分がエラー
             if params[:controller_path] == 'top_index'
+                flash[:danger] = 'コメントが空白か101文字以上のためコメントできません'
                 @user = User.find(@article.user_id)
                 @articles = Article.all.order(created_at: "DESC")
-                # @articles = Article.where(user_id: @article.user_id).order(date: "DESC")
-                # render template: "top/index"
                 render "top/index"
-                # render 'app/views/top/index.html.erb'
-                # render partial: 'top/index', locals: { @user: User.find_by(id: article.user_id) }
             elsif params[:controller_path] == 'articles_index'
+                flash[:danger] = 'コメントが空白か101文字以上のためコメントできません'
+                @user = User.find(params[:user_id])
+                @articles = Article.where(user_id: params[:user_id]).order(date: "DESC")
                 render 'articles/index'
             else
+                # モデルのバリデーションエラーが表示されるのでflashは不要
                 render 'articles/show'
-                # redirect_to user_article_path(user_id: @article.user_id, id: @article.id)
             end
-            # render :new
         end
     end
 
     def destroy
+        flash[:success] = 'コメントを削除しました'
         @comment = Comment.find_by(id: params[:id], article_id: params[:article_id], user_id: params[:user_id])
         @article = Article.find(@comment.article_id)
         @comment.destroy
-        redirect_to user_article_path(user_id: @article.user_id, id: @article.id), alert: 'コメントを削除しました'
+        if params[:controller_path] == 'top_index'
+            redirect_to root_path
+        elsif params[:controller_path] == 'articles_index'
+            redirect_to user_articles_path(user_id: @article.user_id)
+        else
+            redirect_to user_article_path(user_id: @article.user_id, id: @article.id)
+        end
     end
 
     private

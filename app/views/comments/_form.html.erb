@@ -1,5 +1,8 @@
+
+<% if current_user %>
     <%= form_with(model: comment, url: user_article_comments_path(user_id: current_user.id, article_id: article.id), local: true) do |f| %>
         <%= hidden_field_tag :controller_path, controller_path %>
         <%= f.text_area :comment, rows:'5',placeholder: "コメントを入力してください" %>
         <%= f.submit "送信する" %>
     <% end %>
+<% end %>
