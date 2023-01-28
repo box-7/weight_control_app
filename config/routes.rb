@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get 'relationships/followings'
+  get 'relationships/followers'
+
   get 'articles/new'
   get 'sessions/new'
   get 'users/new'
@@ -17,8 +20,12 @@ Rails.application.routes.draw do
     resources :articles do
       resources :comments, only: [:create, :destroy]
     end
-    # end
+    resource :relationships, only: [:create, :destroy]
+    get 'followings' => 'relationships#followings', as: 'followings'
+    get 'followers' => 'relationships#followers', as: 'followers'
   end
+
+  resources :relationships, only: [:index]
 
   # ログイン機能
   get    '/login', to: 'sessions#new'

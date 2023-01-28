@@ -10,17 +10,27 @@
 <% @articles.each do |article| %>
     <article>
         <div class="content">
-            <div class="image">
-                <% if article.user.image == "default.png" %>
-                    <%= image_tag "/user_images/#{article.user.image}", size: '150x150' %>
-                <% else %>
-                    <%= image_tag "/user_images/user_#{article.user.id}.png", size: '150x150' %>
-                <% end %>
-                <%= link_to "ユーザーの投稿一覧", user_articles_path(article.user.id), class: "btn btn-info" %>
+            <div>
+                <div class="image">
+                    <% if article.user.image == "default.png" %>
+                        <%= image_tag "/user_images/#{article.user.image}", size: '150x150' %>
+                    <% else %>
+                        <%= image_tag "/user_images/user_#{article.user_id}.png", size: '150x150' %>
+                    <% end %>
+                </div>
+                <%= link_to "ユーザーの投稿一覧", user_articles_path(article.user_id), class: "btn btn-info" %>
+                <div class="content good">
+                    <%# 非同期通信のためのid設定 %>
+                    <p id="article_<%= article.id %>">
+                    <%# 「,」の後ろは、article: で変数を定義している %>
+                        <%= render 'layouts/article', article: article %>
+                    </p>
+                </div>
             </div>
+
             <div class="name">
                 <p>(名前)</p>
-                <p class="make_a_margin-bottom"><%= article.user.name %></p>
+                <%= link_to article.user.name, user_path(article.user_id) %>
                 <p>(計測日)</p>
                 <p class="make_a_margin-bottom"><%= article.date %></p>
             </div>
@@ -51,13 +61,7 @@
             </div>
         </div>
         <div class="content button_zone">
-            <div class="content good">
-                <%# 非同期通信のためのid設定 %>
-                <p id="article_<%= article.id %>">
-                <%# 「,」の後ろは、article: で変数を定義している %>
-                    <%= render 'layouts/article', article: article %>
-                </p>
-            </div>
+
             <div class="article_button">
                 <%# 書き方注意、user_id,idが必要 user_article_path(user_id: article.user_id, id:article.id) %>
                 <%= link_to "詳細", user_article_path(user_id: article.user_id, id:article.id), class: "btn btn-info" %>

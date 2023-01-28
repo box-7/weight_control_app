@@ -3,6 +3,19 @@ class User < ApplicationRecord
     attr_accessor :remember_token
 	has_many :articles, dependent: :destroy, foreign_key: "user_id"
 
+    # フォローをした、されたの関係
+    # relationshipm、reverse_of_relationshipsはここで定義している。
+    # class_name: "Relationship"でRelationshipモデルを参照
+    # 外部キー foreign_key: "follower_id",
+    # ユーザーが削除されると関連するフォロー、フォロワー情報も消える dependent: :destroy
+    has_many :relationships, class_name: "Relationship", foreign_key: "follower_id", dependent: :destroy
+    has_many :reverse_of_relationships, class_name: "Relationship", foreign_key: "followed_id", dependent: :destroy
+
+    # 一覧画面で使う through: :relationshipsで、relationshipsテーブルを経由する
+    # sourceで参照するカラム(relationship.rb)を指定 フォロー・フォロワーの一覧画面で、user.followersという記述でフォロワーを表示できるようにする
+    has_many :followings, through: :relationships, source: :followed
+    has_many :followers, through: :reverse_of_relationships, source: :follower
+
     # メールアドレスの小文字化
     before_save { self.email = email.downcase }
 
@@ -14,7 +27,7 @@ class User < ApplicationRecord
                         uniqueness: true
     # has_secure_passwordの機能を利用できるようにする
     has_secure_password
-    # 最小文字数を指定  
+    # 最小文字数を指定
     # allow_nil: true → updateではパスワードが空文字""の場合バリデーションをスルー
     validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
     # validates :remember_digest, presence: true
@@ -67,5 +80,22 @@ class User < ApplicationRecord
 
     def liked_by?(article_id)
         likes.where(article_id: article_id).exists?
+    end
+
+    # フォローしたときの処理
+    def follow(user_id)
+        unless relationships.find_by(followed_id: user_id)
+            relationships.create(followed_id: user_id)
+        end
+    end
+
+    # フォローを外すときの処理
+    def unfollow(user_id)
+        relationships.find_by(followed_id: user_id).destroy
+    end
+
+    # フォローしているか判定
+    def following?(user)
+        followings.include?(user)
     end
 end
