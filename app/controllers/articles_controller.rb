@@ -62,9 +62,9 @@ class ArticlesController < ApplicationController
       @articles_30days_weight << article.weight
       @articles_30days_body_fat_percentage << article.body_fat_percentage
     end
-    @articles_30days_date_j = @articles_30days_date
-    @articles_30days_weight_j = @articles_30days_weight
-    @articles_30days_body_fat_percentage_j = @articles_30days_body_fat_percentage
+    @articles_30days_date_j = @articles_30days_date.to_json.html_safe
+    @articles_30days_weight_j = @articles_30days_weight.to_json.html_safe
+    @articles_30days_body_fat_percentage_j = @articles_30days_body_fat_percentage.to_json.html_safe
 
 
 

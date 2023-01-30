@@ -100,16 +100,17 @@
     </article>
 <% end %>
 
-
-<%# よく見たらerbではない<input name="arr_json" type="hidden" value=<%= @articles_30days_date_j %> class='arr_json'/>
- %>
-
-
-
+<%# erbのコード %>
+<input name="arr_json" type="hidden" value=<%= @articles_30days_date_j %> class='arr_json1'/>
+<input name="arr_json" type="hidden" value=<%= @articles_30days_weight_j %> class='arr_json2'/>
+<input name="arr_json" type="hidden" value=<%= @articles_30days_body_fat_percentage_j %> class='arr_json3'/>
 
 
 
-<%# 
+
+
+
+
 <script>
 window.onload = function() {
     ctx = document.getElementById("canvas").getContext("2d");
@@ -119,23 +120,135 @@ window.onload = function() {
         options: complexChartOption
     });
 };
-</script> %>
+</script>
+
+
+<script>
+// arr_json取得
+var arrJson1 = $('.arr_json1').val();
+// arr_jsonをパースし配列にする
+var articles_30days_date_j = JSON.parse(arrJson1);
+// 確認用のログ出力
+console.log(articles_30days_date_j);
+
+// arr_json取得
+var arrJson2 = $('.arr_json2').val();
+// arr_jsonをパースし配列にする
+var articles_30days_weight_j = JSON.parse(arrJson2);
+
+// articles_30days_weight_j = (string(articles_30days_weight_j)).split(',');
+
+// articles_30days_weight_j = articles_30days_weight_j.map(function (e) {
+//     return e
+// });
+
+// articles_30days_weight_j = articles_30days_weight_j.map(function(value) {
+//     //配列の各値を返す
+//     return value;
+//     });
+// // 確認用のログ出力
+
+
+console.log(articles_30days_weight_j);
+
+
+
+// arr_json取得
+var arrJson3 = $('.arr_json3').val();
+// arr_jsonをパースし配列にする
+var articles_30days_body_fat_percentage_j = JSON.parse(arrJson3);
+// 確認用のログ出力
+console.log(articles_30days_body_fat_percentage_j);
+
+console.log(typeof(articles_30days_date_j))
+console.log(typeof(articles_30days_weight_j))
+console.log(typeof(articles_30days_body_fat_percentage_j))
+
+
+var barChartData = {
+    labels: articles_30days_date_j,
+    // labels: ['8/26','8/27','8/28','8/29','8/30','8/31','9/1',
+    //     '9/2','9/3','9/4','9/5','9/6','9/7','9/8',
+    //     '9/9','9/10','9/11','9/12','9/13','9/14',
+    //     '9/15','9/16','9/17','9/18','9/19','9/20','9/21','9/22'
+    // ],
+    datasets: [
+    {
+        type: 'line',
+        label: 'sample-line',
+        data: articles_30days_weight_j,
+        // data: ['0.155','0.118','0.121','0.068','0.083','0.060','0.067',
+        //     '0.121','0.121','0.150','0.118','0.097','0.078','0.127',
+        //     '0.155','0.140','0.101','0.140','0.041','0.093','0.189',
+        //     '0.146','0.134','0.127','0.116','0.111','0.125','0.116'
+        // ],
+        borderColor : "rgba(254,97,132,0.8)",
+                pointBackgroundColor    : "rgba(254,97,132,0.8)",
+                fill: false,
+        yAxisID: "y-axis-1",// 追加
+    },
+    {
+        type: 'line',
+        label: 'sample-bar',
+        data: articles_30days_body_fat_percentage_j,
+        // data: ['0.3','0.1','0.1','0.3','0.4','0.2','0.0',
+        //     '0.2','0.3','0.11','0.5','0.2','0.5','0.4',
+        //     '0.0','0.3','0.7','0.3','0.6','0.4','0.9',
+        //     '0.7','0.4','0.8','0.7','0.4','0.7','0.8'
+        // ],
+        borderColor : "rgba(54,164,235,0.8)",
+        backgroundColor : "rgba(54,164,235,0.5)",
+        yAxisID: "y-axis-2",
+    },
+    ],
+};
+</script>
+
+<script>
+var complexChartOption = {
+    responsive: true,
+    scales: {
+        yAxes: [{
+            id: "y-axis-1",
+            type: "linear", 
+            position: "left",
+            ticks: {
+                max: 0.2,
+                min: 0,
+                stepSize: 0.1
+            },
+        }, {
+            id: "y-axis-2",
+            type: "linear", 
+            position: "right",
+            ticks: {
+                max: 1.5,
+                min: 0,
+                stepSize: .5
+            },
+            gridLines: {
+                drawOnChartArea: false, 
+            },
+        }],
+    }
+};
+</script>
 
 
 <script>
 
 
-// @sample = { a: 1, b: 2, c: 3 }
-var articles_30days_date_j = <%= @articles_30days_date_j.to_json.html_safe %>;
-// const re = /(?<=\")[^,\s].*?(?=\")/g;
-articles_30days_date_j = articles_30days_date_j.dataset.text.match(',');
-// articles_30days_date_j = articles_30days_date_j.slice(1);
-// articles_30days_date_j = articles_30days_date_j.slice(-1);
-// articles_30days_date_j = articles_30days_date_j.dataset.text.split(',');
+// // @sample = { a: 1, b: 2, c: 3 }
+// var articles_30days_date_j = <%= @articles_30days_date_j.to_json.html_safe %>;
+// // const re = /(?<=\")[^,\s].*?(?=\")/g;
+// articles_30days_date_j = articles_30days_date_j.dataset.text.match(',');
+// // articles_30days_date_j = articles_30days_date_j.slice(1);
+// // articles_30days_date_j = articles_30days_date_j.slice(-1);
+// // articles_30days_date_j = articles_30days_date_j.dataset.text.split(',');
 
-// articles_30days_date_j = articles_30days_date_j.split(',');
-console.log(articles_30days_date_j);
-console.log(typeof(articles_30days_date_j));
+// // articles_30days_date_j = articles_30days_date_j.split(',');
+// console.log(articles_30days_date_j);
+// console.log(typeof(articles_30days_date_j));
 
 
 
@@ -149,79 +262,6 @@ console.log(typeof(articles_30days_date_j));
 // console.log(articles_30days_body_fat_percentage_j);
 // console.log(typeof(articles_30days_body_fat_percentage_j));
 
-
-
-// var barChartData = {
-//     labels: articles_30days_date_j,
-//     // labels: ['8/26','8/27','8/28','8/29','8/30','8/31','9/1',
-//     //     '9/2','9/3','9/4','9/5','9/6','9/7','9/8',
-//     //     '9/9','9/10','9/11','9/12','9/13','9/14',
-//     //     '9/15','9/16','9/17','9/18','9/19','9/20','9/21','9/22'
-//     // ],
-//     datasets: [
-//     {
-//         type: 'line',
-//         label: 'sample-line',
-//         data: articles_30days_weight_j,
-//         // data: ['0.155','0.118','0.121','0.068','0.083','0.060','0.067',
-//         //     '0.121','0.121','0.150','0.118','0.097','0.078','0.127',
-//         //     '0.155','0.140','0.101','0.140','0.041','0.093','0.189',
-//         //     '0.146','0.134','0.127','0.116','0.111','0.125','0.116'
-//         // ],
-//         borderColor : "rgba(254,97,132,0.8)",
-//                 pointBackgroundColor    : "rgba(254,97,132,0.8)",
-//                 fill: false,
-//         yAxisID: "y-axis-1",// 追加
-//     },
-//     {
-//         type: 'line',
-//         label: 'sample-bar',
-//         data: articles_30days_body_fat_percentage_j,
-//         // data: ['0.3','0.1','0.1','0.3','0.4','0.2','0.0',
-//         //     '0.2','0.3','0.11','0.5','0.2','0.5','0.4',
-//         //     '0.0','0.3','0.7','0.3','0.6','0.4','0.9',
-//         //     '0.7','0.4','0.8','0.7','0.4','0.7','0.8'
-//         // ],
-//         borderColor : "rgba(54,164,235,0.8)",
-//         backgroundColor : "rgba(54,164,235,0.5)",
-//         yAxisID: "y-axis-2",
-//     },
-//     ],
-// };
-// </script>
-
-// <script>
-// var complexChartOption = {
-//     responsive: true,
-//     scales: {
-//         yAxes: [{
-//             id: "y-axis-1",
-//             type: "linear", 
-//             position: "left",
-//             ticks: {
-//                 max: 0.2,
-//                 min: 0,
-//                 stepSize: 0.1
-//             },
-//         }, {
-//             id: "y-axis-2",
-//             type: "linear", 
-//             position: "right",
-//             ticks: {
-//                 max: 1.5,
-//                 min: 0,
-//                 stepSize: .5
-//             },
-//             gridLines: {
-//                 drawOnChartArea: false, 
-//             },
-//         }],
-//     }
-// };
-// </script>
-
-
-<script>
 // #=> Object {a: 1, b: 2, c: 3}
 // console.log(test.a);
 // #=> 1

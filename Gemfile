@@ -36,6 +36,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'bootstrap-sass'
 gem 'rails-i18n'
 gem 'chart-js-rails'
+gem 'jquery-rails'
 
 # パスワードのハッシュ化
 gem 'bcrypt'
