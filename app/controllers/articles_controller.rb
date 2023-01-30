@@ -23,11 +23,66 @@ class ArticlesController < ApplicationController
     render "index"
   end
 
+
+
+
+
+
+
   def index
     @user = User.find(params[:user_id])
-    @articles = Article.where(user_id: params[:user_id]).order(date: "DESC")
+    # @articles = Article.where(user_id: params[:user_id]).order(date: "DESC")
+    @articles = Article.where(user_id: params[:user_id])
     @comment = Comment.new
+
+    @articles_30days = []
+    today_date = Date.today
+    30.times.each do |i|
+      # 30日前からの昇順にするための書き方
+      article = @articles.find_by(date: today_date - 30 + i)
+      if article.nil?
+# weight: 0, body_fat_percentage: 0 を変える
+        article = Article.create(date: today_date - 30 + i, weight: '', body_fat_percentage: '' )
+        # article = Article.new
+        # binding.pry
+        # artilce[:date] = today_date - (1+i)
+        # artilce.weight = ''
+        # artilce.body_fat_percentage = ''
+      end
+      @articles_30days << article
+    end
+    # @articles_30days = @articles_30days.order(date: "DESC")
+
+
+    @articles_30days_date = []
+    @articles_30days_weight = []
+    @articles_30days_body_fat_percentage = []
+    @articles_30days.each do |article|
+      @articles_30days_date << article.date
+      @articles_30days_weight << article.weight
+      @articles_30days_body_fat_percentage << article.body_fat_percentage
+    end
+    @articles_30days_date_j = @articles_30days_date
+    @articles_30days_weight_j = @articles_30days_weight
+    @articles_30days_body_fat_percentage_j = @articles_30days_body_fat_percentage
+
+
+
+    # @articles_30days_date_j = @articles_30days_date.to_json.html_safe → ArrayがActiveSupport::SafeBufferに変わる
+    # @articles_30days_date_j = @articles_30days_date.to_json.html_safe
+    # @articles_30days_weight_j = @articles_30days_weight.to_json.html_safe
+    # @articles_30days_body_fat_percentage_j = @articles_30days_body_fat_percentage.to_json.html_safe
   end
+
+
+
+
+
+
+
+
+
+
 
   def new
     # sessions_helperのcurrent_userを叩く
