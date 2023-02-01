@@ -3,86 +3,88 @@ class ArticlesController < ApplicationController
   before_action :correct_article_user_or_admin, only: [:destroy]
   before_action :correct_article_user, only: [:edit, :update]
 
-
   def search
     @user = User.find(params[:user_id])
-    @articles = Article.where(user_id: @user.id)
-
-    if params[:keyword] != ""
-      if params[:date_from] != "" || params[:date_to] != ""
-        @articles = @articles.user_articles_search(params[:date_from], params[:date_to])
+# グラフの年月を絞り込む時に、params[:articles]を渡し、すでに表示されていた投稿一覧を抽出する
+    if params[:articles]
+      @articles = []
+      params[:articles].each do |article|
+        new_article = Article.find_by(id: article[:id])
+        @articles.push(new_article)
       end
-      @articles = @articles.search(params[:keyword])
-    elsif params[:date_from] != "" || params[:date_to] != ""
-      if params[:keyword] != ""
-        @articles = @articles.search(params[:keyword])
-      end
-      @articles = @articles.user_articles_search(params[:date_from], params[:date_to])
+      # グラフの月日を絞り込むのではなく、キーワード検索、日付けでの絞り込み検索の場合
+    else
+      @articles = Article.where(user_id: @user.id)
     end
-    @articles = @articles.order(date: "DESC")
-    render "index"
+    @comment = Comment.new
+
+# グラフの年月を絞り込む
+    if params[:"year_month(1i)"]
+      year = params[:"year_month(1i)"]
+      month = params[:"year_month(2i)"]
+      day = params[:"year_month(3i)"]
+      # month,dayが１桁の場合、数字の前に0を付ける
+      if count_digits(month) == 1
+        month = "0#{month}"
+      end
+      if count_digits(day) == 1
+        day = "0#{day}"
+      end
+      first_day = "#{year}-#{month}-#{day}"
+      @first_day = "#{year}年 #{month}月"
+      @articles_graph = Article.where(user_id: @user.id)
+      @articles_30days = @articles_graph.where(date: first_day.in_time_zone.all_month).order(date: "ASC")
+      # コントローラーの下部でメソッドを定義
+      articles_30days_date(@articles_30days)
+
+      render "index"
+
+# キーワード検索、日付での絞り込み検索
+    else
+      if params[:first_day]
+        @first_day = params[:first_day]
+      end
+
+      # キーワードがある場合
+      if params[:keyword] != ""
+        # 日付けでの絞り込み検索がある場合
+        if params[:date_from] != "" || params[:date_to] != ""
+          @articles = @articles.user_articles_search(params[:date_from], params[:date_to])
+        end
+        @articles = @articles.search(params[:keyword]).order(date: "DESC")
+      # キーワードがなく、日付けでの絞り込み検索がある場合
+      elsif params[:date_from] != "" || params[:date_to] != ""
+        @articles = @articles.user_articles_search(params[:date_from], params[:date_to]).order(date: "DESC")
+      end
+#  キーワード検索、日付での絞り込み検索の時に、params[:articles_30days]を渡し、すでに表示されていたグラフを描画する
+      if params[:articles_30days]
+        @articles_30days = []
+        params[:articles_30days].each do |article|
+          new_article = Article.find_by(id: article[:id])
+          @articles_30days.push(new_article)
+        end
+      else
+# グラフ表示される
+        @month = Date.today
+        @articles_30days = Article.where(date: @month.in_time_zone.all_month).order(date: "ASC")
+      end
+      articles_30days_date(@articles_30days)
+      render "index"
+    end
   end
-
-
-
-
-
-
 
   def index
     @user = User.find(params[:user_id])
-    # @articles = Article.where(user_id: params[:user_id]).order(date: "DESC")
     @articles = Article.where(user_id: params[:user_id])
     @comment = Comment.new
-
-    @articles_30days = []
-    today_date = Date.today
-    30.times.each do |i|
-      # 30日前からの昇順にするための書き方
-      article = @articles.find_by(date: today_date - 30 + i)
-      if article.nil?
-# weight: 0, body_fat_percentage: 0 を変える
-        article = Article.create(date: today_date - 30 + i, weight: '', body_fat_percentage: '' )
-        # article = Article.new
-        # binding.pry
-        # artilce[:date] = today_date - (1+i)
-        # artilce.weight = ''
-        # artilce.body_fat_percentage = ''
-      end
-      @articles_30days << article
-    end
-    # @articles_30days = @articles_30days.order(date: "DESC")
+    @month = Date.today
+    @articles_30days = Article.where(date: @month.in_time_zone.all_month).order(date: "ASC")
 
 
-    @articles_30days_date = []
-    @articles_30days_weight = []
-    @articles_30days_body_fat_percentage = []
-    @articles_30days.each do |article|
-      @articles_30days_date << article.date
-      @articles_30days_weight << article.weight
-      @articles_30days_body_fat_percentage << article.body_fat_percentage
-    end
-    @articles_30days_date_j = @articles_30days_date.to_json.html_safe
-    @articles_30days_weight_j = @articles_30days_weight.to_json.html_safe
-    @articles_30days_body_fat_percentage_j = @articles_30days_body_fat_percentage.to_json.html_safe
-
-
-
-    # @articles_30days_date_j = @articles_30days_date.to_json.html_safe → ArrayがActiveSupport::SafeBufferに変わる
-    # @articles_30days_date_j = @articles_30days_date.to_json.html_safe
-    # @articles_30days_weight_j = @articles_30days_weight.to_json.html_safe
-    # @articles_30days_body_fat_percentage_j = @articles_30days_body_fat_percentage.to_json.html_safe
+    articles_30days_date(@articles_30days)
+# indexアクションを叩いた時、グラフが表示されない。更新ボタンを押せば表示される
+    # render "index"
   end
-
-
-
-
-
-
-
-
-
-
 
   def new
     # sessions_helperのcurrent_userを叩く
@@ -144,7 +146,28 @@ class ArticlesController < ApplicationController
       redirect_to root_path
     end
   end
+
+  def articles_30days_date(articles_30days)
+    @articles_30days_date = []
+    @articles_30days_weight = []
+    @articles_30days_body_fat_percentage = []
+    articles_30days.each do |article|
+        @articles_30days_date << article.date
+        @articles_30days_weight << article.weight
+        @articles_30days_body_fat_percentage << article.body_fat_percentage
+    end
+    @articles_30days_date_j = @articles_30days_date.to_json.html_safe
+    @articles_30days_weight_j = @articles_30days_weight.to_json.html_safe
+    @articles_30days_body_fat_percentage_j = @articles_30days_body_fat_percentage.to_json.html_safe
+
+    @max_weight = @articles_30days_weight.max
+    @min_weight = @articles_30days_weight.min
+    @max_body_fat_percentage = @articles_30days_body_fat_percentage.max
+    @min_body_fat_percentage = @articles_30days_body_fat_percentage.min
+  end
 end
+
+  private
 
   # ストロングパラメーター 入力できるカラムを制御
   def article_params
@@ -153,30 +176,57 @@ end
       :meal_dinner, :meal_snack, :exercise, :memo).merge(user_id: current_user.id)
   end
 
+  def count_digits(num)
+    num.to_s.length
+  end
 
-  # def search
-  #   # keyword,date_from,date_to何も入力されていないとき
-  #   if params[:keyword] == "" && params[:date_from] == "" && params[:date_to] == ""
-  #     @user = User.find(params[:user_id])
-  #     @articles = Article.where(user_id: params[:user_id]).order(date: "DESC")
-  #     render "index"
-  #     return
-  #   end
-  #   # form_withからparams[:user_id]を渡す
-  #   @user = User.find(params[:user_id])
 
-  #   # article.rbのsearchメソッドを叩く whereをつなげられる
-  #   @articles = Article.search(params[:keyword]).where(user_id: @user.id)
+    # if params[:keyword] != "" || (params[:date_from] != "" || params[:date_to] != "")
 
-  #   # 日付入力がある場合のみ、article.rbのsuser_articles_searchメソッドを叩く
-  #   unless params[:date_from] == "" && params[:date_to] == ""
-  #     @articles = @articles.user_articles_search(params[:date_from], params[:date_to])
-  #   end
 
-  #   # 検索窓での表示で使う
-  #   @keyword = params[:keyword]
-  #   @date_from = params[:date_from]
-  #   @date_to = params[:date_to]
-  #   # articlesのindex
-  #   render "index"
-  # end
+          # if params[:"year_month(2i)"] == 1
+        #   month = Jan
+        # end
+        # @articles_30days = @articles.where("date LIKE?": params[:"year_month(1i)"], date: month]).order(date: "ASC")
+        # @articles_30days = @articles.where("date LIKE?": '%#{params[:"year_month(1i)"]}%', "date LIKE?": month).order(date: "ASC")
+
+
+
+    # @articles_30days = []
+    # today_date = Date.today
+    # 30.times.each do |i|
+    #   # 30日前からの昇順にするための書き方
+    #   article = @articles.find_by(date: today_date - 30 + i)
+    #   if article.nil?
+    #   # weight: '', body_fat_percentage: ''を加える
+    #     article = Article.create(date: today_date - 30 + i, weight: '', body_fat_percentage: '' )
+
+    #   end
+    #   @articles_30days << article
+    # end
+
+
+      # @articles_30days_date = []
+      # @articles_30days_weight = []
+      # @articles_30days_body_fat_percentage = []
+      # @articles_30days.each do |article|
+      #   @articles_30days_date << article.date
+      #   @articles_30days_weight << article.weight
+      #   @articles_30days_body_fat_percentage << article.body_fat_percentage
+      # end
+      # @articles_30days_date_j = @articles_30days_date.to_json.html_safe
+      # @articles_30days_weight_j = @articles_30days_weight.to_json.html_safe
+      # @articles_30days_body_fat_percentage_j = @articles_30days_body_fat_percentage.to_json.html_safe
+
+      # @max_weight = @articles_30days_weight.max
+      # @min_weight = @articles_30days_weight.min
+      # @max_body_fat_percentage = @articles_30days_body_fat_percentage.max
+      # @min_body_fat_percentage = @articles_30days_body_fat_percentage.min
+
+    # 取得した時刻が含まれる月の範囲のデータを取得
+    # if @articles_30days == nil
+    #   # @articles_30days = @articles.where(date: @month.all_month).order(date: "ASC")
+    #   # @articles_30days = Article.where(date: @month.in_time_zone.all_month).order(date: "ASC")
+    #   # @month = Date.today
+    #   @articles_30days = Article.where(date: @month.in_time_zone.all_month).order(date: "ASC")
+    # end
