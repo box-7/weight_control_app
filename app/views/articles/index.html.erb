@@ -1,17 +1,25 @@
 
 <h2 class="articles_list"><%= "投稿一覧 / ユーザー名：" + @user.name %></h2>
 <p id="notice"><%= notice %></p>
+<%# chart.jsの読み込み %>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.bundle.min.js"></script>
 
-<h1>年月を絞り込む</h1>
-<% if @first_day %>
-    <%= "検索年月：" + @first_day %>
+<h2>グラフ表示</h2>
+<% if @articles_30days_date == nil %>
+    <p>※ グラフデータがありません</br>
+    ※ 他の月のグラフを表示させる場合は、年月を入力して検索ボタンを押してください</p>
 <% end %>
+
 <%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
     <div class="field">
     <%# オプション :use_month_numbers 月を数字で表示,:discard_day 日の選択ボックスを非表示, include_blank: true 空を含めて表示→不要 %>
-        <%= f.date_select:year_month , value: params[:year_month], start_year: 2020, use_month_numbers: true, discard_day: true  %>
+    <% if @description_first_day %>
+        <%= f.date_select:year_month , start_year: 2020, use_month_numbers: true, discard_day: true, selected: @description_first_day.to_date %>
+    <% else %>
+        <%= f.date_select:year_month , start_year: 2020, use_month_numbers: true, discard_day: true %>
+    <% end %>
         <%= f.hidden_field :user_id, value: params[:user_id] %>
+<%# コントローラーに配列を渡す %>
         <% @articles.each do |article| %>
             <%= hidden_field_tag 'articles[][id]', article.id %>
         <% end %>
@@ -19,11 +27,15 @@
     <%= f.submit "検索" %>
 <% end %>
 
-<div class="container" style="width:100%, length:70%">
-    <canvas id="canvas"></canvas>
-</div>
 
-<h1>検索語句</h1>
+<%# グラフ表示 %>
+<% if @articles_30days_date != nil %>
+    <div class="container" style="width:100%, length:70%">
+        <canvas id="canvas"></canvas>
+    </div>
+<% end %>
+
+<h2>検索語句</h2>
 <%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
     <%= f.text_field :keyword, value: params[:keyword] %>
     <%= f.hidden_field :user_id, value: params[:user_id] %>
@@ -122,62 +134,40 @@
     </article>
 <% end %>
 
-<%# erbのコード %>
+<%# erbのコード コントローラーからビューへ配列を渡すための記述 %>
 <input name="arr_json" type="hidden" value=<%= @articles_30days_date_j %> class='arr_json1'/>
 <input name="arr_json" type="hidden" value=<%= @articles_30days_weight_j %> class='arr_json2'/>
 <input name="arr_json" type="hidden" value=<%= @articles_30days_body_fat_percentage_j %> class='arr_json3'/>
-<input name="arr_json" type="hidden" value=<%= @max_weight %> class='arr_json3'/>
-
-<script>
-window.onload = function() {
-// window.myChart = function() {
-    ctx = document.getElementById("canvas").getContext("2d");
-    window.myBar = new Chart(ctx, {
-        type: 'bar',
-        data: barChartData,
-        options: complexChartOption
-    });
-    
-};
-</script>
 
 <script>
 // arr_json取得
 var arrJson1 = $('.arr_json1').val();
-
 try {
-	// JSON.parse(arrJson1);
+// arr_jsonをパースし配列にする
     var articles_30days_date_j = JSON.parse(arrJson1);
     console.log('エラーではない!!!!');
 } catch (error) {
 	//エラー時の処理
     console.log('エラー!!!!');
 }
-// arr_jsonをパースし配列にする
-// var articles_30days_date_j = JSON.parse(arrJson1);
 
-// arr_json取得
 var arrJson2 = $('.arr_json2').val();
-
 try {
-	// JSON.parse(arrJson1);
     var articles_30days_weight_j = JSON.parse(arrJson2);
     console.log('エラーではない!!!!');
 } catch (error) {
-	//エラー時の処理
     console.log('エラー!!!!');
 }
 
-var test = []
-articles_30days_weight_j.forEach(article =>{
-    test.push(String(article))
-});
-
-// arr_json取得
 var arrJson3 = $('.arr_json3').val();
-// arr_jsonをパースし配列にする
-var articles_30days_body_fat_percentage_j = JSON.parse(arrJson3);
+try {
+    var articles_30days_body_fat_percentage_j = JSON.parse(arrJson3);
+    console.log('エラーではない!!!!');
+} catch (error) {
+    console.log('エラー!!!!');
+}
 
+// window.onload = function() から、barChartDataを呼び出す　
 var barChartData = {
 // ※ labelsの日付は変数でグラフを表示できる
     labels: articles_30days_date_j,
@@ -185,8 +175,7 @@ var barChartData = {
     {
         type: 'line',
         label: '体重',
-// ※ dataは変数でグラフを表示できできない、文字列だとグラフを表示できる
-        data: test,
+        data: articles_30days_weight_j,
 
         borderColor : "rgba(254,97,132,0.8)",
                 pointBackgroundColor    : "rgba(254,97,132,0.8)",
@@ -196,7 +185,6 @@ var barChartData = {
     {
         type: 'line',
         label: '体脂肪率',
-// ※ dataは変数でグラフを表示できできない、文字列だとグラフを表示できる
         data: articles_30days_body_fat_percentage_j,
 
         borderColor : "rgba(54,164,235,0.8)",
@@ -210,11 +198,40 @@ var barChartData = {
 </script>
 
 <script>
-// コントローラーからhtmlで変数を受け取る
-var max_weight = '<%= @max_weight %>';
-var min_weight = '<%= @min_weight %>';
-var max_body_fat_percentage = '<%= @max_body_fat_percentage %>';
-var min_body_fat_percentage = '<%= @min_body_fat_percentage %>';
+// // コントローラーからhtmlで変数を受け取る
+// console.log(<%= @max_weight %> == '')
+// if ('<%= @max_weight %>'){
+    var max_weight = '<%= @max_weight %>'
+// // var max_weight = '<%= @max_weight %>';
+// }
+// else{
+//     var max_weight = 70;
+// }
+// console.log(max_weight)
+
+// if (<%= @min_weight %> != "nil"){
+    var min_weight = '<%= @min_weight %>';
+// }
+// else{
+//     var min_weight = 40;
+// }
+
+// if (<%= @max_body_fat_percentage %> != "nil"){
+    var max_body_fat_percentage = '<%= @max_body_fat_percentage %>';
+// }
+// else{
+//     var max_body_fat_percentage = 25;
+// }
+
+// if (<%= @min_body_fat_percentage %> != "nil"){
+    var min_body_fat_percentage = '<%= @min_body_fat_percentage %>';
+// }
+// else{
+//     var min_body_fat_percentage = 10;
+// }
+
+
+
 
 var complexChartOption = {
     responsive: true,
@@ -224,7 +241,12 @@ var complexChartOption = {
             type: "linear",
             position: "left",
             ticks: {
+                // if (max_weight == "nil"){
+                //     max : 70
+                // }
+                // else{
                 max: Math.round((Number(max_weight) + 5)),
+                // },
                 // max: 0.2,
                 min: Math.round((Number(min_weight) - 5)),
                 stepSize: 5
@@ -249,37 +271,26 @@ var complexChartOption = {
 };
 </script>
 
-
-<%
-=begin %>
-    グラフ作成時
-
-<% if params[:"year_month(1i)"] %>
-    <%= "絞り込み ：" + params[:year_month(1i)] + params[:year_month(2i)] %>
-<% end %>
-
-
-    <%= f.text_field :keyword, value: params[:keyword] %>
-    <%= f.hidden_field :user_id, value: params[:user_id] %>
-
-    <%= f.date_field :date_from, value: params[:date_from] %> ~ <%= f.date_field :date_to, value: params[:date_to] %>
-    "article", "written_on", 
-
-
-<%= f.date_select:params[:"year_month(1i)"] , value: params[:"year_month(2i)"], start_year: 2020, use_month_numbers: true, discard_day: true %>
-<%= f.date_select: year_month , prompt: { day: 'Select day', month: 'Select month', year: 'Select year' }, start_year: 2020, use_month_numbers: true, discard_day: true  %>
-月は反映されないが動くコード
-    <%= f.date_select:year_month , value: params[:year_month], start_year: 2020, use_month_numbers: true, discard_day: true  %>
-
-    params["year_month(2i)"]
-
-    prompt: { day: 'Select day', month: 'Select month', year: 'Select year' }
-<%
-=end %>
+<script>
+window.onload = function() {
+    ctx = document.getElementById("canvas").getContext("2d");
+    window.myBar = new Chart(ctx, {
+        type: 'bar',
+        data: barChartData,
+        options: complexChartOption
+    });
+};
+</script>
 
 
 
 <script>
+// 配列から配列にする記述
+// var test = []
+// articles_30days_weight_j.forEach(article =>{
+//     test.push(String(article))
+// });
+
 
 // console.log('パース前 arrJson1の出力');
 // console.log(arrJson1);
@@ -300,7 +311,6 @@ var complexChartOption = {
 // console.log(typeof(articles_30days_weight_j));
 
 
-
 // 確認用のログ出力
 // console.log('articles_30days_body_fat_percentage_jの出力');
 // console.log(articles_30days_body_fat_percentage_j);
@@ -317,9 +327,6 @@ var complexChartOption = {
 // console.log('testのタイプの出力');
 // console.log(typeof(test));
 // console.log(typeof(test[0]));
-
-
-
 
 
     // グラフ作成時のjs
@@ -430,8 +437,51 @@ var complexChartOption = {
 
 </script>
 
+
 <%
 =begin %>
+testで検索年月を表示させる
+<% if @first_day %>
+    <%= "検索年月：" + @first_day %>
+<% end %>
+
+-----------
+
+
+<input name="arr_json" type="hidden" value=<%= @max_weight %> class='arr_json3'/>
+
+-----------
+
+
+グラフ表示はできるコード 年月がおかしい
+        <%= f.date_select:year_month , value: params[:year_month], start_year: 2020, use_month_numbers: true, discard_day: true  %>
+
+-----------
+    グラフ作成時
+
+<% if params[:"year_month(1i)"] %>
+    <%= "絞り込み ：" + params[:year_month(1i)] + params[:year_month(2i)] %>
+<% end %>
+
+
+    <%= f.text_field :keyword, value: params[:keyword] %>
+    <%= f.hidden_field :user_id, value: params[:user_id] %>
+
+    <%= f.date_field :date_from, value: params[:date_from] %> ~ <%= f.date_field :date_to, value: params[:date_to] %>
+    "article", "written_on", 
+
+
+<%= f.date_select:params[:"year_month(1i)"] , value: params[:"year_month(2i)"], start_year: 2020, use_month_numbers: true, discard_day: true %>
+<%= f.date_select: year_month , prompt: { day: 'Select day', month: 'Select month', year: 'Select year' }, start_year: 2020, use_month_numbers: true, discard_day: true  %>
+月は反映されないが動くコード
+    <%= f.date_select:year_month , value: params[:year_month], start_year: 2020, use_month_numbers: true, discard_day: true  %>
+
+    params["year_month(2i)"]
+
+    prompt: { day: 'Select day', month: 'Select month', year: 'Select year' }
+
+-----------
+
 <canvas id="myChart" width="400" height="400"></canvas>
 <script>draw_graph();</script>
 
@@ -441,18 +491,14 @@ var complexChartOption = {
         <%= article.body_fat_percentage %>
     </div>
 <% end %>
-<%
-=end %>
 
-<%
-=begin %>
+-----------
+
                 ユーザーの投稿一覧へのリンクは不要
                 <%= link_to "ユーザーの投稿一覧", articles_path(article.user.id), class: "btn btn-info" %>
-<%
-=end %>
 
-<%
-=begin %>
+-----------
+
         <%= f.label(:date, User.article_attribute(:date)) %>
 
 <div class="search-form">
@@ -486,11 +532,9 @@ var complexChartOption = {
         <div class="actions">
         <%= f.submit(t('helpers.submit.search')) %>
         </div>
-<%
-=end %>
 
-<%
-=begin %>
+-----------
+
 <div class="search-form">
     <%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
         <%# @〜のインスタンス変数を渡したり受け取ったりする %>

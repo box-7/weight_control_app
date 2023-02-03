@@ -1,18 +1,19 @@
 class ArticlesController < ApplicationController
 
+  before_action :set_one_month, only: [:create]
   before_action :correct_article_user_or_admin, only: [:destroy]
   before_action :correct_article_user, only: [:edit, :update]
 
   def search
     @user = User.find(params[:user_id])
-# グラフの年月を絞り込む時に、params[:articles]を渡し、すでに表示されていた投稿一覧を抽出する
+# グラフの年月を絞り込む時に、すでに表示されていた投稿一覧がある場合に、params[:articles]でビューから配列で受け取り、すでに表示されていた投稿一覧を抽出する
     if params[:articles]
       @articles = []
       params[:articles].each do |article|
         new_article = Article.find_by(id: article[:id])
         @articles.push(new_article)
       end
-      # グラフの月日を絞り込むのではなく、キーワード検索、日付けでの絞り込み検索の場合
+# グラフの年月絞り込みではなく、キーワード検索、日付けでの絞り込み検索の場合の投稿一覧取得
     else
       @articles = Article.where(user_id: @user.id)
     end
@@ -23,6 +24,7 @@ class ArticlesController < ApplicationController
       year = params[:"year_month(1i)"]
       month = params[:"year_month(2i)"]
       day = params[:"year_month(3i)"]
+
       # month,dayが１桁の場合、数字の前に0を付ける
       if count_digits(month) == 1
         month = "0#{month}"
@@ -31,19 +33,19 @@ class ArticlesController < ApplicationController
         day = "0#{day}"
       end
       first_day = "#{year}-#{month}-#{day}"
+      @description_first_day = first_day
+
       @first_day = "#{year}年 #{month}月"
       @articles_graph = Article.where(user_id: @user.id)
       @articles_30days = @articles_graph.where(date: first_day.in_time_zone.all_month).order(date: "ASC")
       # コントローラーの下部でメソッドを定義
-      articles_30days_date(@articles_30days)
+      @articles_30days_date = articles_30days_date(@articles_30days)
 
       render "index"
 
 # キーワード検索、日付での絞り込み検索
     else
-      if params[:first_day]
-        @first_day = params[:first_day]
-      end
+      @first_day = params[:first_day] if params[:first_day]
 
       # キーワードがある場合
       if params[:keyword] != ""
@@ -56,7 +58,7 @@ class ArticlesController < ApplicationController
       elsif params[:date_from] != "" || params[:date_to] != ""
         @articles = @articles.user_articles_search(params[:date_from], params[:date_to]).order(date: "DESC")
       end
-#  キーワード検索、日付での絞り込み検索の時に、params[:articles_30days]を渡し、すでに表示されていたグラフを描画する
+# キーワード検索、日付での絞り込み検索の時に、すでに表示されていたグラフがある場合、params[:articles_30days]を渡し表示する
       if params[:articles_30days]
         @articles_30days = []
         params[:articles_30days].each do |article|
@@ -64,14 +66,15 @@ class ArticlesController < ApplicationController
           @articles_30days.push(new_article)
         end
       else
-# グラフ表示される
+# キーワード検索、日付での絞り込み検索の時に、すでに表示されていたグラフがない場合、グラフ表示のための変数を定義
         @month = Date.today
         @articles_30days = Article.where(date: @month.in_time_zone.all_month).order(date: "ASC")
       end
-      articles_30days_date(@articles_30days)
+      @articles_30days_date = articles_30days_date(@articles_30days)
       render "index"
     end
   end
+
 
   def index
     @user = User.find(params[:user_id])
@@ -80,11 +83,11 @@ class ArticlesController < ApplicationController
     @month = Date.today
     @articles_30days = Article.where(date: @month.in_time_zone.all_month).order(date: "ASC")
 
-
-    articles_30days_date(@articles_30days)
+    @articles_30days_date = articles_30days_date(@articles_30days)
 # indexアクションを叩いた時、グラフが表示されない。更新ボタンを押せば表示される
     # render "index"
   end
+
 
   def new
     # sessions_helperのcurrent_userを叩く
@@ -113,6 +116,7 @@ class ArticlesController < ApplicationController
     end
   end
 
+
   def show
     @article = Article.find(params[:id])
     # firstがないと配列になってしまうため、エラーとなりweightのデータがとれなくなる
@@ -120,9 +124,11 @@ class ArticlesController < ApplicationController
     @comment = Comment.new
   end
 
+
   def edit
     @article = Article.find_by(params[:user_id], params[:id])
   end
+
 
   def update
     # createとは異なり、find文が必要
@@ -135,6 +141,7 @@ class ArticlesController < ApplicationController
       render :edit
     end
   end
+
 
   def destroy
     @article = Article.find(params[:id])
@@ -156,6 +163,7 @@ class ArticlesController < ApplicationController
         @articles_30days_weight << article.weight
         @articles_30days_body_fat_percentage << article.body_fat_percentage
     end
+# コントローラーからビューへ配列を渡すために、「.to_json.html_safe」を使う
     @articles_30days_date_j = @articles_30days_date.to_json.html_safe
     @articles_30days_weight_j = @articles_30days_weight.to_json.html_safe
     @articles_30days_body_fat_percentage_j = @articles_30days_body_fat_percentage.to_json.html_safe
