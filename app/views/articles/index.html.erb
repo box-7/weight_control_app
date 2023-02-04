@@ -2,10 +2,9 @@
 <h2 class="articles_list"><%= "投稿一覧 / ユーザー名：" + @user.name %></h2>
 <p id="notice"><%= notice %></p>
 <%# chart.jsの読み込み %>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.bundle.min.js"></script>
 
 <h2>グラフ表示</h2>
-<% if @articles_30days_date == nil %>
+<% if @articles_one_month_date == nil %>
     <p>※ グラフデータがありません</br>
     ※ 他の月のグラフを表示させる場合は、年月を入力して検索ボタンを押してください</p>
 <% end %>
@@ -27,9 +26,8 @@
     <%= f.submit "検索" %>
 <% end %>
 
-
 <%# グラフ表示 %>
-<% if @articles_30days_date != nil %>
+<% if @articles_one_month_date %>
     <div class="container" style="width:100%, length:70%">
         <canvas id="canvas"></canvas>
     </div>
@@ -42,9 +40,12 @@
     <% if @first_day %>
         <%= f.hidden_field :first_day, value: @first_day %>
     <% end %>
-    <% if @articles_30days %>
-        <% @articles_30days.each do |article| %>
-            <%= hidden_field_tag 'articles_30days[][id]', article.id %>
+    <% if @articles_one_month_date == nil %>
+        <%= f.hidden_field :articles_one_month_date, value: @articles_one_month_date %>
+    <% end %>
+    <% if @articles_one_month %>
+        <% @articles_one_month.each do |article| %>
+            <%= hidden_field_tag 'articles_one_month[][id]', article.id %>
         <% end %>
     <% end %>
     <div class="field">
@@ -71,7 +72,11 @@
             </div>
             <div class="weight">
                 <p>(目標との乖離)</p>
-                <p class="make_a_margin-bottom"><%= (article.user.target_weight - article.weight).round(1) %></p>
+                <% if article.user.target_weight && article.weight %>
+                    <p class="make_a_margin-bottom"><%= (article.user.target_weight - article.weight).round(1) %></p>
+                <% else %>
+                    <p class="make_a_margin-bottom"><%= "目標を設定してください" %></p>
+                <% end %>
                 <p>(体重)</p>
                 <p class="make_a_margin-bottom"><%= article.weight %></p>
                 <p>(体脂肪率)</p>
@@ -135,62 +140,45 @@
 <% end %>
 
 <%# erbのコード コントローラーからビューへ配列を渡すための記述 %>
-<input name="arr_json" type="hidden" value=<%= @articles_30days_date_j %> class='arr_json1'/>
-<input name="arr_json" type="hidden" value=<%= @articles_30days_weight_j %> class='arr_json2'/>
-<input name="arr_json" type="hidden" value=<%= @articles_30days_body_fat_percentage_j %> class='arr_json3'/>
+<input name="arr_json" type="hidden" value=<%= @articles_one_month_date_j %> class='arr_json1'/>
+<input name="arr_json" type="hidden" value=<%= @articles_one_month_weight_j %> class='arr_json2'/>
+<input name="arr_json" type="hidden" value=<%= @articles_one_month_body_fat_percentage_j %> class='arr_json3'/>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.bundle.min.js"></script>
 
 <script>
 // arr_json取得
 var arrJson1 = $('.arr_json1').val();
-try {
-// arr_jsonをパースし配列にする
-    var articles_30days_date_j = JSON.parse(arrJson1);
-    console.log('エラーではない!!!!');
-} catch (error) {
-	//エラー時の処理
-    console.log('エラー!!!!');
-}
+var articles_one_month_date_j = JSON.parse(arrJson1);
 
 var arrJson2 = $('.arr_json2').val();
-try {
-    var articles_30days_weight_j = JSON.parse(arrJson2);
-    console.log('エラーではない!!!!');
-} catch (error) {
-    console.log('エラー!!!!');
-}
+var articles_one_month_weight_j = JSON.parse(arrJson2);
 
 var arrJson3 = $('.arr_json3').val();
-try {
-    var articles_30days_body_fat_percentage_j = JSON.parse(arrJson3);
-    console.log('エラーではない!!!!');
-} catch (error) {
-    console.log('エラー!!!!');
-}
+var articles_one_month_body_fat_percentage_j = JSON.parse(arrJson3);
 
-// window.onload = function() から、barChartDataを呼び出す　
 var barChartData = {
-// ※ labelsの日付は変数でグラフを表示できる
-    labels: articles_30days_date_j,
+    labels: articles_one_month_date_j,
     datasets: [
     {
         type: 'line',
         label: '体重',
-        data: articles_30days_weight_j,
-
-        borderColor : "rgba(254,97,132,0.8)",
-                pointBackgroundColor    : "rgba(254,97,132,0.8)",
-                fill: false,
+        data: articles_one_month_weight_j,
+        borderColor: "rgba(254,97,132,0.8)",
+        pointBackgroundColor: "rgba(254,97,132,0.8)",
+        fill: false,
+        spanGaps: true,
         yAxisID: "y-axis-1",// 追加
     },
     {
         type: 'line',
         label: '体脂肪率',
-        data: articles_30days_body_fat_percentage_j,
-
-        borderColor : "rgba(54,164,235,0.8)",
-                pointBackgroundColor    : "rgba(254,97,132,0.8)",
-                fill: false,
-        backgroundColor : "rgba(54,164,235,0.5)",
+        data: articles_one_month_body_fat_percentage_j,
+        borderColor: "rgba(54,164,235,0.8)",
+        pointBackgroundColor: "rgba(254,97,132,0.8)",
+        fill: false,
+        spanGaps: true,
+        backgroundColor: "rgba(54,164,235,0.5)",
         yAxisID: "y-axis-2",
     },
     ],
@@ -199,39 +187,14 @@ var barChartData = {
 
 <script>
 // // コントローラーからhtmlで変数を受け取る
-// console.log(<%= @max_weight %> == '')
-// if ('<%= @max_weight %>'){
-    var max_weight = '<%= @max_weight %>'
-// // var max_weight = '<%= @max_weight %>';
-// }
-// else{
-//     var max_weight = 70;
-// }
-// console.log(max_weight)
-
-// if (<%= @min_weight %> != "nil"){
-    var min_weight = '<%= @min_weight %>';
-// }
-// else{
-//     var min_weight = 40;
-// }
-
-// if (<%= @max_body_fat_percentage %> != "nil"){
-    var max_body_fat_percentage = '<%= @max_body_fat_percentage %>';
-// }
-// else{
-//     var max_body_fat_percentage = 25;
-// }
-
-// if (<%= @min_body_fat_percentage %> != "nil"){
-    var min_body_fat_percentage = '<%= @min_body_fat_percentage %>';
-// }
-// else{
-//     var min_body_fat_percentage = 10;
-// }
-
-
-
+var max_weight = '<%= @max_weight %>'
+console.log(max_weight);
+var min_weight = '<%= @min_weight %>';
+console.log(min_weight);
+var max_body_fat_percentage = '<%= @max_body_fat_percentage %>';
+console.log(max_body_fat_percentage);
+var min_body_fat_percentage = '<%= @min_body_fat_percentage %>';
+console.log(min_body_fat_percentage);
 
 var complexChartOption = {
     responsive: true,
@@ -241,27 +204,18 @@ var complexChartOption = {
             type: "linear",
             position: "left",
             ticks: {
-                // if (max_weight == "nil"){
-                //     max : 70
-                // }
-                // else{
-                max: Math.round((Number(max_weight) + 5)),
-                // },
-                // max: 0.2,
+                max: Math.round((Number(max_weight) + 3)),
                 min: Math.round((Number(min_weight) - 5)),
-                stepSize: 5
-                // stepSize: 0.1
+                stepSize: 1,
             },
         }, {
             id: "y-axis-2",
             type: "linear",
             position: "right",
             ticks: {
-                // max: 1.5,
                 max: Math.round((Number(max_body_fat_percentage) + 1)),
-                // min: 0,
                 min: Math.round((Number(min_body_fat_percentage) - 1)),
-                stepSize: 0.5
+                stepSize: 0.5,
             },
             gridLines: {
                 drawOnChartArea: false,
@@ -276,6 +230,7 @@ window.onload = function() {
     ctx = document.getElementById("canvas").getContext("2d");
     window.myBar = new Chart(ctx, {
         type: 'bar',
+// barChartData、complexChartOptionを呼び出す　
         data: barChartData,
         options: complexChartOption
     });
@@ -285,9 +240,47 @@ window.onload = function() {
 
 
 <script>
+    //    data: ['75.3','70.1','70.1','70.3','70.4','70.2','65.65',
+    //         '65.2','65.3','65.11','65.5','65.2','65.5','62.4',
+    //         '62.62','62.3','62.7','62.3','62.6','62.4','62.9',
+    //         '60.7','60.4','60.8','60.7','60.4','60.7','60.8'
+    //     ],
+    //     data: ['10.3','10.1','10.1','10.3','10.4','10.2','10.0',
+    //         '10.2','10.3','10.11','10.5','10.2','10.5','10.4',
+    //         '10.0','10.3','10.7','10.3','10.6','10.4','10.9',
+    //         '10.7','10.4','10.8','10.7','10.4','10.7','10.8'
+    //     ],
+
+
+// // arr_json取得
+// var arrJson1 = $('.arr_json1').val();
+// try {
+// // arr_jsonをパースし配列にする
+//     var articles_one_month_date_j = JSON.parse(arrJson1);
+//     console.log('エラーではない!!!!');
+// } catch (error) {
+// 	//エラー時の処理
+//     console.log('エラー!!!!');
+// }
+
+// var arrJson2 = $('.arr_json2').val();
+// try {
+//     var articles_one_month_weight_j = JSON.parse(arrJson2);
+//     console.log('エラーではない!!!!');
+// } catch (error) {
+//     console.log('エラー!!!!');
+// }
+
+// var arrJson3 = $('.arr_json3').val();
+// try {
+//     var articles_one_month_body_fat_percentage_j = JSON.parse(arrJson3);
+//     console.log('エラーではない!!!!');
+// } catch (error) {
+//     console.log('エラー!!!!');
+// }
 // 配列から配列にする記述
 // var test = []
-// articles_30days_weight_j.forEach(article =>{
+// articles_one_month_weight_j.forEach(article =>{
 //     test.push(String(article))
 // });
 
@@ -297,29 +290,29 @@ window.onload = function() {
 // console.log('arrJson1のタイプ確認');
 // console.log(typeof(arrJson1));
 
-// console.log('articles_30days_date_jでJSON.parseができているか確認');
+// console.log('articles_one_month_date_jでJSON.parseができているか確認');
 // 確認用のログ出力
-// console.log('articles_30days_date_jの出力');
-// console.log(articles_30days_date_j);
-// console.log('articles_30days_date_jのタイプの出力');
-// console.log(typeof(articles_30days_date_j));
-// console.log('articles_30days_weight_jでJSON.parseができているか確認');
+// console.log('articles_one_month_date_jの出力');
+// console.log(articles_one_month_date_j);
+// console.log('articles_one_month_date_jのタイプの出力');
+// console.log(typeof(articles_one_month_date_j));
+// console.log('articles_one_month_weight_jでJSON.parseができているか確認');
 
-// console.log('articles_30days_weight_jの出力');
-// console.log(articles_30days_weight_j);
-// console.log('articles_30days_weight_jのタイプの出力');
-// console.log(typeof(articles_30days_weight_j));
+// console.log('articles_one_month_weight_jの出力');
+// console.log(articles_one_month_weight_j);
+// console.log('articles_one_month_weight_jのタイプの出力');
+// console.log(typeof(articles_one_month_weight_j));
 
 
 // 確認用のログ出力
-// console.log('articles_30days_body_fat_percentage_jの出力');
-// console.log(articles_30days_body_fat_percentage_j);
+// console.log('articles_one_month_body_fat_percentage_jの出力');
+// console.log(articles_one_month_body_fat_percentage_j);
 
-// console.log('articles_30days_body_fat_percentage_jの[1]のタイプの出力');
-// console.log(typeof(articles_30days_body_fat_percentage_j[1]));
+// console.log('articles_one_month_body_fat_percentage_jの[1]のタイプの出力');
+// console.log(typeof(articles_one_month_body_fat_percentage_j[1]));
 
-// console.log('articles_30days_body_fat_percentage_jのタイプの出力');
-// console.log(typeof(articles_30days_body_fat_percentage_j));
+// console.log('articles_one_month_body_fat_percentage_jのタイプの出力');
+// console.log(typeof(articles_one_month_body_fat_percentage_j));
 // console.log(typeof('0.155'));
 
 // console.log('testの出力');
@@ -330,20 +323,20 @@ window.onload = function() {
 
 
     // グラフ作成時のjs
-// articles_30days_weight_j = (string(articles_30days_weight_j)).split(',');
+// articles_one_month_weight_j = (string(articles_one_month_weight_j)).split(',');
 
-// articles_30days_weight_j = articles_30days_weight_j.map(function (e) {
+// articles_one_month_weight_j = articles_one_month_weight_j.map(function (e) {
 //     return e
 // });
 
-// articles_30days_weight_j = articles_30days_weight_j.map(function(value) {
+// articles_one_month_weight_j = articles_one_month_weight_j.map(function(value) {
 //     //配列の各値を返す
 //     return value;
 //     });
 // // 確認用のログ出力
 
 // arr_jsonをパースし配列にする
-// var articles_30days_weight_j = JSON.parse(arrJson2);
+// var articles_one_month_weight_j = JSON.parse(arrJson2);
 
 // test = ['63.155','60.118','61.121','61.068','61.083','60.060','60.067',
 //             '60.121','60.121','59.150','60.118','60.097','58.078','58.127',
@@ -365,7 +358,7 @@ window.onload = function() {
         // console.log(typeof(test[0]));
 
 
-        // data: articles_30days_weight_j,
+        // data: articles_one_month_weight_j,
         // data: ['0.155','0.118','0.121','0.068','0.083','0.060','0.067',
         //     '0.121','0.121','0.150','0.118','0.097','0.078','0.127',
         //     '0.155','0.140','0.101','0.140','0.041','0.093','0.189',
@@ -388,41 +381,41 @@ window.onload = function() {
 
 
 // // @sample = { a: 1, b: 2, c: 3 }
-// var articles_30days_date_j = <%= @articles_30days_date_j.to_json.html_safe %>;
+// var articles_one_month_date_j = <%= @articles_one_month_date_j.to_json.html_safe %>;
 // // const re = /(?<=\")[^,\s].*?(?=\")/g;
-// articles_30days_date_j = articles_30days_date_j.dataset.text.match(',');
-// // articles_30days_date_j = articles_30days_date_j.slice(1);
-// // articles_30days_date_j = articles_30days_date_j.slice(-1);
-// // articles_30days_date_j = articles_30days_date_j.dataset.text.split(',');
+// articles_one_month_date_j = articles_one_month_date_j.dataset.text.match(',');
+// // articles_one_month_date_j = articles_one_month_date_j.slice(1);
+// // articles_one_month_date_j = articles_one_month_date_j.slice(-1);
+// // articles_one_month_date_j = articles_one_month_date_j.dataset.text.split(',');
 
-// // articles_30days_date_j = articles_30days_date_j.split(',');
-// console.log(articles_30days_date_j);
-// console.log(typeof(articles_30days_date_j));
+// // articles_one_month_date_j = articles_one_month_date_j.split(',');
+// console.log(articles_one_month_date_j);
+// console.log(typeof(articles_one_month_date_j));
 
 
 
-// var articles_30days_weight_j = <%= @articles_30days_weight_j.to_json.html_safe %>;
-// articles_30days_weight_j = articles_30days_weight_j.split(',');
-// console.log(articles_30days_weight_j);
-// console.log(typeof(articles_30days_weight_j));
+// var articles_one_month_weight_j = <%= @articles_one_month_weight_j.to_json.html_safe %>;
+// articles_one_month_weight_j = articles_one_month_weight_j.split(',');
+// console.log(articles_one_month_weight_j);
+// console.log(typeof(articles_one_month_weight_j));
 
-// var articles_30days_body_fat_percentage_j = <%= @articles_30days_body_fat_percentage_j.to_json.html_safe %>;
-// articles_30days_body_fat_percentage_j = articles_30days_body_fat_percentage_j.split(',');
-// console.log(articles_30days_body_fat_percentage_j);
-// console.log(typeof(articles_30days_body_fat_percentage_j));
+// var articles_one_month_body_fat_percentage_j = <%= @articles_one_month_body_fat_percentage_j.to_json.html_safe %>;
+// articles_one_month_body_fat_percentage_j = articles_one_month_body_fat_percentage_j.split(',');
+// console.log(articles_one_month_body_fat_percentage_j);
+// console.log(typeof(articles_one_month_body_fat_percentage_j));
 
 // #=> Object {a: 1, b: 2, c: 3}
 // console.log(test.a);
 // #=> 1
 
-// var test = #{{@articles_30days_date.to_json}};
-// var articles_30days_date = #{{@articles_30days_date.to_json}};
-// var articles_30days_weight = #{{@articles_30days_weight.to_json}};
-// var articles_30days_body_fat_percentage = #{{@articles_30days_body_fat_percentage.to_json}};
+// var test = #{{@articles_one_month_date.to_json}};
+// var articles_one_month_date = #{{@articles_one_month_date.to_json}};
+// var articles_one_month_weight = #{{@articles_one_month_weight.to_json}};
+// var articles_one_month_body_fat_percentage = #{{@articles_one_month_body_fat_percentage.to_json}};
 
-// var articles_30days_date = #{{@articles_30days_date_j}};
-// var articles_30days_weight = @articles_30days_weight
-// var articles_30days_body_fat_percentage = @articles_30days_body_fat_percentage
+// var articles_one_month_date = #{{@articles_one_month_date_j}};
+// var articles_one_month_weight = @articles_one_month_weight
+// var articles_one_month_body_fat_percentage = @articles_one_month_body_fat_percentage
 
 
 

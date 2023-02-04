@@ -4,8 +4,9 @@ class Article < ApplicationRecord
     has_many :comments, dependent: :destroy
 
     validates :date, presence: true
-    validates :weight, presence: true
-    validates :body_fat_percentage, presence: true
+    # 1ヶ月ごとの日付データを作成する際にエラーになるためコメントアウト
+    # validates :weight, presence: true
+    # validates :body_fat_percentage, presence: true
 
     validates :meal_morning, length: { maximum: 50 }
     validates :meal_lunch, length: { maximum: 50 }
@@ -34,32 +35,6 @@ class Article < ApplicationRecord
             where("date >= ?", date_from)
         end
     end
-
-    # def self.articles_30days_date(articles_30days)
-    #     @articles_30days_date = []
-    #     @articles_30days_weight = []
-    #     @articles_30days_body_fat_percentage = []
-    #     articles_30days.each do |article|
-    #         @articles_30days_date << article.date
-    #         @articles_30days_weight << article.weight
-    #         @articles_30days_body_fat_percentage << article.body_fat_percentage
-    #     end
-    #     @articles_30days_date_j = @articles_30days_date.to_json.html_safe
-    #     @articles_30days_weight_j = @articles_30days_weight.to_json.html_safe
-    #     @articles_30days_body_fat_percentage_j = @articles_30days_body_fat_percentage.to_json.html_safe
-
-    #     @max_weight = @articles_30days_weight.max
-    #     @min_weight = @articles_30days_weight.min
-    #     @max_body_fat_percentage = @articles_30days_body_fat_percentage.max
-    #     @min_body_fat_percentage = @articles_30days_body_fat_percentage.min
-    # end
-
-
-
-
-
-
-
 end
 
         # where(["meal_morning like? OR meal_lunch like? OR meal_dinner like? OR meal_snack like? OR exercise like? OR memo like?",

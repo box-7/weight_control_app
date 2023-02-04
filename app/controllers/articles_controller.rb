@@ -1,6 +1,5 @@
 class ArticlesController < ApplicationController
 
-  before_action :set_one_month, only: [:create]
   before_action :correct_article_user_or_admin, only: [:destroy]
   before_action :correct_article_user, only: [:edit, :update]
 
@@ -19,7 +18,7 @@ class ArticlesController < ApplicationController
     end
     @comment = Comment.new
 
-# グラフの年月を絞り込む
+# (1)グラフの年月を絞り込む場合
     if params[:"year_month(1i)"]
       year = params[:"year_month(1i)"]
       month = params[:"year_month(2i)"]
@@ -37,15 +36,17 @@ class ArticlesController < ApplicationController
 
       @first_day = "#{year}年 #{month}月"
       @articles_graph = Article.where(user_id: @user.id)
-      @articles_30days = @articles_graph.where(date: first_day.in_time_zone.all_month).order(date: "ASC")
+      @articles_one_month = @articles_graph.where(date: first_day.in_time_zone.all_month).order(date: "ASC")
       # コントローラーの下部でメソッドを定義
-      @articles_30days_date = articles_30days_date(@articles_30days)
+      @articles_one_month_date = articles_one_month_date(@articles_one_month)
 
       render "index"
 
-# キーワード検索、日付での絞り込み検索
+# (2)キーワード検索、日付での絞り込み検索の場合
     else
-      @first_day = params[:first_day] if params[:first_day]
+      if params[:first_day]
+        @first_day = params[:first_day]
+      end
 
       # キーワードがある場合
       if params[:keyword] != ""
@@ -58,34 +59,26 @@ class ArticlesController < ApplicationController
       elsif params[:date_from] != "" || params[:date_to] != ""
         @articles = @articles.user_articles_search(params[:date_from], params[:date_to]).order(date: "DESC")
       end
-# キーワード検索、日付での絞り込み検索の時に、すでに表示されていたグラフがある場合、params[:articles_30days]を渡し表示する
-      if params[:articles_30days]
-        @articles_30days = []
-        params[:articles_30days].each do |article|
-          new_article = Article.find_by(id: article[:id])
-          @articles_30days.push(new_article)
+# 「グラフデータがありません」の場合、先にこちらを読み込ませる
+      if params[:articles_one_month_date]
+        @month = Date.today
+        @articles_one_month = Article.where(user_id: @user.id, date: @month.in_time_zone.all_month).order(date: "ASC")
+# すでに表示されていたグラフがある場合、params[:articles_one_month]を渡し表示する
+      elsif params[:articles_one_month]
+        @articles_one_month = []
+        params[:articles_one_month].each do |article|
+          new_article = Article.find(article[:id])
+            # new_article = Article.find_by(user_id: @user.id, id: article.user_id)
+          @articles_one_month.push(new_article)
         end
       else
-# キーワード検索、日付での絞り込み検索の時に、すでに表示されていたグラフがない場合、グラフ表示のための変数を定義
+# すでに表示されていたグラフがない場合、グラフ表示のための変数を定義
         @month = Date.today
-        @articles_30days = Article.where(date: @month.in_time_zone.all_month).order(date: "ASC")
+        @articles_one_month = Article.where(user_id: @user.id, date: @month.in_time_zone.all_month).order(date: "ASC")
       end
-      @articles_30days_date = articles_30days_date(@articles_30days)
+      @articles_one_month_date = articles_one_month_date(@articles_one_month)
       render "index"
     end
-  end
-
-
-  def index
-    @user = User.find(params[:user_id])
-    @articles = Article.where(user_id: params[:user_id])
-    @comment = Comment.new
-    @month = Date.today
-    @articles_30days = Article.where(date: @month.in_time_zone.all_month).order(date: "ASC")
-
-    @articles_30days_date = articles_30days_date(@articles_30days)
-# indexアクションを叩いた時、グラフが表示されない。更新ボタンを押せば表示される
-    # render "index"
   end
 
 
@@ -100,18 +93,44 @@ class ArticlesController < ApplicationController
     end
   end
 
+
   def create
-    @article = Article.new(article_params)
-    if Article.where(user_id: @article.user.id, date: @article.date) != []
-      flash.now[:danger] = "同じ計測日の投稿はできません。"
-      @user = current_user
+    @user = current_user
+    if params[:article][:date].empty? || params[:article][:weight].empty? || params[:article][:body_fat_percentage].empty?
+      flash.now[:danger] = "計測日、体重、体脂肪率は入力必須項目です"
+      @article = Article.new(article_params)
       return render :new
     end
+
+    @first_day = params[:article][:date].to_date.beginning_of_month
+    check_articles_month = Article.where(user_id: params[:user_id], date: @first_day)
+    # check_articles_monthが存在しない場合、その月の1ヶ月分のデータを作成
+    unless check_articles_month.present?
+      set_one_month
+    end
+    check_same_day_article = Article.find_by(user_id: params[:user_id], date: params[:article][:date])
+
+    if check_same_day_article.weight != nil
+      @article = Article.new(article_params)
+      flash.now[:danger] = "同じ計測日の投稿はできません。"
+      return render :new
+    end
+
+    @article = Article.find_by(user_id:@user.id, date: params[:article][:date])
+# seedデータと矛盾するので一旦グレーアウト
+    # if @article.date >= Date.tomorrow
+    #   @article = Article.new(article_params)
+    #   flash.now[:danger] = "未来日付の投稿はできません。"
+    #   @user = current_user
+    #   return render :new
+    # end
+
+    @article.update_attributes(article_params)
+
     if @article.save
-      flash[:success] = '新規投稿しました。' # フラッシュメッセージを渡す
-      redirect_to user_article_path(user_id:@article.user_id, id:@article.id)
+      flash[:success] = "投稿を更新しました"
+      redirect_to user_article_path(user_id: @article.user_id, id: @article.id)
     else
-      @user = current_user
       render :new
     end
   end
@@ -126,13 +145,30 @@ class ArticlesController < ApplicationController
 
 
   def edit
-    @article = Article.find_by(params[:user_id], params[:id])
+    # @article = Article.find_by(params[:user_id], params[:id])と記述していて更新すると自分以外の投稿になってエラー
+    @article = Article.find_by(user_id: params[:user_id], id: params[:id])
   end
 
 
   def update
-    # createとは異なり、find文が必要
     @article = Article.find(params[:id])
+    @user = current_user
+
+    if params[:article][:date].empty? || params[:article][:weight].empty? || params[:article][:body_fat_percentage].empty?
+      flash.now[:danger] = "計測日、体重、体脂肪率は入力必須項目です"
+      @article = Article.new(article_params)
+
+      return render :edit
+    end
+
+# seedデータと矛盾するので一旦グレーアウト
+    # if @article.date >= time.tomorrow
+    #   @article = Article.new(article_params)
+    #   flash.now[:danger] = "未来日付の投稿はできません。"
+    #   @user = current_user
+    #   return render :edit
+    # end
+
     @article.update_attributes(article_params)
     if @article.save
       flash[:success] = "投稿を更新しました"
@@ -154,26 +190,42 @@ class ArticlesController < ApplicationController
     end
   end
 
-  def articles_30days_date(articles_30days)
-    @articles_30days_date = []
-    @articles_30days_weight = []
-    @articles_30days_body_fat_percentage = []
-    articles_30days.each do |article|
-        @articles_30days_date << article.date
-        @articles_30days_weight << article.weight
-        @articles_30days_body_fat_percentage << article.body_fat_percentage
-    end
-# コントローラーからビューへ配列を渡すために、「.to_json.html_safe」を使う
-    @articles_30days_date_j = @articles_30days_date.to_json.html_safe
-    @articles_30days_weight_j = @articles_30days_weight.to_json.html_safe
-    @articles_30days_body_fat_percentage_j = @articles_30days_body_fat_percentage.to_json.html_safe
 
-    @max_weight = @articles_30days_weight.max
-    @min_weight = @articles_30days_weight.min
-    @max_body_fat_percentage = @articles_30days_body_fat_percentage.max
-    @min_body_fat_percentage = @articles_30days_body_fat_percentage.min
+  def index
+    @user = User.find(params[:user_id])
+    @articles = Article.where(user_id: params[:user_id]).where.not(weight: nil)
+    @comment = Comment.new
+    @month = Date.today
+# user_id: @user.idの指定が漏れていたのでグラフが複数の違う人たちのデータを引っ張ってしまった
+    @articles_one_month = Article.where(user_id: @user.id, date: @month.in_time_zone.all_month).order(date: "ASC")
+    @articles_one_month_date = articles_one_month_date(@articles_one_month)
+# indexアクションを叩いた時、グラフが表示されない。更新ボタンを押せば表示される
+    # render "index"
+  end
+
+
+  def articles_one_month_date(articles_one_month)
+    @articles_one_month_date = []
+    @articles_one_month_weight = []
+    @articles_one_month_body_fat_percentage = []
+    articles_one_month.each do |article|
+        @articles_one_month_date << article.date
+        @articles_one_month_weight << article.weight
+        @articles_one_month_body_fat_percentage << article.body_fat_percentage
+    end
+
+# コントローラーからビューへ配列を渡すために、「.to_json.html_safe」を使う
+    @articles_one_month_date_j = @articles_one_month_date.to_json.html_safe
+    @articles_one_month_weight_j = @articles_one_month_weight.to_json.html_safe
+    @articles_one_month_body_fat_percentage_j = @articles_one_month_body_fat_percentage.to_json.html_safe
+
+    @max_weight = @articles_one_month_weight.compact.max
+    @min_weight = @articles_one_month_weight.compact.min
+    @max_body_fat_percentage = @articles_one_month_body_fat_percentage.compact.max
+    @min_body_fat_percentage = @articles_one_month_body_fat_percentage.compact.min
   end
 end
+
 
   private
 
@@ -191,16 +243,15 @@ end
 
     # if params[:keyword] != "" || (params[:date_from] != "" || params[:date_to] != "")
 
-
           # if params[:"year_month(2i)"] == 1
         #   month = Jan
         # end
-        # @articles_30days = @articles.where("date LIKE?": params[:"year_month(1i)"], date: month]).order(date: "ASC")
-        # @articles_30days = @articles.where("date LIKE?": '%#{params[:"year_month(1i)"]}%', "date LIKE?": month).order(date: "ASC")
+        # @articles_one_month = @articles.where("date LIKE?": params[:"year_month(1i)"], date: month]).order(date: "ASC")
+        # @articles_one_month = @articles.where("date LIKE?": '%#{params[:"year_month(1i)"]}%', "date LIKE?": month).order(date: "ASC")
 
 
 
-    # @articles_30days = []
+    # @articles_one_month = []
     # today_date = Date.today
     # 30.times.each do |i|
     #   # 30日前からの昇順にするための書き方
@@ -210,31 +261,62 @@ end
     #     article = Article.create(date: today_date - 30 + i, weight: '', body_fat_percentage: '' )
 
     #   end
-    #   @articles_30days << article
+    #   @articles_one_month << article
     # end
 
 
-      # @articles_30days_date = []
-      # @articles_30days_weight = []
-      # @articles_30days_body_fat_percentage = []
-      # @articles_30days.each do |article|
-      #   @articles_30days_date << article.date
-      #   @articles_30days_weight << article.weight
-      #   @articles_30days_body_fat_percentage << article.body_fat_percentage
+      # @articles_one_month_date = []
+      # @articles_one_month_weight = []
+      # @articles_one_month_body_fat_percentage = []
+      # @articles_one_month.each do |article|
+      #   @articles_one_month_date << article.date
+      #   @articles_one_month_weight << article.weight
+      #   @articles_one_month_body_fat_percentage << article.body_fat_percentage
       # end
-      # @articles_30days_date_j = @articles_30days_date.to_json.html_safe
-      # @articles_30days_weight_j = @articles_30days_weight.to_json.html_safe
-      # @articles_30days_body_fat_percentage_j = @articles_30days_body_fat_percentage.to_json.html_safe
+      # @articles_one_month_date_j = @articles_one_month_date.to_json.html_safe
+      # @articles_one_month_weight_j = @articles_one_month_weight.to_json.html_safe
+      # @articles_one_month_body_fat_percentage_j = @articles_one_month_body_fat_percentage.to_json.html_safe
 
-      # @max_weight = @articles_30days_weight.max
-      # @min_weight = @articles_30days_weight.min
-      # @max_body_fat_percentage = @articles_30days_body_fat_percentage.max
-      # @min_body_fat_percentage = @articles_30days_body_fat_percentage.min
+      # @max_weight = @articles_one_month_weight.max
+      # @min_weight = @articles_one_month_weight.min
+      # @max_body_fat_percentage = @articles_one_month_body_fat_percentage.max
+      # @min_body_fat_percentage = @articles_one_month_body_fat_percentage.min
 
     # 取得した時刻が含まれる月の範囲のデータを取得
-    # if @articles_30days == nil
-    #   # @articles_30days = @articles.where(date: @month.all_month).order(date: "ASC")
-    #   # @articles_30days = Article.where(date: @month.in_time_zone.all_month).order(date: "ASC")
+    # if @articles_one_month == nil
+    #   # @articles_one_month = @articles.where(date: @month.all_month).order(date: "ASC")
+    #   # @articles_one_month = Article.where(date: @month.in_time_zone.all_month).order(date: "ASC")
     #   # @month = Date.today
-    #   @articles_30days = Article.where(date: @month.in_time_zone.all_month).order(date: "ASC")
+    #   @articles_one_month = Article.where(date: @month.in_time_zone.all_month).order(date: "ASC")
+    # end
+
+
+
+    # def create
+    #   # binding.pry
+    #   # @article = Article.new(article_params)
+    #   # # if Article.where(user_id: @article.user.id, date: @article.date) != []
+    #   # #   flash.now[:danger] = "同じ計測日の投稿はできません。"
+    #   # #   @user = current_user
+    #   # #   return render :new
+    #   # # end
+    #   # if @article.save
+    #   #   flash[:success] = '新規投稿しました。' # フラッシュメッセージを渡す
+    #   #   redirect_to user_article_path(user_id:@article.user_id, id:@article.id)
+    #   # else
+    #   #   @user = current_user
+    #   #   render :new
+    #   # end
+  
+    #   # createとは異なり、find文が必要
+    #   binding.pry
+    #   @article = Article.new
+    #   @article = Article.find_by(date: [:article][:date])
+    #   @article.update_attributes(article_params)
+    #   if @article.save
+    #     flash[:success] = "投稿を更新しました"
+    #     redirect_to user_article_path(user_id:@article.user_id, id:@article.id)
+    #   else
+    #     render :edit
+    #   end
     # end
