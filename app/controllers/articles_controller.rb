@@ -40,6 +40,17 @@ class ArticlesController < ApplicationController
       # コントローラーの下部でメソッドを定義
       @articles_one_month_date = articles_one_month_date(@articles_one_month)
 
+      # 検索国の絞り込みのインスタンス変数を渡す html側ではそれぞれparams[:keyword]などで受け取れる
+      if params[:keyword]
+        @keyword = params[:keyword]
+      end
+      if params[:date_from] 
+        @date_from = params[:date_from] 
+      end
+      if params[:date_to]
+        @keyword = params[:date_to]
+      end
+
       render "index"
 
 # (2)キーワード検索、日付での絞り込み検索の場合
@@ -77,6 +88,12 @@ class ArticlesController < ApplicationController
         @articles_one_month = Article.where(user_id: @user.id, date: @month.in_time_zone.all_month).order(date: "ASC")
       end
       @articles_one_month_date = articles_one_month_date(@articles_one_month)
+
+      # 年月絞り込みのインスタンス変数を渡す html側ではparams[:description_first_day]で受け取れる
+      if params[:description_first_day]
+        @description_first_day = params[:description_first_day]
+      end
+
       render "index"
     end
   end

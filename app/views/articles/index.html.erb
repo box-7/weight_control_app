@@ -11,16 +11,27 @@
 
 <%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
     <div class="field">
-    <%# オプション :use_month_numbers 月を数字で表示,:discard_day 日の選択ボックスを非表示, include_blank: true 空を含めて表示→不要 %>
-    <% if @description_first_day %>
-        <%= f.date_select:year_month , start_year: 2020, use_month_numbers: true, discard_day: true, selected: @description_first_day.to_date %>
-    <% else %>
-        <%= f.date_select:year_month , start_year: 2020, use_month_numbers: true, discard_day: true %>
-    <% end %>
-        <%= f.hidden_field :user_id, value: params[:user_id] %>
-<%# コントローラーに配列を渡す %>
-        <% @articles.each do |article| %>
-            <%= hidden_field_tag 'articles[][id]', article.id %>
+        <%# オプション :use_month_numbers 月を数字で表示,:discard_day 日の選択ボックスを非表示, include_blank: true 空を含めて表示→不要 %>
+        <% if @description_first_day %>
+            <%= f.date_select:year_month , start_year: 2020, use_month_numbers: true, discard_day: true, selected: @description_first_day.to_date %>
+        <% else %>
+            <%= f.date_select:year_month , start_year: 2020, use_month_numbers: true, discard_day: true %>
+        <% end %>
+            <%= f.hidden_field :user_id, value: params[:user_id] %>
+    <%# コントローラーに配列を渡す %>
+            <% @articles.each do |article| %>
+                <%= hidden_field_tag 'articles[][id]', article.id %>
+            <% end %>
+
+        <%# 検索語句絞り込みのインスタンス変数を渡す %>
+        <% if params[:keyword] %>
+            <%= f.hidden_field :keyword, value: params[:keyword] %>
+        <% end %>
+        <% if params[:date_from] %>
+            <%= f.hidden_field :date_from, value: params[:date_from] %>
+        <% end %>
+        <% if params[:date_to] %>
+            <%= f.hidden_field :date_to, value: params[:date_to] %>
         <% end %>
     </div>
     <%= f.submit "検索" %>
@@ -51,6 +62,11 @@
     <div class="field">
         <%= f.date_field :date_from, value: params[:date_from] %> ~ <%= f.date_field :date_to, value: params[:date_to] %>
     </div>
+
+    <%# 年月絞り込みのインスタンス変数を渡す %>
+    <% if @description_first_day %>
+        <%= f.hidden_field :description_first_day, value: @description_first_day %>
+    <% end %>
     <%= f.submit "検索" %>
 <% end %>
 
