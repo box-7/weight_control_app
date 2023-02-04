@@ -1,0 +1,7 @@
+<h2><%= current_user.name + 'のお気に入り一覧' %></h2>
+
+<% @users.each do |user| %>
+    <P>
+        <%= link_to user.name, user_path(user.id) %>
+    </p>
+<% end %>

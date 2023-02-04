@@ -27,7 +27,7 @@ publicフォルダに画像がある場合は、画像ファイル名のみでOK
 </p>
 
 <p>ニックネーム</p>
-<p><%= @article.user.name %></p>
+<%= link_to @article.user.name, user_path(@article.user_id) %>
 
 <p>計測日</p>
 <p><%= @article.date %></p>

@@ -11,7 +11,7 @@
                     <%# アソシエーションのモデルで、idを指定したリンクは引数が2つ必要 %>
                     <li><%= link_to "新規投稿", new_user_article_path(user_id: @current_user.id) %></li>
                     <li><%= link_to "自分の投稿一覧", user_articles_path(user_id: @current_user.id) %></li>
-                    <li><%= link_to "お気に入りユーザー一覧", "#" %></li>
+                    <li><%= link_to "お気に入りユーザー一覧", relationships_path(current_user) %></li>
                     <li><%= link_to "プロフィール", user_path(@current_user.id) %></li>
                     <li><%= link_to "ログアウト", logout_path, method: :delete %></li>
                 <% else %>
