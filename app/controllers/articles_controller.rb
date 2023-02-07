@@ -48,7 +48,7 @@ class ArticlesController < ApplicationController
         @date_from = params[:date_from] 
       end
       if params[:date_to]
-        @keyword = params[:date_to]
+        @date_to = params[:date_to]
       end
 
       render "index"
