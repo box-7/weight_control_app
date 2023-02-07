@@ -5,10 +5,11 @@
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
         <%# アソシエーションのモデルでform_withを使うためには、urlの指定が必要 %>
-        <%= form_with(model: @article, url: user_article_path, local: true) do |f| %>
 
-            <%# エラーメッセージを読み込む , multipart: true%>
-            <%= render 'shared/error_article_messages' %>
+        <%= form_with(model: @article, url: user_article_path(user_id: @article.user_id, id: @article.id), local: true) do |f| %>
+            <%# エラーメッセージを読み込む %>
+            <%= render 'shared/error_messages' %>
+
             <p>
                 <label class="form-image">
                     <%# /user_images(フォルダ名)/#{@user.image(画像ファイル名)}
@@ -22,8 +23,9 @@
                 </label>
             </p>
             <p>
+                <%# 日付の変更はできないようにする %>
                 <%= f.label :date %>
-                <%= f.date_field :date %>
+                <%= f.date_field :date, readonly: true %> ※日付編集不可
             </p>
 
             <p>

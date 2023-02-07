@@ -4,8 +4,9 @@ class Article < ApplicationRecord
     has_many :comments, dependent: :destroy
 
     validates :date, presence: true
-    validates :weight, presence: true
-    validates :body_fat_percentage, presence: true
+    # 1ヶ月ごとの日付データを作成する際にエラーになるためコメントアウト
+    # validates :weight, presence: true
+    # validates :body_fat_percentage, presence: true
 
     validates :meal_morning, length: { maximum: 50 }
     validates :meal_lunch, length: { maximum: 50 }

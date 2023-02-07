@@ -47,8 +47,13 @@ publicフォルダに画像がある場合は、画像ファイル名のみでOK
 <%# 目標体重との際の項目を入れるかなど、詳細は後で決めます %>
 <%# @article_one_month_agoに値がない場合、nilになる %>
 <p>1ヶ月前との比較</p>
+<%
+=begin %>
 <% if @article_one_month_ago != nil %>
-    <p> <%= @article_one_month_ago.weight - @article.weight %></p>
+<%
+=end %>
+<% if @article_one_month_ago && @article %>
+    <p> <%= (@article_one_month_ago.weight).to_i - (@article.weight).to_i %></p>
 <% else %>
     <p> -データなし- </p>
 <% end %>

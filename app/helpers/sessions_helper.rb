@@ -30,7 +30,8 @@ module SessionsHelper
     end
 
     def current_user?(user)
-        user == current_user
+        # user == current_userだと、それぞれの中身が違うためエラーになる
+        user.id == current_user.id
     end
 
     # ヘルパーメソッド（logged_in?）
