@@ -1,5 +1,60 @@
 
 <% provide(:title, 'Sign up') %>
+
+
+
+<main class="position-relative">
+    <div class="form-signin position-absolute top-50 start-50 translate-middle">
+        <div class="text-center mb-4">
+            <h1 class="h3 mb-3 font-weight-normal">SIGN UP</h1>
+            <div class="text-center mb-4">
+                <%= form_with(model: @user, local: true) do |f| %>
+                    <%# エラーメッセージを読み込む %>
+                    <%= render 'shared/error_messages' %>
+                    <div class="mb-3">
+                        <p><%= f.label :name %></p>
+                        <%= f.text_field :name, class: 'form-control', required:true , autofocus:true %>
+                    </div>
+                    <div class="mb-3">
+                        <%= f.label :email %>
+                        <%= f.email_field :email, class: 'form-control', required:true %>
+                    </div>
+                    </div><div class="mb-3">
+                        <%= f.label :password %>
+                        <%= f.password_field :password, class: 'form-control', required:true %>
+                    </div>
+                    <div class="mb-3">
+                        <%= f.label :password_confirmation %>
+                        <%= f.password_field :password_confirmation, class: 'form-control', required:true %>
+                    </div>
+                    <div><%= f.submit "SIGN UP", class: "btn btn-primary btn-block btn-signup" %></div>
+                <% end %>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<%
+=begin %>
+
+            <p>
+                <%= f.label :email %>
+                <%= f.email_field :email %>
+            </p>
+            <p>
+                <%= f.label :password %>
+                <%= f.password_field :password %>
+            </p>
+            <p>
+                <%= f.label :password_confirmation %>
+                <%= f.password_field :password_confirmation %>
+            </p>
+
+            <%= f.submit "新規作成", class: "btn btn-primary btn-block btn-signup" %>
+        <% end %>
+
+
 <h1>ユーザー登録</h1>
 
 <div class="row">
@@ -31,3 +86,34 @@
         <% end %>
     </div>
 </div>
+----------------------
+<main class="position-relative">
+    <div class="form-signin position-absolute top-50 start-50 translate-middle">
+        <div class="text-center mb-4">
+            <h1 class="h3 mb-3 font-weight-normal">SIGN UP</h1>
+            <div class="text-center mb-4">
+                <%= form_with(scope: :session, url: login_path, local: true) do |f| %>
+                    <%# # label要素のfor属性は、ラベル付け対象であるラベル付け可能フォーム関連要素のid属性値を指定する属性。 %>
+                    <%= f.label :email %>
+                    <%= f.email_field :email, class: 'form-control', required:true , autofocus:true %>
+
+                    <%= f.label :password %>
+                    <%= f.password_field :password, class: 'form-control', required:true %>
+
+                    <div class="checkbox mb-3">
+                        <%= f.label :remember_me, class: "checkbox inline checkbox-login", for: "remember-me" do %>
+                            <%= f.check_box :remember_me, id: "remember-me" %>
+                            <span>Remember me</span>
+                        <% end %>
+                    </div>
+                    <div><%= f.submit "LOG IN", class: "btn btn-primary btn-block btn-login" %></div>
+                <% end %>
+                <div>ユーザー登録がまだの場合は<%= link_to "こちら", signup_path %></div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<%
+=end %>

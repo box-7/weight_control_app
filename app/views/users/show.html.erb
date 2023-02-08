@@ -1,5 +1,90 @@
 <% provide(:title, @user.name) %>
 
+<main>
+    <div class="form-signin">
+        <div class="text-center mb-4">
+            <h1 class="h3 mb-3 font-weight-normal">USER EDIT</h1>
+            <div class="text-center mb-4">
+                <div class="mb-3">
+                    <label class="form-image">
+                        <%# /user_images/:フォルダ名、#{@user.image}:画像ファイル名 publicフォルダに画像がある場合は、画像ファイル名のみでOK
+                        今回はuser_imagesフォルダを作成しているのでフォルダ名をつける 本の画像がdefault画像とそれ以外の時で条件分岐 %>
+                        <% if @user.image == "default.png" %>
+                            <span class="image-file"><%= image_tag "/user_images/#{@user.image}", size: '150x150' %></span>
+                        <% else %>
+                            <span class="image-file"><%= image_tag "/user_images/user_#{@user.id}.png", size: '150x150' %></span>
+                        <% end %>
+                    </label>
+                </div>
+
+                <div class="mb-3">
+                    <% if current_user %>
+                        <% unless current_user.id == @user.id %>
+                            <% if current_user.following?(@user) %>
+                                <%= link_to "フォロー外す", user_relationships_path(@user.id), method: :delete %>
+                            <% else %>
+                                <%= link_to "フォローする", user_relationships_path(@user.id), method: :post %>
+                            <% end %>
+                        <% end %>
+                    <% end %>
+                </div>
+                <div class="mb-3">
+                    <%= render 'relationships/follow_list', user: @user %>
+                </div>
+
+                <%= form_with(model: @user, local: true) do |f| %>
+
+                    <fieldset disabled>
+                        <div class="mb-3">
+                            <%= f.label :name %>
+                            <%= f.text_field :name, class: 'form-control disabled' %>
+                        </div>
+
+                        <div class="mb-3">
+                            <%= f.label :self_introduction %>
+                            <%= f.text_area :self_introduction, class: 'form-control disabled', rows:"5" %>
+                        </div>
+                        <div class="mb-3">
+                            <%= f.label :target_weight %>
+                            <%= f.number_field :target_weight, step: "0.1", class: 'form-control disabled' %>
+                        </div>
+                        <div class="mb-3">
+                            <%= f.label :target_body_fat_percentage %>
+                            <%= f.number_field :target_body_fat_percentage, step: "0.1", class: 'form-control disabled' %>
+                        </div>
+                    </fieldset>
+                <% end %>
+
+                <div class="mb-3">
+                    <% if logged_in? %>
+                        <% if current_user.admin %>
+                            <%= link_to "編集", edit_user_path(@user.id), class: "btn btn-info" %>
+                            <%= link_to "削除", user_path(@user.id), class: "btn btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                        <% elsif current_user.id == @user.id %>
+                            <%= link_to "編集", edit_user_path(@user.id), class: "btn btn-info" %>
+                            <%= link_to "削除", user_path(@user.id), class: "btn btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                        <% end %>
+                    <% end %>
+                </div>
+
+                <div>
+                    <%= link_to "ユーザーの投稿一覧", user_articles_path(@user.id), class: "btn btn-secondary" %>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+
+<%
+=begin %>
+
+                    <div class="mb-3">
+                        <%= f.label :name %>
+                        <%= f.text_field :name, class: 'form-control' %>
+                    </div>
+
 <h1>プロフィール詳細</h1>
 
 <%# /user_images/:フォルダ名、#{@user.image}:画像ファイル名
@@ -66,4 +151,5 @@ publicフォルダに画像がある場合は、画像ファイル名のみでOK
 <div>
     <%= link_to "ユーザーの投稿一覧", user_articles_path(@user.id), class: "btn btn-info" %>
 </div>
-
+<%
+=end %>
