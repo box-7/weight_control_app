@@ -1,4 +1,4 @@
-<% provide(:title, "articles top") %>
+<% provide(:title, "User Articles Top") %>
 
 <main>
     <header class="bg-primary bg-gradient text-white">
@@ -45,7 +45,7 @@
                     </div>
 
                     <div class="align-items-end">
-                        <h4 class="mb-3">記事をキーワード、日付で検索</4>
+                        <h4 class="mb-3">キーワード、日付で投稿検索</4>
                         <%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
                             <div class="field mb-3">
                                 <%= f.text_field :keyword, value: params[:keyword] %>
