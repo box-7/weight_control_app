@@ -3,14 +3,16 @@
 <main>
     <header class="bg-primary bg-gradient text-white">
         <div class="container px-4 text-center">
-            <h1 class="fw-bolder">　</h1> <%# Please Enter Keywordsの文字は見えていないが、消すと体裁が崩れるの空白で残す %>
-            <p class="lead">You can search by username, meal, exercise, or notes</p>
-            <%# <a class="btn btn-lg btn-light" href="#about">Start scrolling!</a> "%>
-            <div class="search-form">
-                <%= form_with url: articles_search_path, method: :get, local: true do |f| %>
-                    <%= f.text_field :keyword, value: @keyword, class: "search-box" %>
-                    <%= f.submit "SEARCH", class: "btn-outline-success text-nowrap" %>
-                <% end %>
+            <div class="top-page-margin">
+                <%# <h1 class="fw-bolder">　</h1> Please Enter Keywordsの文字は見えていないが、消すと体裁が崩れるの空白で残す %>
+                <p class="lead">You can search by username, meal, exercise, or notes</p>
+                <%# <a class="btn btn-lg btn-light" href="#about">Start scrolling!</a> "%>
+                <div class="search-form">
+                    <%= form_with url: articles_search_path, method: :get, local: true do |f| %>
+                        <%= f.text_field :keyword, value: @keyword, class: "search-box" %>
+                        <%= f.submit "SEARCH", class: "btn-outline-success text-nowrap" %>
+                    <% end %>
+                </div>
             </div>
         </div>
     </header>
