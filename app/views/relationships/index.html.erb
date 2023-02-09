@@ -1,3 +1,91 @@
+
+
+<% provide(:title, 'All Users') %>
+<%# 文字は見えていないが、消すと体裁が崩れるの空白で残す %>
+<h2 class="articles_list">　</h2>
+
+<main>
+    <header class="bg-primary bg-gradient text-white">
+        <div class="container px-4 text-center">
+        <%# <h3 class="articles_list px-4 mt-5 text-center"><%= "ユーザー一覧(管理者専用画面)" 　　</h3> %>
+            <h3 class="articles_list px-4 text-center"><%= current_user.name + " フォローユーザー一覧" %></h3>
+            <%# <div class="top-page-margin"> %>
+            <div>
+
+                <p class="lead">You can search by username, meal, exercise, or notes</p>
+                <%# <a class="btn btn-lg btn-light" href="#about">Start scrolling!</a> "%>
+                <div class="search-form">
+                    <%= form_with url: users_search_path, method: :get, local: true do |f| %>
+                        <%= f.text_field :keyword, value: @keyword %>
+                        <%= f.submit "検索" %>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">画像</th>
+                    <th scope="col">名前</th>
+                    <th scope="col">フォロー</th>
+                    <th scope="col">自己紹介</th>
+                    <th scope="col">目標体重</th>
+                    <th scope="col">目標体脂肪率</th>
+                    <th scope="col">投稿一覧</th>
+                    <%# <th scope="col">操作</th> %>
+                </tr>
+            </thead>
+            <tbody>
+                <% if @users.count == 0 %>
+                    <td colspan="7">
+                        <%= "フォローしているユーザーはいません" %>
+                    </td>
+                <% else %>
+                    <% @users.each_with_index do |user, i| %>
+                        <tr>
+                            <td>
+                                <% if user.image == "default.png" %>
+                                    <%= image_tag "/user_images/#{user.image}", size: '75x75' %>
+                                <% else %>
+                                    <%= image_tag "/user_images/user_#{user.id}.png", size: '75x75' %>
+                                <% end %>
+                            </td>
+                            <td><%= link_to user.name, user_path(user.id) %></td>
+
+                            <td>
+                                <% if current_user %>
+                                    <% unless current_user.id == user.id %>
+                                        <% if current_user.following?(user) %>
+                                            <%= link_to "フォロー外す", user_relationships_path(user.id), method: :delete %>
+                                        <% else %>
+                                            <%= link_to "フォローする", user_relationships_path(user.id), method: :post %>
+                                        <% end %>
+                                    <% end %>
+                                <% end %>
+                            </td>
+                            <td><%= user.self_introduction %></td>
+                            <td><%= user.target_weight %></td>
+                            <td><%= user.target_body_fat_percentage %></td>
+                            <td><%= link_to "投稿一覧", user_articles_path(user.id), class: "btn btn-info" %></td>
+                        </tr>
+                    <% end %>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+
+
+<%
+=begin %>
+                        <td>
+                            <%= link_to "詳細", user_path(user.id), class: "btn btn-info" %>
+                        </td>
+
+
 <h2><%= current_user.name + 'のお気に入り一覧' %></h2>
 
 <% @users.each do |user| %>
@@ -5,3 +93,11 @@
         <%= link_to user.name, user_path(user.id) %>
     </p>
 <% end %>
+
+<%
+=end %>
+
+
+
+
+
