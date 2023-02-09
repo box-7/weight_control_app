@@ -1,129 +1,186 @@
-@import "bootstrap-sprockets";
-@import "bootstrap";
+// bootstrap_styles.scssとデザインがconflictを起こしてしまうためコメントアウト
+// 様々な箇所で、以下でインストールしたデザインが優先されてしまう
+// @import "bootstrap-sprockets";
+// @import "bootstrap";
 
 /* universal */
 
+// body {
+//     padding-top: 60px;
+// }
+
+// section {
+//     overflow: auto;
+// }
+
+// textarea {
+//     resize: vertical;
+// }
+
+// .center {
+//     text-align: center;
+// }
+
+// .center h1 {
+//     margin-bottom: 10px;
+// }
+
+// /* header */
+// .navbar-inverse {
+//     background-color: #d9d9d9;
+//     border-color: black;
+// }
+
+// .navbar-inverse .navbar-nav > li > a {
+//     color: black;
+// }
+
+// #logo {
+//     float: left;
+//     margin-right: 10px;
+//     font-size: 1.7em;
+//     color:black;
+//     letter-spacing: -1px;
+//     padding-top: 9px;
+//     // font-weight: bold;
+// }
+
+// #logo:hover {
+//     color: #fff;
+//     text-decoration: none;
+// }
+
+// // home
+// .articles_list{
+//     text-align: center;
+//     margin-top:50px;
+// }
+
+// article{
+//     padding: 40px 20px 20px;
+//     margin:20px;
+//     background-color:#d9d9d9;
+//     border-radius: 20px;
+// }
+
+// .content{
+//     display: flex;
+//     justify-content:space-between;
+//     // flex-wrap: wrap; /* 折返し指定 */
+// // 	gap: 0px 4px; /* 余白 */
+// }
+
+// .image{
+//     // width:15%;
+//     width:150px;
+//     margin-top: 20px;
+//     margin-right: 30px;
+// }
+
+// .name{
+//     width:15%;
+//     margin-right: 10px;
+// }
+
+
+// .weight{
+//     width:15%;
+//     margin-right: 10px;
+// }
+
+// .meal{
+//     width:20%;
+//     margin-right: 10px;
+// }
+
+// .exercise{
+//     width:30%;
+//     margin-right: 10px;
+// }
+// .button_zone{
+//     justify-content: space-between;
+// }
+
+// .good{
+//     margin-left:10%;
+// }
+
+// .good p{
+//     margin-right: 10px;
+//     white-space: nowrap
+// }
+
+// .article_button{
+//     margin-right:10%;
+// }
+
+// .make_a_margin-bottom{
+//     margin-bottom:20px;
+// }
+
+// .good_position{
+//     margin-right:10%;
+// }
+
+
+// ----------------------------------
+
+.header-navbar{
+    margin-bottom:0px;
+}
+
+
+.name-position{
+    margin-left:30px;
+}
+
+.footer-length {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
+text-position{
+    text-align:center;
+}
+
+// googleフォントを利用
 body {
-    padding-top: 60px;
+    // font-family: 'Hiragino Kaku Gothic Pro', 'Meiryo', sans-serif;
+    // font-family: 'Open Sans', sans-serif;
+    // font-family: 'Poor Story', cursive;
+    font-family: 'Open Sans', sans-serif;
+    // font-family: 'Poor Story', cursive;
 }
 
-section {
-    overflow: auto;
-}
-
-textarea {
-    resize: vertical;
-}
-
-.center {
-    text-align: center;
-}
-
-.center h1 {
-    margin-bottom: 10px;
-}
-
-/* header */
-.navbar-inverse {
-    background-color: #d9d9d9;
-    border-color: black;
-}
-
-.navbar-inverse .navbar-nav > li > a {
-    color: black;
-}
-
-#logo {
-    float: left;
-    margin-right: 10px;
-    font-size: 1.7em;
-    color:black;
-    letter-spacing: -1px;
-    padding-top: 9px;
-    // font-weight: bold;
-}
-
-#logo:hover {
-    color: #fff;
-    text-decoration: none;
-}
-
-// home
-.articles_list{
-    text-align: center;
-    margin-top:50px;
-}
-
-article{
-    padding: 40px 20px 20px;
-    margin:20px;
-    background-color:#d9d9d9;
-    border-radius: 20px;
-}
-
-.content{
+body {
+    // margin: 0;
     display: flex;
-    justify-content:space-between;
-    // flex-wrap: wrap; /* 折返し指定 */
-// 	gap: 0px 4px; /* 余白 */
+    flex-flow: column;
+    min-height: 100vh;
 }
 
-.image{
-    // width:15%;
-    width:150px;
-    margin-top: 20px;
-    margin-right: 30px;
-}
-
-.name{
-    width:15%;
-    margin-right: 10px;
+main {
+//     // background: #ffffff;
+    flex: 1;
 }
 
 
-.weight{
-    width:15%;
-    margin-right: 10px;
+// 使っているか微妙
+form-signin {
+    display: flex;
+    align-items: center;
+    // padding-top: 40px;
+    // padding-bottom: 40px;
+    // background-color: #f5f5f5;
 }
 
-.meal{
-    width:20%;
-    margin-right: 10px;
+.form-control.disabled{
+    cursor: not-allowed;
 }
 
-.exercise{
-    width:30%;
-    margin-right: 10px;
+// アラートがヘッダーにカッ暮れてしまうための処置
+.alert{
+    padding-top: 70px;
 }
-.button_zone{
-    justify-content: space-between;
-}
-
-.good{
-    margin-left:10%;
-}
-
-.good p{
-    margin-right: 10px;
-    white-space: nowrap
-}
-
-.article_button{
-    margin-right:10%;
-}
-
-.make_a_margin-bottom{
-    margin-bottom:20px;
-}
-
-.good_position{
-    margin-right:10%;
-}
-
-
-
-
-
-
 
 

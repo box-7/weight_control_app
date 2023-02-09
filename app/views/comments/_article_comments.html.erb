@@ -1,3 +1,68 @@
+<%# <div class="my-3 p-3 bg-white rounded shadow-sm"> %>
+<div class="my-4 p-3 rounded">
+    <h6 class="border-bottom border-gray pb-2 mb-0">Comments</h6>
+
+    <div class="comments">
+        <% if article.comments.present? %>
+            <div class="mt-3 p-2">コメント件数：<%= article.comments.count %></div>
+            <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray"></p>
+
+            <% article.comments.each do |comment| %>
+                <div class="media text-muted pt-3">
+                    <%# <img data-src="holder.js/32x32?theme=thumb&amp;bg=007bff&amp;fg=007bff&amp;size=1" alt="" class="mr-2 rounded"> %>
+
+                    <div>
+                        <label class="form-image">
+                            <%# /user_images(フォルダ名)/#{@user.image(画像ファイル名)}
+                            publicフォルダに画像がある場合は、画像ファイル名のみでOK 今回user_imagesフォルダを作成したのでフォルダ名が必要
+                            画像がdefault画像とそれ以外の時で条件分岐 %>
+                            <% if @article.user.image == "default.png" %>
+                                <span class="image-file"><%= image_tag "/user_images/#{@article.user.image}", size: '75x75' %></span>
+                            <% else %>
+                                <span class="image-file"><%= image_tag "/user_images/user_#{@article.user.id}.png", size: '75x75' %></span>
+                            <% end %>
+                        </label>
+                        <strong class="d-block text-gray-dark"><%= comment.user.name %><%=  ' ' + comment.created_at.strftime('%Y/%m/%d') %></strong>
+                    </div>
+
+                    <p class="w-auto px-5"><%= comment.comment %></p>
+
+                    <% if logged_in? %>
+                        <% if comment.user == current_user || current_user.admin == true %>
+                            <nobr class="comment-delete">
+                                <%= link_to "削除", user_article_comment_path(user_id: comment.user_id,
+                                article_id: comment.article_id, id: comment.id, controller_path: controller_path),
+                                        method: :delete, data: {confirm: "本当に削除しますか？"} %>
+                            </nobr>
+                        <% end %>
+                    <% end %>
+                    <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                </div>
+            <% end %>
+        <% else %>
+            <p class="mt-3">コメントはまだありません</p>
+        <% end %>
+    </div>
+
+
+<%
+=begin %>
+<% if article.comments.present? %>
+<% article.comments.each do |comment| %>
+    <div class="media text-muted pt-3">
+        <img data-src="holder.js/32x32?theme=thumb&amp;bg=007bff&amp;fg=007bff&amp;size=1" alt="" class="mr-2 rounded">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+        <strong class="d-block text-gray-dark"><%= comment.user.name %><%=  ' ' + comment.created_at.strftime('%Y/%m/%d') %></strong>
+        <%= comment.comment %>
+        </p>
+    </div>
+<% end %>
+<% end %>
+
+</div>
+
+
+
 <div class="comments">
     <% if article.comments.present? %>
         <p>コメント件数：<%= article.comments.count %></p>
@@ -20,3 +85,43 @@
         <p>コメントはまだありません</p>
     <% end %>
 </div>
+<%
+=end %>
+
+<%
+=begin %>
+
+bootstrap
+<div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2 mb-0">Recent updates</h6>
+    <div class="media text-muted pt-3">
+        <img data-src="holder.js/32x32?theme=thumb&amp;bg=007bff&amp;fg=007bff&amp;size=1" alt="" class="mr-2 rounded">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+        <strong class="d-block text-gray-dark">@username</strong>
+        Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+        </p>
+    </div>
+    <div class="media text-muted pt-3">
+        <img data-src="holder.js/32x32?theme=thumb&amp;bg=e83e8c&amp;fg=e83e8c&amp;size=1" alt="" class="mr-2 rounded">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <strong class="d-block text-gray-dark">@username</strong>
+            Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+        </p>
+    </div>
+    <div class="media text-muted pt-3">
+        <img data-src="holder.js/32x32?theme=thumb&amp;bg=6f42c1&amp;fg=6f42c1&amp;size=1" alt="" class="mr-2 rounded">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+        <strong class="d-block text-gray-dark">@username</strong>
+        Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+        </p>
+    </div>
+    <small class="d-block text-right mt-3">
+        <a href="#">All updates</a>
+    </small>
+</div>
+
+
+
+
+<%
+=end %>

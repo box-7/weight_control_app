@@ -1,8 +1,22 @@
 
 <% if current_user %>
     <%= form_with(model: comment, url: user_article_comments_path(user_id: current_user.id, article_id: article.id), local: true) do |f| %>
-        <%= hidden_field_tag :controller_path, controller_path %>
-        <%= f.text_area :comment, rows:'5',placeholder: "コメントを入力してください" %>
+        <div class="mb-3">
+            <%= hidden_field_tag :controller_path, controller_path %>
+            <%= f.text_area :comment, class: 'form-control', rows:'5',placeholder: "コメントを入力してください" %>
+        </div>
         <%= f.submit "送信する" %>
     <% end %>
 <% end %>
+
+
+<%
+=begin %>
+                    <div class="mb-3">
+                        <%= f.label :memo %>
+                        <%= f.text_area :memo, class: 'form-control', rows:"5" %>
+                    </div>
+                    <div><%= f.submit "保存", class: "btn btn-primary btn-block btn-signup" %></div>
+
+<%
+=end %>

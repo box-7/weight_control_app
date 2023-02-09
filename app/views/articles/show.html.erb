@@ -1,5 +1,143 @@
 <% provide(:title, @article.user.name) %>
 
+<div class="container">
+    <main>
+        <div class="form-signin-article-show  row">
+            <div class="col">
+                <div class="text-center mb-4">
+                    <h1 class="h3 mb-3 font-weight-normal">　</h1> <%# ARTICLE DETAIL 文字は見えていないが、消すと体裁が崩れるので空白で残す %>
+                    <div class="text-center mb-4">
+                        <%# アソシエーションのモデルでform_withを使うためには、urlの指定が必要 %>
+                        <%= form_with(model: @article, url: user_articles_path, local: true) do |f| %>
+                            <%= render 'shared/error_messages' %>
+                            <div class="mb-3">
+                                <label class="form-image">
+                                    <%# /user_images(フォルダ名)/#{@user.image(画像ファイル名)}
+                                    publicフォルダに画像がある場合は、画像ファイル名のみでOK 今回user_imagesフォルダを作成したのでフォルダ名が必要
+                                    画像がdefault画像とそれ以外の時で条件分岐 %>
+                                    <% if @article.user.image == "default.png" %>
+                                        <span class="image-file"><%= image_tag "/user_images/#{@article.user.image}", size: '150x150' %></span>
+                                    <% else %>
+                                        <span class="image-file"><%= image_tag "/user_images/user_#{@article.user.id}.png", size: '150x150' %></span>
+                                    <% end %>
+                                </label>
+                            </div>
+                            <%# <div class="name-position"> %>
+                            <div>
+                                <p><%= link_to @article.user.name, user_path(@article.user_id) %>　
+                                <%= link_to "投稿一覧", user_articles_path(@article.user_id), class: "btn btn-info" %></p>
+                                    <% if current_user %>
+                                        <% unless current_user.id == @article.user.id %>
+                                            <% if current_user.following?(@article.user.id) %>
+                                                <%= link_to "フォロー外す", user_relationships_path(@article.user.id), method: :delete %>
+                                            <% else %>
+                                                <%= link_to "フォローする", user_relationships_path(@article.user.id), method: :post %>
+                                            <% end %>
+                                        <% end %>
+                                    <% end %>
+                                </div>
+                                <div class="mb-3">
+                                    <%= render 'relationships/follow_list', user: @article.user %>
+                                </div>
+                                <p class="content good">
+                                    <span id="article_<%= @article.id %>"> <%# 非同期通信のためのid設定 %>
+                                        <%= render 'layouts/article', article: @article %> <%# 「,」の後ろは、article: で変数を定義している %>
+                                    </span>
+                                </p>
+                            </div>
+                            <fieldset disabled>
+                                <div class="mb-3">
+                                    <%= f.label :date %>
+                                    <%= f.date_field :date, class: 'form-control' , autofocus:true  %>
+                                </div>
+                                <div class="mb-3">
+                                    <%= f.label :weight %>
+                                    <%= f.number_field :weight, step: "0.1", class: 'form-control' %>
+                                </div>
+                                <div class="mb-3">
+                                    <%= f.label :body_fat_percentage %>
+                                    <%= f.number_field :body_fat_percentage, step: "0.1", class: 'form-control'  %>
+                                </div>
+                                <div class="mb-3">
+                                    <%= f.label :meal_morning %>
+                                    <%= f.text_field :meal_morning, class: 'form-control' %>
+                                </div>
+                                <div class="mb-3">
+                                    <%= f.label :meal_lunch %>
+                                    <%= f.text_field :meal_lunch, class: 'form-control' %>
+                                </div>
+                                <div class="mb-3">
+                                    <%= f.label :meal_dinner %>
+                                    <%= f.text_field :meal_dinner, class: 'form-control' %>
+                                </div>
+                                <div class="mb-3">
+                                    <%= f.label :meal_snack %>
+                                    <%= f.text_field :meal_snack, class: 'form-control' %>
+                                </div>
+                                <div class="mb-3">
+                                    <%= f.label :exercise %>
+                                    <%= f.text_field :exercise, class: 'form-control' %>
+                                </div>
+                                <div class="mb-3">
+                                    <%= f.label :memo %>
+
+                                <%# w-autoを入力し、レスポンシブル時の横幅を調整 → 体裁おかしくなるのでなし %>
+                                    <%= f.text_area :memo, class: 'form-control', rows:"5" %>
+                                </div>
+                            </fieldset>
+                        <% end %>
+                        <%# ログインしているユーザーIDと投稿のユーザーIDが一致する場合、表示できる %>
+                        <% if logged_in? %>
+                            <% if current_user.id == @article.user.id %>
+                                <%# アソシエーションのモデルで、idを指定したリンクは引数が2つ必要 %>
+                                <%= link_to "編集", edit_user_article_path(user_id:@article.user_id, id:@article.id), class: "btn btn-info" %>
+                                <%= link_to "削除", user_article_path(user_id:@article.user_id, id:@article.id), class: "btn btn-sm btn-danger",  method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                            <% elsif current_user.admin? %>
+                                <%= link_to "削除", user_article_path(user_id:@article.user_id, id:@article.id), class: "btn btn-sm btn-danger",  method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                            <% end %>
+                        <% end %>
+                    </div>
+                </div>
+
+
+                <div class="col ms-5">
+                    <div class="text-center mb-4">
+                        <h1 class="h3 mb-3 font-weight-normal">　</h1> <%# ARTICLE DETAIL 文字は見えていないが、消すと体裁が崩れるので空白で残す %>
+                        <!--コメントフォーム-->
+                        <div class="new-comment">
+
+                        <!--コメント一覧部分-->
+                        <div id="comments_area">
+                            <%= render 'comments/article_comments', article: @article, comment: @comment  %>
+                        </div>
+                        <!--コメント投稿部分-->
+                        <div class="new-comment">
+                            <%= render 'comments/form', article: @article, comment: @comment %>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+
+<%# <main>
+    <div class="container">
+        <div class="form-signin row">
+            <div class="col">
+                <div class="text-center mb-4">
+                    <h1 class="h3 mb-3 font-weight-normal">ARTICLE DETAIL</h1> 文字は見えていないが、消すと体裁が崩れるので残す %>
+
+<%
+=begin %>
+    <%
+    =begin %>
+        <div><%= f.submit "保存", class: "btn btn-primary btn-block btn-signup" %></div>
+    <%
+    =end %>
 <%= render 'shared/error_messages' %>
 
 <h1>投稿詳細</h1>
@@ -14,13 +152,12 @@ publicフォルダに画像がある場合は、画像ファイル名のみでOK
     <%= image_tag "/user_images/user_#{@article.user.id}.png", size: '150x150' %>
 <% end %>
 
-<%
-=begin %>
+    ---------------------
     非同期通信のためのid設定
     jsは、以下の通り、＠〜でインスタンス変数にする必要がある
     document.getElementById('article_<%= @article.id %>').innerHTML = '<%= j(render 'layouts/article', article: @article) %>'
-<%
-=end %>
+    ---------------------
+
 <p id="article_<%= @article.id %>">
 <%# 「,」の後ろは、article: で変数を定義している %>
     <%= render 'layouts/article', article: @article %>
@@ -47,11 +184,9 @@ publicフォルダに画像がある場合は、画像ファイル名のみでOK
 <%# 目標体重との際の項目を入れるかなど、詳細は後で決めます %>
 <%# @article_one_month_agoに値がない場合、nilになる %>
 <p>1ヶ月前との比較</p>
-<%
-=begin %>
-<% if @article_one_month_ago != nil %>
-<%
-=end %>
+    ---------------------
+    <% if @article_one_month_ago != nil %>
+    ---------------------
 <% if @article_one_month_ago && @article %>
     <p> <%= (@article_one_month_ago.weight).to_i - (@article.weight).to_i %></p>
 <% else %>
@@ -110,6 +245,13 @@ publicフォルダに画像がある場合は、画像ファイル名のみでOK
 <div id="comments_area">
     <%= render 'comments/article_comments', article: @article, comment: @comment  %>
 </div>
+
+<%
+=end %>
+
+
+
+
 
 <%
 =begin %>

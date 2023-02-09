@@ -1,4 +1,81 @@
 
+
+<% provide(:title, 'Edit') %>
+
+<main>
+    <div class="form-signin">
+        <div class="text-center mb-4">
+            <h1 class="h3 mb-3 font-weight-normal">EDIT ARTICLE</h1>
+            <div class="text-center mb-4">
+        <%# アソシエーションのモデルでform_withを使うためには、urlの指定が必要 %>
+
+        <%= form_with(model: @article, url: user_article_path(user_id: @article.user_id, id: @article.id), local: true) do |f| %>
+            <%# エラーメッセージを読み込む %>
+            <%= render 'shared/error_messages' %>
+
+                    <div class="mb-3">
+                        <label class="form-image">
+                        <%# /user_images(フォルダ名)/#{@user.image(画像ファイル名)}
+                            publicフォルダに画像がある場合は、画像ファイル名のみでOK 今回user_imagesフォルダを作成したのでフォルダ名が必要
+                            画像がdefault画像とそれ以外の時で条件分岐 %>
+                            <% if @user.image == "default.png" %>
+                                <span class="image-file"><%= image_tag "/user_images/#{@user.image}" %></span>
+                            <% else %>
+                                <span class="image-file"><%= image_tag "/user_images/user_#{@user.id}.png" %></span>
+                            <% end %>
+                        </label>
+                    </div>
+
+                    <div class="mb-3">
+                        <%= f.label :date %>
+                        <%# showではなくeditで、他の項目は更新するため、fieldsetでdisabledにすると、コントローラーに値が渡らなくなってエラーになる %>
+                        <%= f.date_field :date, class: 'form-control disabled', readonly: true %>
+                    </div>
+
+                    <div class="mb-3">
+                        <%= f.label :weight %>
+                        <%= f.number_field :weight, step: "0.1", class: 'form-control', autofocus:true %>
+                    </div>
+                    <div class="mb-3">
+                        <%= f.label :body_fat_percentage %>
+                        <%= f.number_field :body_fat_percentage, step: "0.1", class: 'form-control'  %>
+                    </div>
+                    <div class="mb-3">
+                        <%= f.label :meal_morning %>
+                        <%= f.text_field :meal_morning, class: 'form-control' %>
+                    </div>
+                    <div class="mb-3">
+                        <%= f.label :meal_lunch %>
+                        <%= f.text_field :meal_lunch, class: 'form-control' %>
+                    </div>
+                    <div class="mb-3">
+                        <%= f.label :meal_dinner %>
+                        <%= f.text_field :meal_dinner, class: 'form-control' %>
+                    </div>
+                    <div class="mb-3">
+                        <%= f.label :meal_snack %>
+                        <%= f.text_field :meal_snack, class: 'form-control' %>
+                    </div>
+                    <div class="mb-3">
+                        <%= f.label :exercise %>
+                        <%= f.text_field :exercise, class: 'form-control' %>
+                    </div>
+                    <div class="mb-3">
+                        <%= f.label :memo %>
+                        <%= f.text_area :memo, class: 'form-control', rows:"5" %>
+                    </div>
+                    <div><%= f.submit "保存", class: "btn btn-primary btn-block btn-signup" %></div>
+                <% end %>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%
+=begin %>
+                        <%= f.hidden_field :user_id, value: params[:user_id] %>
+
+
 <% provide(:title, 'edit') %>
 <h1>投稿編集</h1>
 
@@ -66,3 +143,5 @@
     </div>
 </div>
 
+<%
+=end %>
