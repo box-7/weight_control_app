@@ -114,18 +114,21 @@
                     <div class="name-position">
                         <p><%= link_to article.user.name, user_path(article.user_id) %></p>
                         <p><%= link_to "投稿一覧", user_articles_path(article.user_id), class: "btn btn-info" %></p>
-
-                        <div class="row">
-                            <div class="col">
+                        <div class="flex">
+                            <div class="item box1 pt-1">
                                 <p class="content good">
                                     <span id="article_<%= article.id %>"> <%# 非同期通信のためのid設定 %>
                                         <%= render 'layouts/article', article: article %> <%# 「,」の後ろは、article: で変数を定義している %>
                                     </span>
                                 </p>
                             </div>
-                            <div class="col">
-                                <%# "/public/chat.svg"だと動かなかったが、"/user_images/chat.svg"だと動く　謎 %>
-                                <%= link_to image_tag("/user_images/chat.svg"), user_article_path(user_id: article.user_id, id:article.id) %>
+                            <div class="item box2 chat-position">
+                                <%# 置き場所を正しくして、"/public/chat.svg"だと動かなかったが、"/user_images/chat.svg"だと動く 謎 背景色により見えなくなってしまうため、２種類の画像を用意 %>
+                                <% if i % 2 == 0 %>
+                                    <%= link_to image_tag("/user_images/chat.png"), user_article_path(user_id: article.user_id, id:article.id) %>
+                                <% else %>
+                                    <%= link_to image_tag("/user_images/chat.svg"), user_article_path(user_id: article.user_id, id:article.id) %>
+                                <% end %>
                             </div>
                         </div>
                     </div>
@@ -445,7 +448,12 @@ window.onload = function() {
 
 </script>
 
-
+<%
+=begin %>
+                                <% sample = embedded_svg "/user_images/chat.svg"), class: "chat-icon", %>
+                                <%= link_to image_tag(sample), user_article_path(user_id: article.user_id, id:article.id) %>
+<%
+=end %>
 
 <%
 =begin %>
