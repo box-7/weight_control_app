@@ -1,18 +1,18 @@
 <% provide(:title, "Top") %>
+<%# 文字は見えていないが、消すと体裁が崩れるの空白で残す %>
+<h2>　</h2>
 
 <main>
     <header class="bg-primary bg-gradient text-white">
         <div class="container px-4 text-center">
-            <div class="top-page-margin">
-                <%# <h1 class="fw-bolder">　</h1> Please Enter Keywordsの文字は見えていないが、消すと体裁が崩れるの空白で残す %>
-                <p class="lead">You can search by username, meal, exercise, or notes</p>
-                <%# <a class="btn btn-lg btn-light" href="#about">Start scrolling!</a> "%>
-                <div class="search-form">
-                    <%= form_with url: articles_search_path, method: :get, local: true do |f| %>
-                        <%= f.text_field :keyword, value: @keyword, class: "search-box" %>
-                        <%= f.submit "SEARCH", class: "btn-outline-success text-nowrap" %>
-                    <% end %>
-                </div>
+            <h3 class="articles_list px-4 text-center"><%= "All Articles" %></h3>
+            <p class="lead">You can search by username, meal, exercise, or notes</p>
+            <div class="search-form">
+                <%= form_with url: articles_search_path, method: :get, local: true do |f| %>
+                    <%= f.text_field :keyword, value: @keyword, class: "search-box" %>
+                    <%# 検索ボタンにclassをつける場合 f.submit "検索", class: "btn-outline-success text-nowrap" %>
+                    <%= f.submit "SEARCH" %>
+                <% end %>
             </div>
         </div>
     </header>
@@ -37,7 +37,7 @@
                     </div>
                     <div class="name-position">
                         <p><%= link_to article.user.name, user_path(article.user_id) %></p>
-                        <p><%= link_to "投稿一覧", user_articles_path(article.user_id), class: "btn btn-info" %></p>
+                        <p><%= link_to "投稿一覧", user_articles_path(article.user_id), class: "btn btn-secondary" %></p>
 
                         <div class="flex">
                             <div class="item box1 pt-1">
@@ -61,7 +61,12 @@
 
                 <div class="col-lg-10 position-relative">
                     <%# </br> <p class="lead my-3">Multiple lines of text that form the lede, informing new readers quickly and efficiently about what's most interesting in this post's contents.</p> %>
-                    <p class="lead my-3">DATE:<%= article.date %>　UP TO TARGET:<%= (article.user.target_weight - article.weight).round(1) %>kg　TARGET WEIGHT:<%= article.user.target_weight %>kg　WEIGHT:<%= article.weight %>kg　MEAL MORNING:<%= article.meal_morning %>　
+                    <p class="lead my-3">DATE:<%= article.date %>　UP TO TARGET:
+                    <%# article.user.target_weightがnilの場合引き算があるとエラーになるためif文追記 %>
+                    <% if article.user.target_weight %>
+                        <%= (article.user.target_weight - article.weight).round(1) %>
+                    <% end %> kg
+                    　TARGET WEIGHT:<%= article.user.target_weight %> kg　WEIGHT:<%= article.weight %>kg　MEAL MORNING:<%= article.meal_morning %>　
                     MEAL LUNCH:<%= article.meal_lunch %>　MEAL DINNER:<%= article.meal_dinner %>　MEAL SNACK:<%= article.meal_snack %>
                     　EXCERCISE:<%= article.exercise %>　MEMO:<%= article.memo %></p>
                     <%# <p class="lead mb-0"><a href="#" class="text-blue font-weight-bold">Continue reading...</a></p> %>

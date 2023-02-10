@@ -2,22 +2,21 @@
 
 <% provide(:title, 'Follow Users') %>
 <%# 文字は見えていないが、消すと体裁が崩れるの空白で残す %>
-<h2 class="articles_list">　</h2>
+<h2>　</h2>
 
 <main>
     <header class="bg-primary bg-gradient text-white">
         <div class="container px-4 text-center">
         <%# <h3 class="articles_list px-4 mt-5 text-center"><%= "ユーザー一覧(管理者専用画面)" 　　</h3> %>
-            <h3 class="articles_list px-4 text-center"><%= current_user.name + " フォローユーザー一覧" %></h3>
+            <h3 class="articles_list px-4 text-center"><%= current_user.name + " List of follow users" %></h3>
             <%# <div class="top-page-margin"> %>
             <div>
-
                 <p class="lead">You can search by username, meal, exercise, or notes</p>
                 <%# <a class="btn btn-lg btn-light" href="#about">Start scrolling!</a> "%>
                 <div class="search-form">
                     <%= form_with url: users_search_path, method: :get, local: true do |f| %>
                         <%= f.text_field :keyword, value: @keyword %>
-                        <%= f.submit "検索" %>
+                        <%= f.submit "SEARCH" %>
                     <% end %>
                 </div>
             </div>

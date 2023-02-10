@@ -25,7 +25,7 @@
                             <%# <div class="name-position"> %>
                             <div>
                                 <p><%= link_to @article.user.name, user_path(@article.user_id) %>　
-                                <%= link_to "投稿一覧", user_articles_path(@article.user_id), class: "btn btn-info" %></p>
+                                <%= link_to "投稿一覧", user_articles_path(@article.user_id), class: "btn btn-secondary" %></p>
                                     <% if current_user %>
                                         <% unless current_user.id == @article.user.id %>
                                             <% if current_user.following?(@article.user.id) %>
@@ -91,9 +91,9 @@
                             <% if current_user.id == @article.user.id %>
                                 <%# アソシエーションのモデルで、idを指定したリンクは引数が2つ必要 %>
                                 <%= link_to "編集", edit_user_article_path(user_id:@article.user_id, id:@article.id), class: "btn btn-info" %>
-                                <%= link_to "削除", user_article_path(user_id:@article.user_id, id:@article.id), class: "btn btn-sm btn-danger",  method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                                <%= link_to "削除", user_article_path(user_id:@article.user_id, id:@article.id), class: "btn btn-danger",  method: :delete, data: { confirm: "本当に削除しますか？" } %>
                             <% elsif current_user.admin? %>
-                                <%= link_to "削除", user_article_path(user_id:@article.user_id, id:@article.id), class: "btn btn-sm btn-danger",  method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                                <%= link_to "削除", user_article_path(user_id:@article.user_id, id:@article.id), class: "btn btn-danger",  method: :delete, data: { confirm: "本当に削除しますか？" } %>
                             <% end %>
                         <% end %>
                     </div>

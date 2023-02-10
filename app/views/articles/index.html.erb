@@ -3,7 +3,7 @@
 <main>
     <header class="bg-primary bg-gradient text-white">
         <%# <div class="container px-4 text-center     position-absolute top-0 start-0"> %>
-        <h3 class="articles_list px-4 mt-5 text-center"><%= "投稿一覧 ：" + @user.name %></h3>
+        <h3 class="articles_list px-4 mt-5 text-center"><%= "List of Articles / " + @user.name %></h3>
         <div class="container px-4">
             <div class="row">
                 <%# <h1 class="fw-bolder">　</h1>  %>
@@ -14,7 +14,7 @@
                 <%# chart.jsの読み込み %>
                 <div class="col-lg-4 row">
                     <div class="align-items-start">
-                        <h4 class="mb-3">グラフ年月絞り込み</h4>
+                        <h4 class="mb-3">Refine graph year and month</h4>
                         <%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
                             <div class="field mb-3">
                                 <%# オプション :use_month_numbers 月を数字で表示,:discard_day 日の選択ボックスを非表示, include_blank: true 空を含めて表示→不要 %>
@@ -40,12 +40,12 @@
                                     <%= f.hidden_field :date_to, value: params[:date_to] %>
                                 <% end %>
                             </div>
-                            <div class="mb-3"><%= f.submit "検索" %></div>
+                            <div class="mb-3"><%= f.submit "SEARCH" %></div>
                         <% end %>
                     </div>
 
                     <div class="align-items-end">
-                        <h4 class="mb-3">キーワード、日付で投稿検索</4>
+                        <h4 class="mb-3">Search posts by keyword or date</4>
                         <%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
                             <div class="field mb-3">
                                 <%= f.text_field :keyword, value: params[:keyword] %>
@@ -70,13 +70,13 @@
                             <% if @description_first_day %>
                                 <%= f.hidden_field :description_first_day, value: @description_first_day %>
                             <% end %>
-                            <div class="mb-3"><%= f.submit "検索" %></div>
+                            <div class="mb-3"><%= f.submit "SEARCH" %></div>
                         <% end %>
                     </div>
                 </div>
 
                 <div class="col-lg-8">
-                    <h4 class="mb-3">体重推移</h4>
+                    <h4 class="mb-3">Weight transition</h4>
                     <% if @articles_one_month_date == nil %>
                         <p>※ グラフデータがありません</br>
                         ※ 他の月のグラフを表示させる場合は、年月を入力して検索ボタンを押してください</p>
@@ -113,7 +113,7 @@
                     </div>
                     <div class="name-position">
                         <p><%= link_to article.user.name, user_path(article.user_id) %></p>
-                        <p><%= link_to "投稿一覧", user_articles_path(article.user_id), class: "btn btn-info" %></p>
+                        <p><%= link_to "投稿一覧", user_articles_path(article.user_id), class: "btn btn-secondary" %></p>
                         <div class="flex">
                             <div class="item box1 pt-1">
                                 <p class="content good">
@@ -136,7 +136,12 @@
 
                 <div class="col-lg-10 position-relative">
                     <%# </br> <p class="lead my-3">Multiple lines of text that form the lede, informing new readers quickly and efficiently about what's most interesting in this post's contents.</p> %>
-                    <p class="lead my-3">DATE:<%= article.date %>　UP TO TARGET:<%= (article.user.target_weight - article.weight).round(1) %>kg　TARGET WEIGHT:<%= article.user.target_weight %>kg　WEIGHT:<%= article.weight %>kg　MEAL MORNING:<%= article.meal_morning %>　
+                    <p class="lead my-3">DATE:<%= article.date %>　UP TO TARGET:
+                    <%# article.user.target_weightがnilの場合引き算があるとエラーになるためif文追記 %>
+                    <% if article.user.target_weight %>
+                        <%= (article.user.target_weight - article.weight).round(1) %>
+                    <% end %> kg
+                    　TARGET WEIGHT:<%= article.user.target_weight %> kg　WEIGHT:<%= article.weight %>kg　MEAL MORNING:<%= article.meal_morning %>　
                     MEAL LUNCH:<%= article.meal_lunch %>　MEAL DINNER:<%= article.meal_dinner %>　MEAL SNACK:<%= article.meal_snack %>
                     　EXCERCISE:<%= article.exercise %>　MEMO:<%= article.memo %></p>
                     <%# <p class="lead mb-0"><a href="#" class="text-blue font-weight-bold">Continue reading...</a></p> %>

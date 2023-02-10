@@ -5,16 +5,14 @@
 <main>
     <header class="bg-primary bg-gradient text-white">
         <div class="container px-4 text-center">
-        <%# <h3 class="articles_list px-4 mt-5 text-center"><%= "ユーザー一覧(管理者専用画面)" 　　</h3> %>
-            <h3 class="articles_list px-4 text-center"><%= "ユーザー一覧(管理者専用画面)" %></h3>
-            <%# <div class="top-page-margin"> %>
+            <h3 class="articles_list px-4 text-center"><%= "User list (for administrator)" %></h3>
             <div>
                 <p class="lead">You can search by username, meal, exercise, or notes</p>
                 <%# <a class="btn btn-lg btn-light" href="#about">Start scrolling!</a> "%>
                 <div class="search-form">
                     <%= form_with url: users_search_path, method: :get, local: true do |f| %>
                         <%= f.text_field :keyword, value: @keyword %>
-                        <%= f.submit "検索" %>
+                        <%= f.submit "SEARCH" %>
                     <% end %>
                 </div>
             </div>
@@ -60,8 +58,8 @@
                         <td><%= user.self_introduction %></td>
                         <td><%= user.target_weight %></td>
                         <td><%= user.target_body_fat_percentage %></td>
-                        <td><%= link_to "投稿一覧", user_articles_path(user.id), class: "btn btn-info" %></td>
-                        <%# adminユーザーの情報は、削除ボタンを表示させない %>
+                        <td><%= link_to "投稿一覧", user_articles_path(user.id), class: "btn btn-secondary" %></td>
+                        <%# adminユーザーの情報についてのみ、詳細、削除ボタンを表示させない %>
                         <td>
                             <% unless user.admin == true %>
                                 <%= link_to "詳細", user_path(user.id), class: "btn btn-info" %>
