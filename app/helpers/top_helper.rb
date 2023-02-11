@@ -3,7 +3,9 @@ module TopHelper
         # グラフ生成のため月日の自動生成が走り、体重がnilのものも存在するため、.where.not(weight: nil)を指定する
         oldest_weight = Article.where(user_id: article.user_id).where.not(weight: nil).order(created_at: :DESC).first
 
-        weight_loss = article.weight - oldest_weight.weight
-        return weight_loss.round(1)
+        if article.weight && oldest_weight.weight
+            weight_loss = article.weight - oldest_weight.weight
+            return weight_loss.round(1)
+        end
     end
 end

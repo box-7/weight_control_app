@@ -10,14 +10,14 @@
                     <%# エラーメッセージを読み込む %>
                     <%= render 'shared/error_messages' %>
                     <div class="mb-3">
-                        <p><%= f.label :name %></p>
+                        <%= f.label :name %>
                         <%= f.text_field :name, class: 'form-control', required:true , autofocus:true %>
                     </div>
                     <div class="mb-3">
                         <%= f.label :email %>
                         <%= f.email_field :email, class: 'form-control', required:true %>
                     </div>
-                    </div><div class="mb-3">
+                    <div class="mb-3">
                         <%= f.label :password %>
                         <%= f.password_field :password, class: 'form-control', required:true %>
                     </div>
