@@ -1,8 +1,83 @@
+<!-- Navigation-->
+<%# bootstrapのクラスの、fixed-topがあるとアラートが隠れてしまう　→ custom.scssの、 alertのclassにpadding-top: 70px;を加えて修正　%>
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark header-navbar border border-danger" id="mainNav">
+    <div class="container px-4">
+        <%# <a class="navbar-brand" href="#page-top">Start Bootstrap</a>, id: "logo" %>
+        <%= link_to " WEIGHT CONTROL", root_path, class:"navbar-brand" %>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto">
+                <%# logged_in?でsessions_helperのcurrent_userを叩く @current_user.idが使える %>
+                <% if logged_in? %>
+                    <% if current_user.admin? %>
+                        <li  class="nav-item"><%= link_to "ユーザー一覧(管理者限定)", users_path, class: "nav-link" %></li>
+                    <% end %>
+                    <%# アソシエーションのモデルで、idを指定したリンクは引数が2つ必要 %>
+                    <li  class="nav-item"><%= link_to "新規投稿", new_user_article_path(user_id: @current_user.id), class: "nav-link" %></li>
+                    <li  class="nav-item"><%= link_to "自分の投稿一覧", user_articles_path(user_id: @current_user.id), class: "nav-link" %></li>
+                    <li  class="nav-item"><%= link_to "お気に入りユーザー一覧", relationships_path(user_id: @current_user.id), class: "nav-link" %></li>
+                    <li  class="nav-item"><%= link_to "プロフィール", user_path(@current_user.id), class: "nav-link" %></li>
+                    <li  class="nav-item"><%= link_to "ログアウト", logout_path, method: :delete, class: "nav-link" %></li>
+                <% else %>
+                    <li  class="nav-item"><%= link_to "ログイン", login_path, class: "nav-link" %></li>
+                    <li  class="nav-item"><%= link_to "ユーザー登録", signup_path, class: "nav-link" %></li>
+                <% end %>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+
+<%# 中身要修正 %>
+<%# <header class="bg-primary bg-gradient text-white">
+    <div class="container px-4 text-center">
+        <h1 class="fw-bolder">Welcome to Scrolling Nav</h1>
+        <p class="lead">A functional Bootstrap 5 boilerplate for one page scrolling websites</p>
+        <a class="btn btn-lg btn-light" href="#about">Start scrolling!</a>
+    </div>
+</header> %>
+
+<%# </body> %>
+<%
+=begin %>
+-----bootstrapのコード--------
+<%# <body id="page-top"> %>
+
+    <!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top header-navbar" id="mainNav">
+    <div class="container px-4">
+        <a class="navbar-brand" href="#page-top">Start Bootstrap</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<header class="bg-primary bg-gradient text-white">
+    <div class="container px-4 text-center">
+        <h1 class="fw-bolder">Welcome to Scrolling Nav</h1>
+        <p class="lead">A functional Bootstrap 5 boilerplate for one page scrolling websites</p>
+        <a class="btn btn-lg btn-light" href="#about">Start scrolling!</a>
+    </div>
+</header>
+
+<%# </body> %>
+
+-----元々のコード--------
 <header class="navbar navbar-fixed-top navbar-inverse">
     <div class="container">
         <%= link_to " WEIGHT CONTROL", root_path, id: "logo" %>
         <nav>
             <ul class="nav navbar-nav navbar-right">
+            
                 <%# logged_in?でsessions_helperのcurrent_userを叩く @current_user.idが使える %>
                 <% if logged_in? %>
                     <% if current_user.admin? %>
@@ -23,3 +98,6 @@
         </nav>
     </div>
 </header>
+
+<%
+=end %>

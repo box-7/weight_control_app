@@ -1,159 +1,172 @@
+<% provide(:title, "User Articles Top") %>
 
-<h2 class="articles_list"><%= "投稿一覧 / ユーザー名：" + @user.name %></h2>
-<p id="notice"><%= notice %></p>
-<%# chart.jsの読み込み %>
+<main>
+    <header class="bg-primary bg-gradient text-white">
+        <%# <div class="container px-4 text-center     position-absolute top-0 start-0"> %>
+        <h3 class="articles_list px-4 mt-5 text-center"><%= "List of Articles / " + @user.name %></h3>
+        <div class="container px-4">
+            <div class="row">
+                <%# <h1 class="fw-bolder">　</h1>  %>
+                <%# Please Enter Keywordsの文字は見えていないが、消すと体裁が崩れるの空白で残す %>
+                        <%# <p class="lead">You can search by username, meal, exercise, or notes</p> %>
+                        <%# <a class="btn btn-lg btn-light" href="#about">Start scrolling!</a> "%>
+                <p id="notice"><%= notice %></p>
+                <%# chart.jsの読み込み %>
+                <div class="col-lg-4 row">
+                    <div class="align-items-start">
+                        <h4 class="mb-3">Refine graph year and month</h4>
+                        <%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
+                            <div class="field mb-3">
+                                <%# オプション :use_month_numbers 月を数字で表示,:discard_day 日の選択ボックスを非表示, include_blank: true 空を含めて表示→不要 %>
+                                <% if @description_first_day %>
+                                    <%= f.date_select:year_month , start_year: 2020, use_month_numbers: true, discard_day: true, selected: @description_first_day.to_date %>
+                                <% else %>
+                                    <%= f.date_select:year_month , start_year: 2020, use_month_numbers: true, discard_day: true %>
+                                <% end %>
+                                    <%= f.hidden_field :user_id, value: params[:user_id] %>
+                            <%# コントローラーに配列を渡す %>
+                                    <% @articles.each do |article| %>
+                                        <%= hidden_field_tag 'articles[][id]', article.id %>
+                                    <% end %>
 
-<h2>グラフ表示</h2>
-<% if @articles_one_month_date == nil %>
-    <p>※ グラフデータがありません</br>
-    ※ 他の月のグラフを表示させる場合は、年月を入力して検索ボタンを押してください</p>
-<% end %>
+                                <%# 検索語句絞り込みのインスタンス変数を渡す %>
+                                <% if params[:keyword] %>
+                                    <%= f.hidden_field :keyword, value: params[:keyword] %>
+                                <% end %>
+                                <% if params[:date_from] %>
+                                    <%= f.hidden_field :date_from, value: params[:date_from] %>
+                                <% end %>
+                                <% if params[:date_to] %>
+                                    <%= f.hidden_field :date_to, value: params[:date_to] %>
+                                <% end %>
+                            </div>
+                            <div class="mb-3"><%= f.submit "SEARCH" %></div>
+                        <% end %>
+                    </div>
 
-<%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
-    <div class="field">
-        <%# オプション :use_month_numbers 月を数字で表示,:discard_day 日の選択ボックスを非表示, include_blank: true 空を含めて表示→不要 %>
-        <% if @description_first_day %>
-            <%= f.date_select:year_month , start_year: 2020, use_month_numbers: true, discard_day: true, selected: @description_first_day.to_date %>
-        <% else %>
-            <%= f.date_select:year_month , start_year: 2020, use_month_numbers: true, discard_day: true %>
-        <% end %>
-            <%= f.hidden_field :user_id, value: params[:user_id] %>
-    <%# コントローラーに配列を渡す %>
-            <% @articles.each do |article| %>
-                <%= hidden_field_tag 'articles[][id]', article.id %>
-            <% end %>
+                    <div class="align-items-end">
+                        <h4 class="mb-3">Search posts by keyword or date</4>
+                        <%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
+                            <div class="field mb-3">
+                                <%= f.text_field :keyword, value: params[:keyword] %>
+                                <%= f.hidden_field :user_id, value: params[:user_id] %>
+                                <% if @first_day %>
+                                    <%= f.hidden_field :first_day, value: @first_day %>
+                                <% end %>
+                                <% if @articles_one_month_date == nil %>
+                                    <%= f.hidden_field :articles_one_month_date, value: @articles_one_month_date %>
+                                <% end %>
+                                <% if @articles_one_month %>
+                                    <% @articles_one_month.each do |article| %>
+                                        <%= hidden_field_tag 'articles_one_month[][id]', article.id %>
+                                    <% end %>
+                                <% end %>
+                            </div>
+                            <div class="field mb-3">
+                                <%= f.date_field :date_from, value: params[:date_from] %> ~ <%= f.date_field :date_to, value: params[:date_to] %>
+                            </div>
 
-        <%# 検索語句絞り込みのインスタンス変数を渡す %>
-        <% if params[:keyword] %>
-            <%= f.hidden_field :keyword, value: params[:keyword] %>
-        <% end %>
-        <% if params[:date_from] %>
-            <%= f.hidden_field :date_from, value: params[:date_from] %>
-        <% end %>
-        <% if params[:date_to] %>
-            <%= f.hidden_field :date_to, value: params[:date_to] %>
-        <% end %>
-    </div>
-    <%= f.submit "検索" %>
-<% end %>
-
-<%# グラフ表示 %>
-<% if @articles_one_month_date %>
-    <div class="container" style="width:100%, length:70%">
-        <canvas id="canvas"></canvas>
-    </div>
-<% end %>
-
-<h2>検索語句</h2>
-<%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
-    <%= f.text_field :keyword, value: params[:keyword] %>
-    <%= f.hidden_field :user_id, value: params[:user_id] %>
-    <% if @first_day %>
-        <%= f.hidden_field :first_day, value: @first_day %>
-    <% end %>
-    <% if @articles_one_month_date == nil %>
-        <%= f.hidden_field :articles_one_month_date, value: @articles_one_month_date %>
-    <% end %>
-    <% if @articles_one_month %>
-        <% @articles_one_month.each do |article| %>
-            <%= hidden_field_tag 'articles_one_month[][id]', article.id %>
-        <% end %>
-    <% end %>
-    <div class="field">
-        <%= f.date_field :date_from, value: params[:date_from] %> ~ <%= f.date_field :date_to, value: params[:date_to] %>
-    </div>
-
-    <%# 年月絞り込みのインスタンス変数を渡す %>
-    <% if @description_first_day %>
-        <%= f.hidden_field :description_first_day, value: @description_first_day %>
-    <% end %>
-    <%= f.submit "検索" %>
-<% end %>
-
-<% @articles.each do |article| %>
-    <article>
-        <div class="content">
-            <div class="image">
-                <% if article.user.image == "default.png" %>
-                    <%= image_tag "/user_images/#{article.user.image}", size: '150x150' %>
-                <% else %>
-                    <%= image_tag "/user_images/user_#{article.user_id}.png", size: '150x150' %>
-                <% end %>
-                <div class="content good">
-                    <%# 非同期通信のためのid設定 %>
-                    <p id="article_<%= article.id %>">
-                    <%# 「,」の後ろは、article: で変数を定義している %>
-                        <%= render 'layouts/article', article: article %>
-                    </p>
+                            <%# 年月絞り込みのインスタンス変数を渡す %>
+                            <% if @description_first_day %>
+                                <%= f.hidden_field :description_first_day, value: @description_first_day %>
+                            <% end %>
+                            <div class="mb-3"><%= f.submit "SEARCH" %></div>
+                        <% end %>
+                    </div>
                 </div>
-            </div>
-            <div class="name">
-                <p>(名前)</p>
-                <%= link_to article.user.name, user_path(article.user_id) %>
-                <p>(計測日)</p>
-                <p class="make_a_margin-bottom"><%= article.date %></p>
-            </div>
-            <div class="weight">
-                <p>(目標との乖離)</p>
-                <% if article.user.target_weight && article.weight %>
-                    <p class="make_a_margin-bottom"><%= (article.user.target_weight - article.weight).round(1) %></p>
-                <% else %>
-                    <p class="make_a_margin-bottom"><%= "目標を設定してください" %></p>
-                <% end %>
-                <p>(体重)</p>
-                <p class="make_a_margin-bottom"><%= article.weight %></p>
-                <p>(体脂肪率)</p>
-                <p class="make_a_margin-bottom"><%= article.body_fat_percentage %></p>
-            </div>
-            <div class="meal">
-                <p>(食事(朝))</p>
-                <p class="make_a_margin-bottom"><%= article.meal_morning %></p>
-                <p>(食事(昼))</p>
-                <p class="make_a_margin-bottom"><%= article.meal_lunch %></p>
-                <p>(食事(夜))</p>
-                <p class="make_a_margin-bottom"><%= article.meal_dinner %></p>
-                <p>(食事(間食))</p>
-                <p class="make_a_margin-bottom"><%= article.meal_snack %></p>
-            </div>
-            <div class="exercise">
-                <p>(運動)</p>
-                <p class="make_a_margin-bottom"><%= article.exercise %></p>
-                <p>(メモ)</p>
-                <p class="make_a_margin-bottom"><%= article.memo %></p>
-            </div>
-        </div>
-        <div class="content button_zone">
-            <div class="article_button">
-                <%# アソシエーションのモデルで、idを指定したリンクは引数が2つ必要 %>
-                <%= link_to "詳細", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-info" %>
-                <% if logged_in? %>
-                    <% if current_user.admin %>
-                        <%= link_to "削除", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
-                    <% elsif article.user_id == current_user.id %>
-                        <%= link_to "編集", edit_user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-info" %>
-                        <%= link_to "削除", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+
+                <div class="col-lg-8">
+                    <h4 class="mb-3">Weight transition</h4>
+                    <% if @articles_one_month_date == nil %>
+                        <p>※ グラフデータがありません</br>
+                        ※ 他の月のグラフを表示させる場合は、年月を入力して検索ボタンを押してください</p>
                     <% end %>
-                <% end %>
-            </div>
-            <!--コメント投稿部分-->
-            <%# @commentがsaveに失敗した場合、@commentに情報が残っているので条件分岐できる %>
-            <% if @comment.article_id.present? && @comment.article_id == article.id %>
-                <div class="new-comment">
-                    <%= render partial: 'comments/form', locals: { article: article, comment: @comment, controller_path: 'articles_index' } %>
-                </div>
-            <% else %>
-                <div class="new-comment">
-                    <%= render partial: 'comments/form', locals: { article: article, comment: Comment.new, controller_path: 'articles_index' } %>
-                </div>
-            <% end %>
 
-            <!--コメント一覧部分-->
-            <div id="comments_area">
-                <%= render 'comments/article_comments', article: article, comment: @comment, controller_path: 'articles_index' %>
+                    <%# グラフ表示 %>
+                    <% if @articles_one_month_date %>
+                        <div class="container bg-white" style="width:100%, length:70%">
+                            <canvas id="canvas"></canvas>
+                        </div>
+                    <% end %>
+                </div>
             </div>
         </div>
-    </article>
-<% end %>
+    </header>
+
+    <% @articles.each_with_index do |article, i| %>
+    <% if i % 2 == 0 %>
+        <div class="jumbotron p-3 p-md-5 text-black rounded bg-white container">
+    <% else %>
+        <div class="jumbotron p-3 p-md-5 text-white rounded bg-dark container">
+    <% end %>
+            <div class="row">
+                <h1 class="display-4 font-italic">WEIGHT LOSS(FROM THE BEGGINING):<%= weight_loss(article) %>kg</br>BODY FAT PERCENTAGE:<%= article.body_fat_percentage %>% </h1>
+            </div>
+            <div class="row">
+                <div class="col-lg-2 text-position">
+                    <div class="image">
+                        <% if article.user.image == "default.png" %>
+                            <%= image_tag "/user_images/#{article.user.image}", size: '150x150' %>
+                        <% else %>
+                            <%= image_tag "/user_images/user_#{article.user_id}.png", size: '150x150' %>
+                        <% end %>
+                    </div>
+                    <div class="name-position">
+                        <p><%= link_to article.user.name, user_path(article.user_id) %></p>
+                        <p><%= link_to "投稿一覧", user_articles_path(article.user_id), class: "btn btn-secondary" %></p>
+                        <div class="flex">
+                            <div class="item box1 pt-1">
+                                <p class="content good">
+                                    <span id="article_<%= article.id %>"> <%# 非同期通信のためのid設定 %>
+                                        <%= render 'layouts/article', article: article %> <%# 「,」の後ろは、article: で変数を定義している %>
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="item box2 chat-position">
+                                <%# 置き場所を正しくして、"/public/chat.svg"だと動かなかったが、"/user_images/chat.svg"だと動く 謎 背景色により見えなくなってしまうため、２種類の画像を用意 %>
+                                <% if i % 2 == 0 %>
+                                    <%= link_to image_tag("/user_images/chat.png"), user_article_path(user_id: article.user_id, id:article.id) %>
+                                <% else %>
+                                    <%= link_to image_tag("/user_images/chat.svg"), user_article_path(user_id: article.user_id, id:article.id) %>
+                                <% end %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-10 position-relative">
+                    <%# </br> <p class="lead my-3">Multiple lines of text that form the lede, informing new readers quickly and efficiently about what's most interesting in this post's contents.</p> %>
+                    <p class="lead my-3">DATE:<%= article.date %>　UP TO TARGET:
+
+                    <%# article.user.target_weightがnilの場合引き算があるとエラーになるためif文追記 %>
+                    <% if article.user.target_weight && article.weight %>
+                        <%= (article.user.target_weight - article.weight).round(1) %>
+                    <% end %> kg　
+                    TARGET WEIGHT:
+                    <% if article.user.target_weight %>
+                        <%= article.user.target_weight %>
+                    <% end %> kg　
+                    WEIGHT:
+                    <% if article.weight %>
+                        <%= article.weight %>
+                    <% end %> kg　
+                    MEAL MORNING:<%= article.meal_morning %>　
+                    MEAL LUNCH:<%= article.meal_lunch %>　MEAL DINNER:<%= article.meal_dinner %>　MEAL SNACK:<%= article.meal_snack %>
+                    　EXCERCISE:<%= article.exercise %>　MEMO:<%= article.memo %></p>
+                    <%# <p class="lead mb-0"><a href="#" class="text-blue font-weight-bold">Continue reading...</a></p> %>
+
+                    <div class="position-absolute bottom-0 end-0">
+                        <p><%= link_to "Continue reading...", user_article_path(user_id: article.user_id, id:article.id), class: "lead mb-0 d-flex justify-content-end" %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% end %>
+</main>
+
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
 
 <%# erbのコード コントローラーからビューへ配列を渡すための記述 %>
 <input name="arr_json" type="hidden" value=<%= @articles_one_month_date_j %> class='arr_json1'/>
@@ -254,6 +267,8 @@ window.onload = function() {
 </script>
 
 
+<!-- Core theme JS-->
+<%# <script src="js/scripts.js"></script> %>
 
 <script>
     //    data: ['75.3','70.1','70.1','70.3','70.4','70.2','65.65',
@@ -445,6 +460,340 @@ window.onload = function() {
 // console.log(arr);
 
 </script>
+
+<%
+=begin %>
+                                <% sample = embedded_svg "/user_images/chat.svg"), class: "chat-icon", %>
+                                <%= link_to image_tag(sample), user_article_path(user_id: article.user_id, id:article.id) %>
+<%
+=end %>
+
+<%
+=begin %>
+
+<h2 class="articles_list"><%= "投稿一覧 / ユーザー名：" + @user.name %></h2>
+<p id="notice"><%= notice %></p>
+<%# chart.jsの読み込み %>
+
+<h2>グラフ表示</h2>
+<% if @articles_one_month_date == nil %>
+    <p>※ グラフデータがありません</br>
+    ※ 他の月のグラフを表示させる場合は、年月を入力して検索ボタンを押してください</p>
+<% end %>
+
+<%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
+    <div class="field">
+        <%# オプション :use_month_numbers 月を数字で表示,:discard_day 日の選択ボックスを非表示, include_blank: true 空を含めて表示→不要 %>
+        <% if @description_first_day %>
+            <%= f.date_select:year_month , start_year: 2020, use_month_numbers: true, discard_day: true, selected: @description_first_day.to_date %>
+        <% else %>
+            <%= f.date_select:year_month , start_year: 2020, use_month_numbers: true, discard_day: true %>
+        <% end %>
+            <%= f.hidden_field :user_id, value: params[:user_id] %>
+    <%# コントローラーに配列を渡す %>
+            <% @articles.each do |article| %>
+                <%= hidden_field_tag 'articles[][id]', article.id %>
+            <% end %>
+
+        <%# 検索語句絞り込みのインスタンス変数を渡す %>
+        <% if params[:keyword] %>
+            <%= f.hidden_field :keyword, value: params[:keyword] %>
+        <% end %>
+        <% if params[:date_from] %>
+            <%= f.hidden_field :date_from, value: params[:date_from] %>
+        <% end %>
+        <% if params[:date_to] %>
+            <%= f.hidden_field :date_to, value: params[:date_to] %>
+        <% end %>
+    </div>
+    <%= f.submit "検索" %>
+<% end %>
+
+<%# グラフ表示 %>
+<% if @articles_one_month_date %>
+    <div class="container" style="width:100%, length:70%">
+        <canvas id="canvas"></canvas>
+    </div>
+<% end %>
+
+<h2>検索語句</h2>
+<%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
+    <%= f.text_field :keyword, value: params[:keyword] %>
+    <%= f.hidden_field :user_id, value: params[:user_id] %>
+    <% if @first_day %>
+        <%= f.hidden_field :first_day, value: @first_day %>
+    <% end %>
+    <% if @articles_one_month_date == nil %>
+        <%= f.hidden_field :articles_one_month_date, value: @articles_one_month_date %>
+    <% end %>
+    <% if @articles_one_month %>
+        <% @articles_one_month.each do |article| %>
+            <%= hidden_field_tag 'articles_one_month[][id]', article.id %>
+        <% end %>
+    <% end %>
+    <div class="field">
+        <%= f.date_field :date_from, value: params[:date_from] %> ~ <%= f.date_field :date_to, value: params[:date_to] %>
+    </div>
+
+    <%# 年月絞り込みのインスタンス変数を渡す %>
+    <% if @description_first_day %>
+        <%= f.hidden_field :description_first_day, value: @description_first_day %>
+    <% end %>
+    <%= f.submit "検索" %>
+<% end %>
+
+<% @articles.each do |article| %>
+    <article>
+        <div class="content">
+            <div class="image">
+                <% if article.user.image == "default.png" %>
+                    <%= image_tag "/user_images/#{article.user.image}", size: '150x150' %>
+                <% else %>
+                    <%= image_tag "/user_images/user_#{article.user_id}.png", size: '150x150' %>
+                <% end %>
+                <div class="content good">
+                    <%# 非同期通信のためのid設定 %>
+                    <p id="article_<%= article.id %>">
+                    <%# 「,」の後ろは、article: で変数を定義している %>
+                        <%= render 'layouts/article', article: article %>
+                    </p>
+                </div>
+            </div>
+            <div class="name">
+                <p>(名前)</p>
+                <%= link_to article.user.name, user_path(article.user_id) %>
+                <p>(計測日)</p>
+                <p class="make_a_margin-bottom"><%= article.date %></p>
+            </div>
+            <div class="weight">
+                <p>(目標との乖離)</p>
+                <% if article.user.target_weight && article.weight %>
+                    <p class="make_a_margin-bottom"><%= (article.user.target_weight - article.weight).round(1) %></p>
+                <% else %>
+                    <p class="make_a_margin-bottom"><%= "目標を設定してください" %></p>
+                <% end %>
+                <p>(体重)</p>
+                <p class="make_a_margin-bottom"><%= article.weight %></p>
+                <p>(体脂肪率)</p>
+                <p class="make_a_margin-bottom"><%= article.body_fat_percentage %></p>
+            </div>
+            <div class="meal">
+                <p>(食事(朝))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_morning %></p>
+                <p>(食事(昼))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_lunch %></p>
+                <p>(食事(夜))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_dinner %></p>
+                <p>(食事(間食))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_snack %></p>
+            </div>
+            <div class="exercise">
+                <p>(運動)</p>
+                <p class="make_a_margin-bottom"><%= article.exercise %></p>
+                <p>(メモ)</p>
+                <p class="make_a_margin-bottom"><%= article.memo %></p>
+            </div>
+        </div>
+        <div class="content button_zone">
+            <div class="article_button">
+                <%# アソシエーションのモデルで、idを指定したリンクは引数が2つ必要 %>
+                <%= link_to "詳細", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-info" %>
+                <% if logged_in? %>
+                    <% if current_user.admin %>
+                        <%= link_to "削除", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                    <% elsif article.user_id == current_user.id %>
+                        <%= link_to "編集", edit_user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-info" %>
+                        <%= link_to "削除", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                    <% end %>
+                <% end %>
+            </div>
+            <!--コメント投稿部分-->
+            <%# @commentがsaveに失敗した場合、@commentに情報が残っているので条件分岐できる %>
+            <% if @comment.article_id.present? && @comment.article_id == article.id %>
+                <div class="new-comment">
+                    <%= render partial: 'comments/form', locals: { article: article, comment: @comment, controller_path: 'articles_index' } %>
+                </div>
+            <% else %>
+                <div class="new-comment">
+                    <%= render partial: 'comments/form', locals: { article: article, comment: Comment.new, controller_path: 'articles_index' } %>
+                </div>
+            <% end %>
+
+            <!--コメント一覧部分-->
+            <div id="comments_area">
+                <%= render 'comments/article_comments', article: article, comment: @comment, controller_path: 'articles_index' %>
+            </div>
+        </div>
+    </article>
+<% end %>
+<%
+=end %>
+
+<%
+=begin %>
+<h2 class="articles_list"><%= "投稿一覧 / ユーザー名：" + @user.name %></h2>
+<p id="notice"><%= notice %></p>
+<%# chart.jsの読み込み %>
+
+<h2>グラフ表示</h2>
+<% if @articles_one_month_date == nil %>
+    <p>※ グラフデータがありません</br>
+    ※ 他の月のグラフを表示させる場合は、年月を入力して検索ボタンを押してください</p>
+<% end %>
+
+<%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
+    <div class="field">
+        <%# オプション :use_month_numbers 月を数字で表示,:discard_day 日の選択ボックスを非表示, include_blank: true 空を含めて表示→不要 %>
+        <% if @description_first_day %>
+            <%= f.date_select:year_month , start_year: 2020, use_month_numbers: true, discard_day: true, selected: @description_first_day.to_date %>
+        <% else %>
+            <%= f.date_select:year_month , start_year: 2020, use_month_numbers: true, discard_day: true %>
+        <% end %>
+            <%= f.hidden_field :user_id, value: params[:user_id] %>
+    <%# コントローラーに配列を渡す %>
+            <% @articles.each do |article| %>
+                <%= hidden_field_tag 'articles[][id]', article.id %>
+            <% end %>
+
+        <%# 検索語句絞り込みのインスタンス変数を渡す %>
+        <% if params[:keyword] %>
+            <%= f.hidden_field :keyword, value: params[:keyword] %>
+        <% end %>
+        <% if params[:date_from] %>
+            <%= f.hidden_field :date_from, value: params[:date_from] %>
+        <% end %>
+        <% if params[:date_to] %>
+            <%= f.hidden_field :date_to, value: params[:date_to] %>
+        <% end %>
+    </div>
+    <%= f.submit "検索" %>
+<% end %>
+
+<%# グラフ表示 %>
+<% if @articles_one_month_date %>
+    <div class="container" style="width:100%, length:70%">
+        <canvas id="canvas"></canvas>
+    </div>
+<% end %>
+
+<h2>検索語句</h2>
+<%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
+    <%= f.text_field :keyword, value: params[:keyword] %>
+    <%= f.hidden_field :user_id, value: params[:user_id] %>
+    <% if @first_day %>
+        <%= f.hidden_field :first_day, value: @first_day %>
+    <% end %>
+    <% if @articles_one_month_date == nil %>
+        <%= f.hidden_field :articles_one_month_date, value: @articles_one_month_date %>
+    <% end %>
+    <% if @articles_one_month %>
+        <% @articles_one_month.each do |article| %>
+            <%= hidden_field_tag 'articles_one_month[][id]', article.id %>
+        <% end %>
+    <% end %>
+    <div class="field">
+        <%= f.date_field :date_from, value: params[:date_from] %> ~ <%= f.date_field :date_to, value: params[:date_to] %>
+    </div>
+
+    <%# 年月絞り込みのインスタンス変数を渡す %>
+    <% if @description_first_day %>
+        <%= f.hidden_field :description_first_day, value: @description_first_day %>
+    <% end %>
+    <%= f.submit "検索" %>
+<% end %>
+
+<% @articles.each do |article| %>
+    <article>
+        <div class="content">
+            <div class="image">
+                <% if article.user.image == "default.png" %>
+                    <%= image_tag "/user_images/#{article.user.image}", size: '150x150' %>
+                <% else %>
+                    <%= image_tag "/user_images/user_#{article.user_id}.png", size: '150x150' %>
+                <% end %>
+                <div class="content good">
+                    <%# 非同期通信のためのid設定 %>
+                    <p id="article_<%= article.id %>">
+                    <%# 「,」の後ろは、article: で変数を定義している %>
+                        <%= render 'layouts/article', article: article %>
+                    </p>
+                </div>
+            </div>
+            <div class="name">
+                <p>(名前)</p>
+                <%= link_to article.user.name, user_path(article.user_id) %>
+                <p>(計測日)</p>
+                <p class="make_a_margin-bottom"><%= article.date %></p>
+            </div>
+            <div class="weight">
+                <p>(目標との乖離)</p>
+                <% if article.user.target_weight && article.weight %>
+                    <p class="make_a_margin-bottom"><%= (article.user.target_weight - article.weight).round(1) %></p>
+                <% else %>
+                    <p class="make_a_margin-bottom"><%= "目標を設定してください" %></p>
+                <% end %>
+                <p>(体重)</p>
+                <p class="make_a_margin-bottom"><%= article.weight %></p>
+                <p>(体脂肪率)</p>
+                <p class="make_a_margin-bottom"><%= article.body_fat_percentage %></p>
+            </div>
+            <div class="meal">
+                <p>(食事(朝))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_morning %></p>
+                <p>(食事(昼))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_lunch %></p>
+                <p>(食事(夜))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_dinner %></p>
+                <p>(食事(間食))</p>
+                <p class="make_a_margin-bottom"><%= article.meal_snack %></p>
+            </div>
+            <div class="exercise">
+                <p>(運動)</p>
+                <p class="make_a_margin-bottom"><%= article.exercise %></p>
+                <p>(メモ)</p>
+                <p class="make_a_margin-bottom"><%= article.memo %></p>
+            </div>
+        </div>
+        <div class="content button_zone">
+            <div class="article_button">
+                <%# アソシエーションのモデルで、idを指定したリンクは引数が2つ必要 %>
+                <%= link_to "詳細", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-info" %>
+                <% if logged_in? %>
+                    <% if current_user.admin %>
+                        <%= link_to "削除", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                    <% elsif article.user_id == current_user.id %>
+                        <%= link_to "編集", edit_user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-info" %>
+                        <%= link_to "削除", user_article_path(user_id:article.user_id, id:article.id), class: "btn btn-sm btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                    <% end %>
+                <% end %>
+            </div>
+            <!--コメント投稿部分-->
+            <%# @commentがsaveに失敗した場合、@commentに情報が残っているので条件分岐できる %>
+            <% if @comment.article_id.present? && @comment.article_id == article.id %>
+                <div class="new-comment">
+                    <%= render partial: 'comments/form', locals: { article: article, comment: @comment, controller_path: 'articles_index' } %>
+                </div>
+            <% else %>
+                <div class="new-comment">
+                    <%= render partial: 'comments/form', locals: { article: article, comment: Comment.new, controller_path: 'articles_index' } %>
+                </div>
+            <% end %>
+
+            <!--コメント一覧部分-->
+            <div id="comments_area">
+                <%= render 'comments/article_comments', article: article, comment: @comment, controller_path: 'articles_index' %>
+            </div>
+        </div>
+    </article>
+<% end %>
+
+<%# erbのコード コントローラーからビューへ配列を渡すための記述 %>
+<input name="arr_json" type="hidden" value=<%= @articles_one_month_date_j %> class='arr_json1'/>
+<input name="arr_json" type="hidden" value=<%= @articles_one_month_weight_j %> class='arr_json2'/>
+<input name="arr_json" type="hidden" value=<%= @articles_one_month_body_fat_percentage_j %> class='arr_json3'/>
+<%
+=end %>
+
 
 
 <%

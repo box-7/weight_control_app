@@ -12,6 +12,7 @@ class SessionsController < ApplicationController
       log_in user
       # [:remember_me] == '1'の場合 sessions_helperの、remember(user)、それ以外の場合 forget(user)を叩く
       params[:session][:remember_me] == '1' ? remember(user) : forget(user)
+      flash[:success] = 'ログインしました。'
       # ログイン後にトップページにリダイレクト
       redirect_to root_path
     else

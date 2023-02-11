@@ -1,5 +1,181 @@
+<% provide(:title, 'Admin') %>
+<%# 文字は見えていないが、消すと体裁が崩れるの空白で残す %>
+<h2 class="articles_list">　</h2>
 
-<h2 class="articles_list">ユーザー一覧</h2>
+<main>
+    <header class="bg-primary bg-gradient text-white">
+        <div class="container px-4 text-center">
+            <h3 class="articles_list px-4 text-center"><%= "User list (for administrator)" %></h3>
+            <div>
+                <p class="lead">You can search by username, meal, exercise, or notes</p>
+                <%# <a class="btn btn-lg btn-light" href="#about">Start scrolling!</a> "%>
+                <div class="search-form">
+                    <%= form_with url: users_search_path, method: :get, local: true do |f| %>
+                        <%= f.text_field :keyword, value: @keyword %>
+                        <%= f.submit "SEARCH" %>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">画像</th>
+                    <th scope="col">名前</th>
+                    <th scope="col">フォロー</th>
+                    <th scope="col">自己紹介</th>
+                    <th scope="col">目標体重</th>
+                    <th scope="col">目標体脂肪率</th>
+                    <th scope="col">投稿一覧</th>
+                    <th scope="col">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @users.each_with_index do |user, i| %>
+                    <tr>
+                        <td>
+                            <% if user.image == "default.png" %>
+                                <%= image_tag "/user_images/#{user.image}", size: '75x75' %>
+                            <% else %>
+                                <%= image_tag "/user_images/user_#{user.id}.png", size: '75x75' %>
+                            <% end %>
+                        </td>
+                        <td><%= link_to user.name, user_path(user.id) %></td>
+
+                        <td>
+                            <% if current_user %>
+                                <% unless current_user.id == user.id %>
+                                    <% if current_user.following?(user) %>
+                                        <%= link_to "フォロー外す", user_relationships_path(user.id), method: :delete %>
+                                    <% else %>
+                                        <%= link_to "フォローする", user_relationships_path(user.id), method: :post %>
+                                    <% end %>
+                                <% end %>
+                            <% end %>
+                        </td>
+                        <td><%= user.self_introduction %></td>
+                        <td><%= user.target_weight %></td>
+                        <td><%= user.target_body_fat_percentage %></td>
+                        <td><%= link_to "投稿一覧", user_articles_path(user.id), class: "btn btn-secondary" %></td>
+                        <%# adminユーザーの情報についてのみ、詳細、削除ボタンを表示させない %>
+                        <td>
+                            <% unless user.admin == true %>
+                                <%= link_to "詳細", user_path(user.id), class: "btn btn-info" %>
+                                <%= link_to "削除", user_path(user.id), class: "btn btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
+                            <% end %>
+                        </td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+
+
+
+
+
+<%
+=begin %>
+
+
+<table class="table">
+    <tbody>
+        <% @users.each do |user| %>
+            <% if !user.admin? %>
+                <tr>
+                    <td>
+                        <div class="col-md-22 col-md-offset-1">
+                        <%= user.name %><br>
+                        <%= link_to "削除", user_path(user), method: :delete,
+                        data:{ confirm: "削除してよろしいですか？" }, class: "btn btn-primary" %><br>    
+                            <div class="panel-group">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <p>
+                                        <button type="button" class="btn btn-primary btn-lg" data-toggle="collapse" 
+                                        data-target="#collapse<%= user.id %>"
+                                        aria-expanded="false" aria-controls="collapseExample">
+                                            編集
+                                        </button>
+                                        </p>
+                                        <div class="collapse" id="collapse<%=user.id %>">
+                                        </div>
+                                    </h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            <% end %>
+        <% end %>
+    </tbody>
+</table>
+
+
+<%
+=end %>
+
+<%
+=begin %>
+                    <div class="row">
+                        <div class="col">
+                            <p class="content good">
+                                <span id="article_<%= article.id %>"> <%# 非同期通信のためのid設定 %>
+                                    <%= render 'layouts/article', article: article %> <%# 「,」の後ろは、article: で変数を定義している %>
+                                </span>
+                            </p>
+                        </div>
+
+                        <div class="col">
+                            <%# "/public/chat.svg"だと動かなかったが、"/user_images/chat.svg"だと動く　謎 %>
+                            <%= link_to image_tag("/user_images/chat.svg"), user_article_path(user_id: article.user_id, id:article.id) %>
+
+                        </div>
+
+
+                <div class="col-lg-10 position-relative">
+                    <%# </br> <p class="lead my-3">Multiple lines of text that form the lede, informing new readers quickly and efficiently about what's most interesting in this post's contents.</p> %>
+                    <p class="lead my-3">DATE:<%= article.date %>　UP TO TARGET:<%= (article.user.target_weight - article.weight).round(1) %>kg　TARGET WEIGHT:<%= article.user.target_weight %>kg　WEIGHT:<%= article.weight %>kg　MEAL MORNING:<%= article.meal_morning %>　
+                    MEAL LUNCH:<%= article.meal_lunch %>　MEAL DINNER:<%= article.meal_dinner %>　MEAL SNACK:<%= article.meal_snack %>
+                    　EXCERCISE:<%= article.exercise %>　MEMO:<%= article.memo %></p>
+                    <%# <p class="lead mb-0"><a href="#" class="text-blue font-weight-bold">Continue reading...</a></p> %>
+
+                    <div class="position-absolute bottom-0 end-0">
+                        <p><%= link_to "Continue reading...", user_article_path(user_id: article.user_id, id:article.id), class: "lead mb-0 d-flex justify-content-end" %></p>
+                    </div>
+<%
+=end %>
+
+
+
+<%
+=begin %>
+<%# 必要？　<div class="container">  %>
+<h1>ユーザー一覧</h1>
+
+<%#  multipartは複数の種類のデータを一度に扱える形式で、
+trueを指定することでフォームで文字列だけでなくcsvファイルや画像データなどを扱うことができる %>
+<%
+=begin %>
+<% provide(:class_text, 'basic-info') %>
+<% provide(:button_text, '更新する') %> 
+
+<%= form_tag import_users_path, method: 'post', multipart: true do %>
+    <%= file_field_tag :csv_file %>
+    <%= submit_tag "CSVインポート", class:"btn btn-primary"  %>
+<% end %>
+
+                            <div class="card card-body">
+                                <%= render partial:'edit_basic_info', locals: { user: user } %>
+                            </div>
+    <%
+    =end %>
 
 <div class="search-form">
     <%= form_with url: users_search_path, method: :get, local: true do |f| %>
@@ -47,6 +223,9 @@
         </div>
     </article>
 <% end %>
+
+<%
+=end %>
 
 <%
 =begin %>
