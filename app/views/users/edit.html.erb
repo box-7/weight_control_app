@@ -23,7 +23,7 @@
                         </label>
                     </div>
 
-                    <% if current_user.name = "guest" %>
+                    <% if current_user.name == "guest" %>
                         <fieldset disabled>
                             <div class="mb-3">
                                 <%= f.label :name %>
@@ -50,7 +50,7 @@
                         <%= f.number_field :target_body_fat_percentage, step: "0.1", class: 'form-control' %>
                     </div>
 
-                    <% if current_user.name = "guest" %>
+                    <% if current_user.name == "guest" %>
                         <fieldset disabled>
                             <div class="mb-3">
                                 <%= f.label :email %>

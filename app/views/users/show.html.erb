@@ -63,7 +63,7 @@
                             <%= link_to "削除", user_path(@user.id), class: "btn btn-danger", method: :delete, data: { confirm: "本当に削除しますか？" } %>
                         <% elsif current_user.id == @user.id %>
                             <%= link_to "編集", edit_user_path(@user.id), class: "btn btn-info" %>
-                            <% if current_user.name = "guest" %>
+                            <% if current_user.name == "guest" %>
                                 <span class="disabled">
                                     <%= link_to "削除", user_path(@user.id), class: "btn btn-danger disabled", method: :delete, data: { confirm: "本当に削除しますか？" } %>
                                 </span>
