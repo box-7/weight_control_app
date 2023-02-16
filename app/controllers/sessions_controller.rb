@@ -33,4 +33,11 @@ class SessionsController < ApplicationController
     redirect_to root_url
   end
 
+  def guest_create
+    user = User.find_by(email: "guest@email.com")
+    log_in user
+    flash[:success] = 'ゲストユーザーでログインしました。'
+    redirect_to root_path
+  end
+
 end

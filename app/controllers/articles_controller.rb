@@ -127,20 +127,30 @@ class ArticlesController < ApplicationController
     end
     check_same_day_article = Article.find_by(user_id: params[:user_id], date: params[:article][:date])
 
-    if check_same_day_article.weight != nil
-      @article = Article.new(article_params)
-      flash.now[:danger] = "同じ計測日の投稿はできません。"
-      return render :new
+    if check_same_day_article != nil
+      if check_same_day_article.weight != nil
+        @article = Article.new(article_params)
+        flash.now[:danger] = "同じ計測日の投稿はできません。該当日付の記事を編集、保存してください、"
+        return render :new
+      end
     end
 
     @article = Article.find_by(user_id:@user.id, date: params[:article][:date])
-# seedデータと矛盾するので一旦グレーアウト
-    # if @article.date >= Date.tomorrow
-    #   @article = Article.new(article_params)
-    #   flash.now[:danger] = "未来日付の投稿はできません。"
-    #   @user = current_user
-    #   return render :new
-    # end
+
+# seedデータと矛盾するので一旦グレーアウト → 本番環境ではグレーアウト解除
+    if @article != nil
+      if @article.date >= Date.tomorrow
+        @article = Article.new(article_params)
+        flash.now[:danger] = "未来日付の投稿はできません。"
+        @user = current_user
+        return render :new
+      end
+    else
+      @article = Article.new(article_params)
+      flash.now[:danger] = "データが間違っています。月末までのデータが作成されておりません。"
+      @user = current_user
+      return render :new
+    end
 
     @article.update_attributes(article_params)
 
@@ -178,13 +188,13 @@ class ArticlesController < ApplicationController
       return render :edit
     end
 
-# seedデータと矛盾するので一旦グレーアウト
-    # if @article.date >= time.tomorrow
-    #   @article = Article.new(article_params)
-    #   flash.now[:danger] = "未来日付の投稿はできません。"
-    #   @user = current_user
-    #   return render :edit
-    # end
+# seedデータと矛盾するので一旦グレーアウト → 本番環境ではグレーアウト解除
+    if @article.date >= time.tomorrow
+      @article = Article.new(article_params)
+      flash.now[:danger] = "未来日付の投稿はできません。"
+      @user = current_user
+      return render :edit
+    end
 
     @article.update_attributes(article_params)
     if @article.save

@@ -23,10 +23,19 @@
                         </label>
                     </div>
 
-                    <div class="mb-3">
-                        <%= f.label :name %>
-                        <%= f.text_field :name, class: 'form-control' %>
-                    </div>
+                    <% if current_user.name = "guest" %>
+                        <fieldset disabled>
+                            <div class="mb-3">
+                                <%= f.label :name %>
+                                <%= f.text_field :name, class: 'form-control disabled' %>
+                            </div>
+                        </fieldset>
+                    <% else %>
+                        <div class="mb-3">
+                            <%= f.label :name %>
+                            <%= f.text_field :name, class: 'form-control' %>
+                        </div>
+                    <% end %>
 
                     <div class="mb-3">
                         <%= f.label :self_introduction %>
@@ -40,18 +49,36 @@
                         <%= f.label :target_body_fat_percentage %>
                         <%= f.number_field :target_body_fat_percentage, step: "0.1", class: 'form-control' %>
                     </div>
-                    <div class="mb-3">
-                        <%= f.label :email %>
-                        <%= f.email_field :email, class: 'form-control' %>
-                    </div>
-                    <div class="mb-3">
-                        <%= f.label :password %>
-                        <%= f.password_field :password, class: 'form-control' %>
-                    </div>
-                    <div class="mb-3">
-                        <%= f.label :password_confirmation %>
-                        <%= f.password_field :password_confirmation, class: 'form-control' %>
-                    </div>
+
+                    <% if current_user.name = "guest" %>
+                        <fieldset disabled>
+                            <div class="mb-3">
+                                <%= f.label :email %>
+                                <%= f.email_field :email, class: 'form-control disabled' %>
+                            </div>
+                            <div class="mb-3">
+                                <%= f.label :password %>
+                                <%= f.password_field :password, class: 'form-control disabled' %>
+                            </div>
+                            <div class="mb-3">
+                                <%= f.label :password_confirmation %>
+                                <%= f.password_field :password_confirmation, class: 'form-control disabled' %>
+                            </div>
+                        </fieldset>
+                    <% else %>
+                        <div class="mb-3">
+                            <%= f.label :email %>
+                            <%= f.email_field :email, class: 'form-control' %>
+                        </div>
+                        <div class="mb-3">
+                            <%= f.label :password %>
+                            <%= f.password_field :password, class: 'form-control' %>
+                        </div>
+                        <div class="mb-3">
+                            <%= f.label :password_confirmation %>
+                            <%= f.password_field :password_confirmation, class: 'form-control' %>
+                        </div>
+                    <% end %>
 
                     <%= f.submit "保存", class: "btn btn-primary btn-block btn-signup" %>
                 <% end %>
