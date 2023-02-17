@@ -9,7 +9,7 @@ class ArticlesController < ApplicationController
     if params[:articles]
       @articles = []
       params[:articles].each do |article|
-        new_article = Article.find_by(id: article[:id]).where.not(weight: nil)
+        new_article = Article.find_by(id: article[:id])
         @articles.push(new_article)
       end
 # グラフの年月絞り込みではなく、キーワード検索、日付けでの絞り込み検索の場合の投稿一覧取得
