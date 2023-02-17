@@ -189,7 +189,7 @@ class ArticlesController < ApplicationController
     end
 
 # seedデータと矛盾するので一旦グレーアウト → 本番環境ではグレーアウト解除
-    if @article.date >= time.tomorrow
+    if @article.date >= Date.tomorrow
       @article = Article.new(article_params)
       flash.now[:danger] = "未来日付の投稿はできません。"
       @user = current_user
