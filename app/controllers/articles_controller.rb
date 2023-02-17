@@ -9,12 +9,12 @@ class ArticlesController < ApplicationController
     if params[:articles]
       @articles = []
       params[:articles].each do |article|
-        new_article = Article.find_by(id: article[:id])
+        new_article = Article.find_by(id: article[:id]).where.not(weight: nil)
         @articles.push(new_article)
       end
 # グラフの年月絞り込みではなく、キーワード検索、日付けでの絞り込み検索の場合の投稿一覧取得
     else
-      @articles = Article.where(user_id: @user.id)
+      @articles = Article.where(user_id: @user.id).where.not(weight: nil)
     end
     @comment = Comment.new
 
@@ -44,8 +44,8 @@ class ArticlesController < ApplicationController
       if params[:keyword]
         @keyword = params[:keyword]
       end
-      if params[:date_from] 
-        @date_from = params[:date_from] 
+      if params[:date_from]
+        @date_from = params[:date_from]
       end
       if params[:date_to]
         @date_to = params[:date_to]
@@ -63,12 +63,12 @@ class ArticlesController < ApplicationController
       if params[:keyword] != ""
         # 日付けでの絞り込み検索がある場合
         if params[:date_from] != "" || params[:date_to] != ""
-          @articles = @articles.user_articles_search(params[:date_from], params[:date_to])
+          @articles = @articles.user_articles_search(params[:date_from], params[:date_to]).where.not(weight: nil)
         end
-        @articles = @articles.search(params[:keyword]).order(date: "DESC")
+        @articles = @articles.search(params[:keyword]).order(date: "DESC").where.not(weight: nil)
       # キーワードがなく、日付けでの絞り込み検索がある場合
       elsif params[:date_from] != "" || params[:date_to] != ""
-        @articles = @articles.user_articles_search(params[:date_from], params[:date_to]).order(date: "DESC")
+        @articles = @articles.user_articles_search(params[:date_from], params[:date_to]).order(date: "DESC").where.not(weight: nil)
       end
 # 「グラフデータがありません」の場合、先にこちらを読み込ませる
       if params[:articles_one_month_date]
