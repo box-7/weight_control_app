@@ -127,12 +127,10 @@ class ArticlesController < ApplicationController
     end
     check_same_day_article = Article.find_by(user_id: params[:user_id], date: params[:article][:date])
 
-    if check_same_day_article != nil
-      if check_same_day_article.weight != nil
-        @article = Article.new(article_params)
-        flash.now[:danger] = "同じ計測日の投稿はできません。該当日付の記事を編集、保存してください、"
-        return render :new
-      end
+    if check_same_day_article.weight != nil
+      @article = Article.new(article_params)
+      flash.now[:danger] = "同じ計測日の投稿はできません。該当日付の記事を編集、保存してください、"
+      return render :new
     end
 
     @article = Article.find_by(user_id:@user.id, date: params[:article][:date])
