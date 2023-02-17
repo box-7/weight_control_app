@@ -16,10 +16,10 @@
                             <%# /user_images(フォルダ名)/#{@user.image(画像ファイル名)}
                             publicフォルダに画像がある場合は、画像ファイル名のみでOK 今回user_imagesフォルダを作成したのでフォルダ名が必要
                             画像がdefault画像とそれ以外の時で条件分岐 %>
-                            <% if @article.user.image == "default.png" %>
-                                <span class="image-file"><%= image_tag "/user_images/#{@article.user.image}", size: '75x75' %></span>
+                            <% if comment.user.image == "default.png" %>
+                                <span class="image-file"><%= image_tag "/user_images/#{comment.user.image}", size: '75x75' %></span>
                             <% else %>
-                                <span class="image-file"><%= image_tag "/user_images/user_#{@article.user.id}.png", size: '75x75' %></span>
+                                <span class="image-file"><%= image_tag "/user_images/user_#{comment.user.id}.png", size: '75x75' %></span>
                             <% end %>
                         </label>
                         <strong class="d-block text-gray-dark"><%= comment.user.name %><%=  ' ' + comment.created_at.strftime('%Y/%m/%d') %></strong>
