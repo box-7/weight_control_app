@@ -10,7 +10,8 @@ class TopController < ApplicationController
     end
 
     def index
-        @articles = Article.all.where.not(weight: nil).order(created_at: "DESC")
+        # 順序はcreated_atだと正しくならない(その月の最初のデータが作成されたときに1ヶ月分のデータが生成されるため)。updated_atにする
+        @articles = Article.all.where.not(weight: nil).order(updated_at: "DESC")
         @comment = Comment.new
     end
 end
