@@ -42,33 +42,3 @@
     <% end %>
 <% end %>
 
-
-<%
-=begin %>
-
-<% elsif @comment.errors.any? %>
-    <div id="error_explanation">
-        <div class="alert alert-danger">
-        入力エラーが <%= pluralize(@comment.errors.count, "件") %>ありました。
-        </div>
-        <ul>
-            <% @comment.errors.full_messages.each do |msg| %>
-                <li><%= msg %></li>
-            <% end %>
-        </ul>
-    </div>
-<% end %>
-
-
-
-<% elsif @comment.errors.any? %>
-    <div class="alert alert-danger">
-        <ul class="list-unstyled">
-        <h5><%= @comment.errors.count %>件のエラー</h5>
-        <% @comment.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-        <% end %>
-        </ul>
-    </div>
-<%
-=end %>

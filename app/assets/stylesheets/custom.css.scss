@@ -3,6 +3,73 @@
 // @import "bootstrap-sprockets";
 // @import "bootstrap";
 
+
+.header-navbar{
+    margin-bottom:0px;
+}
+
+
+.name-position{
+    margin-left:30px;
+}
+
+.footer-length {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
+text-position{
+    text-align:center;
+}
+
+// googleフォントを利用
+body {
+    // font-family: 'Hiragino Kaku Gothic Pro', 'Meiryo', sans-serif;
+    // font-family: 'Open Sans', sans-serif;
+    // font-family: 'Poor Story', cursive;
+    font-family: 'Open Sans', sans-serif;
+    // font-family: 'Poor Story', cursive;
+}
+
+body {
+    // margin: 0;
+    display: flex;
+    flex-flow: column;
+    min-height: 100vh;
+}
+
+main {
+//     // background: #ffffff;
+    flex: 1;
+}
+
+
+// 使っているか微妙
+form-signin {
+    display: flex;
+    align-items: center;
+    // padding-top: 40px;
+    // padding-bottom: 40px;
+    // background-color: #f5f5f5;
+}
+
+.disabled{
+    cursor: not-allowed;
+}
+
+// アラートがヘッダーにかくれてしまうための処置
+.alert{
+    padding-top: 70px;
+}
+
+.flex{
+    display: flex;
+}
+
+.chat-position{
+    margin-left: 40px;
+}
+
 /* universal */
 
 // body {
@@ -124,69 +191,3 @@
 
 
 // ----------------------------------
-
-.header-navbar{
-    margin-bottom:0px;
-}
-
-
-.name-position{
-    margin-left:30px;
-}
-
-.footer-length {
-    padding-top: 1rem !important;
-    padding-bottom: 1rem !important;
-}
-
-text-position{
-    text-align:center;
-}
-
-// googleフォントを利用
-body {
-    // font-family: 'Hiragino Kaku Gothic Pro', 'Meiryo', sans-serif;
-    // font-family: 'Open Sans', sans-serif;
-    // font-family: 'Poor Story', cursive;
-    font-family: 'Open Sans', sans-serif;
-    // font-family: 'Poor Story', cursive;
-}
-
-body {
-    // margin: 0;
-    display: flex;
-    flex-flow: column;
-    min-height: 100vh;
-}
-
-main {
-//     // background: #ffffff;
-    flex: 1;
-}
-
-
-// 使っているか微妙
-form-signin {
-    display: flex;
-    align-items: center;
-    // padding-top: 40px;
-    // padding-bottom: 40px;
-    // background-color: #f5f5f5;
-}
-
-.disabled{
-    cursor: not-allowed;
-}
-
-// アラートがヘッダーにカッ暮れてしまうための処置
-.alert{
-    padding-top: 70px;
-}
-
-.flex{
-    display: flex;
-}
-
-.chat-position{
-    margin-left: 40px;
-}
