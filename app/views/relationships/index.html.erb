@@ -75,28 +75,3 @@
         </table>
     </div>
 </main>
-
-
-
-<%
-=begin %>
-                        <td>
-                            <%= link_to "詳細", user_path(user.id), class: "btn btn-info" %>
-                        </td>
-
-
-<h2><%= current_user.name + 'のお気に入り一覧' %></h2>
-
-<% @users.each do |user| %>
-    <P>
-        <%= link_to user.name, user_path(user.id) %>
-    </p>
-<% end %>
-
-<%
-=end %>
-
-
-
-
-

@@ -10,10 +10,6 @@
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
     <%= csrf_meta_tags %>
 
-    <%# <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital@1&family=Poor+Story&display=swap" rel="stylesheet"> %>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital@1&family=Poor+Story&display=swap" rel="stylesheet">
@@ -28,8 +24,6 @@
     <% end %>
 
     <%= yield %>
-    <%# /*コンテンツ内に空の要素(.push)を加える*/ %>
-    <%# <div class="push"></div> %>
     <%= render 'layouts/footer' %>
   </body>
 </html>

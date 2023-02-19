@@ -3,8 +3,6 @@ class CommentsController < ApplicationController
     def create
         @article = Article.find(params[:article_id])
         @comment = Comment.new(comment_params)
-        # @comment.user_id = current_user.id
-        # @comment.article_id = @article.id
         if @comment.save
             flash[:success] = 'コメントを投稿しました'
             if params[:controller_path] == 'top_index'
