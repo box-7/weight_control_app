@@ -7,16 +7,13 @@
 <main>
     <header class="bg-primary bg-gradient text-white">
         <div class="container px-4 text-center">
-        <%# <h3 class="articles_list px-4 mt-5 text-center"><%= "ユーザー一覧(管理者専用画面)" 　　</h3> %>
-            <h3 class="articles_list px-4 text-center"><%= current_user.name + " List of follow users" %></h3>
-            <%# <div class="top-page-margin"> %>
+            <h3 class="articles_list px-4 text-center"><%= current_user.name + " お気に入りユーザー一覧" %></h3>
             <div>
-                <p class="lead">You can search by username, meal, exercise, or notes</p>
-                <%# <a class="btn btn-lg btn-light" href="#about">Start scrolling!</a> "%>
+                <p class="lead fs-6 mb-1">ユーザー名、食事、運動、メモを入力してください</p>
                 <div class="search-form">
                     <%= form_with url: users_search_path, method: :get, local: true do |f| %>
                         <%= f.text_field :keyword, value: @keyword %>
-                        <%= f.submit "SEARCH" %>
+                        <%= f.submit "検索" %>
                     <% end %>
                 </div>
             </div>
@@ -33,7 +30,6 @@
                     <th scope="col">目標体重</th>
                     <th scope="col">目標体脂肪率</th>
                     <th scope="col">投稿一覧</th>
-                    <%# <th scope="col">操作</th> %>
                 </tr>
             </thead>
             <tbody>

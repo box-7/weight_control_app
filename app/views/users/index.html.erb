@@ -5,14 +5,14 @@
 <main>
     <header class="bg-primary bg-gradient text-white">
         <div class="container px-4 text-center">
-            <h3 class="articles_list px-4 text-center"><%= "User list (for administrator)" %></h3>
+            <h3 class="articles_list px-4 text-center"><%= "ユーザー一覧(管理者限定)" %></h3>
             <div>
-                <p class="lead">You can search by username, meal, exercise, or notes</p>
+                <p class="lead fs-6 mb-1">ユーザー名、食事、運動、メモを入力してください</p>
                 <%# <a class="btn btn-lg btn-light" href="#about">Start scrolling!</a> "%>
                 <div class="search-form">
                     <%= form_with url: users_search_path, method: :get, local: true do |f| %>
                         <%= f.text_field :keyword, value: @keyword %>
-                        <%= f.submit "SEARCH" %>
+                        <%= f.submit "検索" %>
                     <% end %>
                 </div>
             </div>
