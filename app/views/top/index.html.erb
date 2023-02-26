@@ -12,13 +12,13 @@
         <% else %>
             <div class="container px-4 mt-5 text-center">
         <% end %>
-            <h3 class="articles_list px-4 text-center"><%= "All Articles" %></h3>
-            <p class="lead">You can search by username, meal, exercise, or notes</p>
+            <h3 class="articles_list px-4 text-center"><%= "すべての投稿" %></h3>
+            <p class="lead fs-6 mb-1">ユーザー名、食事、運動、メモを入力してください</p>
             <div class="search-form">
                 <%= form_with url: articles_search_path, method: :get, local: true do |f| %>
                     <%= f.text_field :keyword, value: @keyword, class: "search-box" %>
                     <%# 検索ボタンにclassをつける場合 f.submit "検索", class: "btn-outline-success text-nowrap" %>
-                    <%= f.submit "SEARCH" %>
+                    <%= f.submit "検索" %>
                 <% end %>
             </div>
         </div>
@@ -31,7 +31,12 @@
         <div class="jumbotron p-3 p-md-5 text-white rounded bg-dark container">
     <% end %>
             <div class="row">
-                <h1 class="display-4 font-italic">WEIGHT LOSS(FROM THE BEGGINING):<%= weight_loss(article) %>kg</br>BODY FAT PERCENTAGE:<%= article.body_fat_percentage %>% </h1>
+                <h5 class="container text-center">
+                    <span class="item-heading bg-primary">計測開始時からの増減</span>
+                    <%= weight_loss(article) %>kg
+                    <span class="item-heading bg-primary">体脂肪率</span>
+                    <%= article.body_fat_percentage %>%
+                </h5>
             </div>
             <div class="row">
                 <div class="col-lg-2 text-position">
@@ -43,7 +48,7 @@
                         <% end %>
                     </div>
                     <div class="name-position">
-                        <p><%= link_to article.user.name, user_path(article.user_id) %></p>
+                        <p class="ms-4"><%= link_to article.user.name, user_path(article.user_id) %></p>
                         <p><%= link_to "投稿一覧", user_articles_path(article.user_id), class: "btn btn-secondary" %></p>
 
                         <div class="flex">
@@ -68,18 +73,18 @@
 
                 <div class="col-lg-10 position-relative">
                     <%# </br> <p class="lead my-3">Multiple lines of text that form the lede, informing new readers quickly and efficiently about what's most interesting in this post's contents.</p> %>
-                    <p class="lead my-3">DATE:<%= article.date %>　UP TO TARGET:
+                    <p class="lead my-3">日付:<%= article.date %>　目標残:
                     <%# article.user.target_weightがnilの場合引き算があるとエラーになるためif文追記 %>
                     <% if article.user.target_weight %>
                         <%= (article.weight - article.user.target_weight).round(1) %>
                     <% end %> kg
-                    　TARGET WEIGHT:<%= article.user.target_weight %> kg　WEIGHT:<%= article.weight %>kg　MEAL MORNING:<%= article.meal_morning %>　
-                    MEAL LUNCH:<%= article.meal_lunch %>　MEAL DINNER:<%= article.meal_dinner %>　MEAL SNACK:<%= article.meal_snack %>
-                    　EXCERCISE:<%= article.exercise %>　MEMO:<%= article.memo %></p>
+                    　目標体重:<%= article.user.target_weight %> kg　体重:<%= article.weight %>kg　朝食:<%= article.meal_morning %>　
+                    昼食:<%= article.meal_lunch %>　夕食:<%= article.meal_dinner %>　間食:<%= article.meal_snack %>
+                    　運動:<%= article.exercise %>　メモ:<%= article.memo %></p>
                     <%# <p class="lead mb-0"><a href="#" class="text-blue font-weight-bold">Continue reading...</a></p> %>
 
                     <div class="position-absolute bottom-0 end-0">
-                        <p><%= link_to "Continue reading...", user_article_path(user_id: article.user_id, id:article.id), class: "lead mb-0 d-flex justify-content-end" %></p>
+                        <p><%= link_to "続きを読む...", user_article_path(user_id: article.user_id, id:article.id), class: "lead mb-0 d-flex justify-content-end" %></p>
                     </div>
                 </div>
             </div>
