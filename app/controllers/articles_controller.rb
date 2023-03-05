@@ -206,7 +206,16 @@ class ArticlesController < ApplicationController
 
   def destroy
     @article = Article.find(params[:id])
+    user = User.find(@article.user_id)
+    day = @article.date
+
     if @article.destroy
+      user.article.create!(
+        user_id: user.id,
+        date: day,
+        weight:'',
+        body_fat_percentage:'',
+      )
       flash[:success] = "#{@article.date}のデータを削除しました。"
       redirect_to root_path
     else
