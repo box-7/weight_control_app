@@ -12,9 +12,9 @@ class ArticlesController < ApplicationController
         new_article = Article.find_by(id: article[:id])
         @articles.push(new_article)
       end
-# グラフの年月絞り込みではなく、キーワード検索、日付けでの絞り込み検索の場合の投稿一覧取得
+# グラフの年月絞り込みではなく、キーワード検索、日付けでの絞り込み検索の場合の投稿一覧取得 / 日付の降順で一覧データを取得
     else
-      @articles = Article.where(user_id: @user.id).where.not(weight: nil)
+      @articles = Article.where(user_id: @user.id).where.not(weight: nil).order(date: "DESC")
     end
     @comment = Comment.new
 
