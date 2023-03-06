@@ -227,7 +227,8 @@ class ArticlesController < ApplicationController
 
   def index
     @user = User.find(params[:user_id])
-    @articles = Article.where(user_id: params[:user_id]).where.not(weight: nil)
+# 投稿データを日付の降順で取得する
+    @articles = Article.where(user_id: params[:user_id]).where.not(weight: nil).order(date: "DESC")
     @comment = Comment.new
     @month = Date.today
 # user_id: @user.idの指定が漏れていたのでグラフが複数の違う人たちのデータを引っ張ってしまった
