@@ -14,7 +14,7 @@
                 <%# chart.jsの読み込み %>
                 <div class="col-lg-4 row">
                     <div class="align-items-start">
-                        <h4 class="mb-0 fs-5">年月での絞り込み</h4>
+                        <h4 class="mb-0 fs-5">年月でのグラフ絞り込み</h4>
                         <%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
                             <div class="field mb-1">
                                 <%# オプション :use_month_numbers 月を数字で表示,:discard_day 日の選択ボックスを非表示, include_blank: true 空を含めて表示→不要 %>
@@ -45,7 +45,7 @@
                     </div>
 
                     <div class="align-items-end">
-                        <h4 class="mb-0 fs-5">キーワードまたは日付で検索</4>
+                        <h4 class="mb-0 fs-5">キーワードまたは日付で投稿検索</4>
                         <%= form_with(url: user_articles_search_path, method: :get, local: true) do |f| %>
                             <div class="field mb-1">
                                 <%= f.text_field :keyword, value: params[:keyword] %>
